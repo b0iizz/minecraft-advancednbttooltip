@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.b0iizz.advancednbttooltip.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+	"ItemBannerMixin",
+	"ItemBannerPatternMixin",
+	"ItemCrossbowMixin",
+	"ItemFilledMapMixin",
+	"ItemFireworkChargeMixin",
+	"ItemFireworkMixin",
+	"ItemFishBucketMixin",
+	"ItemLingeringPotionMixin",
+    "ItemMixin",
+	"ItemMusicDiscMixin",
+	"ItemPotionMixin",
+	"ItemShieldMixin",
+	"ItemTippedArrowMixin",
+	"ItemWrittenBookMixin",
+	"ItemStackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
