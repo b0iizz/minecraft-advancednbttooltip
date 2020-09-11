@@ -23,6 +23,7 @@
 package me.b0iizz.advancednbttooltip;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
 import net.fabricmc.api.ClientModInitializer;
 
 /**
@@ -41,6 +42,7 @@ public class ModMain implements ClientModInitializer {
 	public void onInitializeClient() {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
+		CustomTooltipManager.registerAllCustomTooltips();
 	}
 
 }
