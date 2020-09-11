@@ -22,7 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
@@ -35,7 +34,7 @@ import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
  * 
  * @author B0IIZZ
  */
-public class ConfigManager implements ModMenuApi {
+public class ConfigManager {
 
 	/**
 	 * This mod's config 
@@ -53,23 +52,6 @@ public class ConfigManager implements ModMenuApi {
 	 */
 	public static void loadConfig() {
 		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-	}
-	
-	/**
-	 * @return This mod's modid.
-	 */
-	@Override
-	public String getModId() {
-		return "advancednbttooltip";
-	}
-	/**
-	 * @return This mod's config's {@link ConfigScreenFactory} 
-	 */
-	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return parent -> {
-			return AutoConfig.getConfigScreen(ModConfig.class, parent).get();
-		};
 	}
 	
 	//TODO: Category General Options

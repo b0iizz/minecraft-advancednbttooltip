@@ -21,7 +21,7 @@
       "me.b0iizz.advancednbttooltip.ModMain"
     ],
 	"modmenu": [
-	  "me.b0iizz.advancednbttooltip.config.ConfigManager"
+	  "me.b0iizz.advancednbttooltip.config.ModMenuEntry"
 	]
   },
   "mixins": [
