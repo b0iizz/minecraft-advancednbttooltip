@@ -23,8 +23,11 @@
 package me.b0iizz.advancednbttooltip;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
+import me.b0iizz.advancednbttooltip.config.CustomTooltipResourceReloadListener;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
 
 /**
  * The Fabric Entrypoint of this mod.
@@ -35,6 +38,12 @@ import net.fabricmc.api.ClientModInitializer;
  */
 public class ModMain implements ClientModInitializer {
 	
+	public static final String modid = "advancednbttooltip";
+	
+	public static Identifier id(String name) {
+		return new Identifier(modid, name);
+	}
+	
 	/**
 	 * Called on initialization. Registers and loads this mod's config.
 	 */
@@ -42,7 +51,7 @@ public class ModMain implements ClientModInitializer {
 	public void onInitializeClient() {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
-		CustomTooltipManager.registerAllCustomTooltips();
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new CustomTooltipResourceReloadListener());
 	}
 
 }

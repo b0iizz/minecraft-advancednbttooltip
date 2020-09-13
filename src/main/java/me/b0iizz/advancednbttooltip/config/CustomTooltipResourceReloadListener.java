@@ -22,28 +22,24 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
-import me.b0iizz.advancednbttooltip.ModMain;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 
-public class ModMenuEntry implements ModMenuApi {
-	
-	/**
-	 * @return This mod's modid.
-	 */
+import me.b0iizz.advancednbttooltip.ModMain;
+import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
+
+public class CustomTooltipResourceReloadListener implements SimpleSynchronousResourceReloadListener{
+
 	@Override
-	public String getModId() {
-		return ModMain.modid;
+	public Identifier getFabricId() {
+		return ModMain.id("resource_listener");
 	}
-	/**
-	 * @return This mod's config's {@link ConfigScreenFactory} 
-	 */
+
 	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return parent -> {
-			return AutoConfig.getConfigScreen(ModConfig.class, parent).get();
-		};
-	
+	public void apply(ResourceManager manager) {
+		CustomTooltipManager.reloadAllCustomTooltips();
 	}
+
+
 }

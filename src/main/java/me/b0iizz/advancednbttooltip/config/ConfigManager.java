@@ -22,6 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import org.apache.logging.log4j.Level;
 
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
@@ -115,5 +116,9 @@ public class ConfigManager {
 		if(config.injectorOptions.overrideAppendTooltip) 		mask &= 0x1F;
 		
 		return mask;
+	}
+	
+	public static Level getDeserializationOutputLevel() {
+		return config.level.getLevel();
 	}
 }

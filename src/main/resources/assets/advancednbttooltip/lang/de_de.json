@@ -27,5 +27,6 @@
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn": "Überschreibe \"Kann plaziert werden\" Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn.@Tooltip": "Zeige im Abenteuermodus immer an, wo ein Block plaziert werden kann.",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Überschreibe Trankeffekt Hide-Flag",
-	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Zeige immer Trankeffekte und modifikationsspezifische Tooltips an."
+	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Zeige immer Trankeffekte und modifikationsspezifische Tooltips an.",
+	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level"
 }

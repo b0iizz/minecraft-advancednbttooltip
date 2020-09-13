@@ -22,6 +22,8 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import org.apache.logging.log4j.Level;
+
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.*;
 
@@ -85,6 +87,12 @@ public class ModConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	HideFlagsOverrides injectorOptions = new HideFlagsOverrides();
 	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+	DeserializerLevel level = DeserializerLevel.DEBUG;
+	
 	static class HideFlagsOverrides {
 		
 		/**
@@ -122,5 +130,19 @@ public class ModConfig implements ConfigData {
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideAppendTooltip = true;
+	}
+	
+	static enum DeserializerLevel {
+		DEBUG(Level.DEBUG),INFO(Level.INFO);
+		
+		private Level level;
+		
+		private DeserializerLevel(Level level) {
+			this.level = level;
+		}
+		
+		public Level getLevel()  {
+			return level;
+		}
 	}
 }

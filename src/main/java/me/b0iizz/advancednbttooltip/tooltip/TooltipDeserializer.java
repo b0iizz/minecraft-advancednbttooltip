@@ -1,11 +1,40 @@
+/*	MIT License
+	
+	Copyright (c) 2020 b0iizz
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
 package me.b0iizz.advancednbttooltip.tooltip;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
@@ -14,212 +43,412 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+/**
+ * A class for loading {@link CustomTooltip CustomTooltips} from a Json file.
+ * 
+ * @author B0IIZZ
+ */
 public class TooltipDeserializer {
 
+	private static final Logger LOGGER = LogManager.getLogger();
+	
+	/**
+	 * Builds a {@link CustomTooltip} from a json object.
+	 * For the format please visit <a href="https://github.com/b0iizz/minecraft-advancednbttooltip/blob/master/README.md">my GitHub page</a>.
+	 * 
+	 * @param root The root json of the tooltip
+	 * @return The parsed custom tooltip
+	 * @throws Exception
+	 */
 	public static CustomTooltip deserializeTooltip(JsonObject root) throws Exception {
 		String name = root.get("name").getAsString();
-		SerializedTooltipFactory factory = new SerializedTooltipFactory();
 		
-		for(JsonElement line : root.get("lines").getAsJsonArray()) {
-			if(!line.isJsonObject()) throw new Exception("Wrong type in lines array in " + name);
-			factory.addPattern(LinePattern.parse(line.getAsJsonObject()));
-		}
+		//Logging
+		logType(name);
 		
+		DeserializedTooltipFactory factory = new DeserializedTooltipFactory();
+		DeserializedLine[] lines = deserializeLines(root);
+		for (DeserializedLine line : lines)
+			factory.lines.add(line);
+
 		CustomTooltip result = new CustomTooltip(name, factory);
-		
-		for(JsonElement condition : root.get("conditions").getAsJsonArray()) {
-			if(!condition.isJsonObject()) throw new Exception("Wrong type in conditions array in " + name);
-			result.addCondition(TooltipConditionPattern.parse(condition.getAsJsonObject()));
-		}
+
+		TooltipCondition[] conditions = deserializeConditions(root);
+		for (TooltipCondition condition : conditions)
+			result.addCondition(condition);
+
+		//Logging
+		retractPath();
 		
 		return result;
 	}
-	
-	private static class SerializedTooltipFactory implements TooltipFactory {
-		
-		List<LinePattern> pattern = new ArrayList<>();
-		
-		public void addPattern(LinePattern lp) {
-			pattern.add(lp);
-		}
-		
-		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			List<Text> result = new ArrayList<>();
-			for(LinePattern lp : pattern) {
-				result.add(new LiteralText(lp.getText(item,tag,context)));
-			}
-			return result;
-		}
-		
-	}
-	
-	private static class TooltipConditionPattern {
-		
-		public static TooltipCondition parse(JsonObject obj) {
-			String name = obj.get("name").getAsString();
-			switch(name.toUpperCase()) {
-			case "HAS_TAG":
-				{
-					return new TooltipCondition("HAS_TAG",obj.get("tag").getAsString());
-				}
-			case "HAS_ITEM":
-				{
-					List<Item> accepted = new ArrayList<>();
-					try {
-						obj.get("arguments").getAsJsonArray().forEach((element) -> {
-							Identifier id = new Identifier(element.getAsString());
-							Item i = Registry.ITEM.get(id);
-							accepted.add(i);
-						});
-					} catch (Exception e) {}
-					return new TooltipCondition("HAS_ITEM", accepted.toArray());
-				}
-			case "NOT":
-				{
-					TooltipCondition condition = parse(obj.get("condition").getAsJsonObject());
-					return new TooltipCondition("NOT", condition);
-				}
-			case "AND":
-				{
-					List<TooltipCondition> args = new ArrayList<>();
-					for(JsonElement element : obj.get("conditions").getAsJsonArray()) {
-						if(element.isJsonObject())
-							args.add(parse(element.getAsJsonObject()));
-					}
-					return new TooltipCondition("AND", args.toArray());
-				}
-			case "OR": 
-				{
-					List<TooltipCondition> args = new ArrayList<>();
-					for(JsonElement element : obj.get("conditions").getAsJsonArray()) {
-						if(element.isJsonObject())
-							args.add(parse(element.getAsJsonObject()));
-					}
-					return new TooltipCondition("OR", args.toArray());
-				}
-			default:
-				return TooltipCondition.FALSE;
-			}
-		}
-		
-	}
-	
-	private static class LinePattern {
-		String pattern;
-		LinePatternArgument[] arguments;
-		
-		public LinePattern(String pattern, LinePatternArgument[] arguments) {
-			this.pattern = pattern;
-			this.arguments = arguments;
-		}
-		
-		public String getText(Item item, CompoundTag tag, TooltipContext context) {
-			Object[] resolved = new Object[arguments.length];
-			for(int i = 0; i < resolved.length; i++) {
-				resolved[i] = arguments[i].getText(item, tag, context);
-			}
-			return String.format(pattern, resolved);
-		}
-		
-		public static LinePattern parse(JsonObject obj) throws Exception {
-			List<LinePatternArgument> args = new ArrayList<>();
-			if(obj.get("arguments").isJsonArray()) {
-				for(JsonElement element : obj.get("arguments").getAsJsonArray()) {
-					if(element.isJsonObject())
-						args.add(LinePatternArgument.parse(element.getAsJsonObject()));
-				}
-			}
+
+	private static DeserializedLine[] deserializeLines(JsonObject obj) throws Exception {
+		if (!obj.has("lines") || !obj.get("lines").isJsonArray())
+			return new DeserializedLine[0];
+		JsonArray array = require(obj,"lines").getAsJsonArray();
+
+		DeserializedLine[] result = new DeserializedLine[array.size()];
+		for (int i = 0; i < result.length; i++) {
+			//Logging
+			logArray(i);
 			
-			return new LinePattern(obj.get("pattern").getAsString(), args.toArray(new LinePatternArgument[args.size()]));
+			result[i] = deserializeLine(array.get(i));
+			
+			//Logging
+			retractPath();
+		}
+		return result;
+	}
+
+	private static DeserializedLine deserializeLine(JsonElement element) throws Exception {
+		if (!element.isJsonObject())
+			throw new IllegalArgumentException("A line has to be a JSON Object!");
+		JsonObject obj = element.getAsJsonObject();
+
+		String pattern = require(obj,"pattern").getAsString();
+
+		DeserializedLineArgument[] arguments = deserializeLineArguments(obj);
+
+		TooltipCondition[] conditions = deserializeConditions(obj);
+		TooltipCondition condition = new TooltipCondition("AND", (Object[]) conditions);
+
+		return new DeserializedLine(pattern, condition, arguments);
+	}
+
+	private static DeserializedLineArgument[] deserializeLineArguments(JsonObject obj) throws Exception {
+		if (!obj.has("arguments") || !obj.get("arguments").isJsonArray())
+			return new DeserializedLineArgument[0];
+		JsonArray array = require(obj,"arguments").getAsJsonArray();
+
+		DeserializedLineArgument[] result = new DeserializedLineArgument[array.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = deserializeLineArgument(array.get(i));
+		}
+		return result;
+	}
+
+	private static TooltipCondition[] deserializeConditions(JsonObject obj) throws Exception {
+		if (!obj.has("conditions") || !obj.get("conditions").isJsonArray())
+			return new TooltipCondition[0];
+		JsonArray array = require(obj,"conditions").getAsJsonArray();
+
+		TooltipCondition[] result = new TooltipCondition[array.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = deserializeCondition(array.get(i));
+		}
+		return result;
+	}
+
+	private static TooltipCondition deserializeCondition(JsonElement element) throws Exception {
+		if (!element.isJsonObject())
+			throw new IllegalArgumentException("A condition has to be a JSON Object!");
+		JsonObject obj = element.getAsJsonObject();
+
+		String type = require(obj,"type").getAsString().toUpperCase();
+		
+		//Logging
+		logType(type);
+		
+		switch (type) {
+		case "HAS_TAG": {
+			//Logging
+			retractPath();
+			
+			return new TooltipCondition(type, require(obj,"tag").getAsString());
+		}
+		case "HAS_ITEM": {
+			List<Item> items = new ArrayList<>();
+			require(obj,"items").getAsJsonArray().forEach((jsonId) -> {
+				Identifier id = new Identifier(jsonId.getAsString());
+				Item item = Registry.ITEM.get(id);
+				items.add(item);
+			});
+			
+			//Logging
+			retractPath();
+			
+			return new TooltipCondition(type, items.toArray());
+		}
+		case "NOT": {
+			TooltipCondition condition = deserializeCondition(require(obj,"condition"));
+			
+			//Logging
+			retractPath();
+			
+			return new TooltipCondition(type, condition);
+		}
+		case "AND": {
+			TooltipCondition[] conditions = deserializeConditions(obj);
+			
+			//Logging
+			retractPath();
+			
+			return new TooltipCondition(type, (Object[]) conditions);
+		}
+		case "OR": {
+			TooltipCondition[] conditions = deserializeConditions(obj);
+			
+			//Logging
+			retractPath();
+			
+			return new TooltipCondition(type, (Object[]) conditions);
+		}
+		case "TRUE": {
+			
+			//Logging
+			retractPath();
+			
+			return TooltipCondition.TRUE;
+		}
+		case "FALSE": {
+			
+			//Logging
+			retractPath();
+			
+			return TooltipCondition.FALSE;
+		}
+		default:
+			throw new IllegalArgumentException("unknown condition type: " + type);
 		}
 	}
-	
-	private static class LinePatternArgument {
+
+	private static DeserializedLineArgument deserializeLineArgument(JsonElement element) throws Exception {
+		if (!element.isJsonObject())
+			throw new IllegalArgumentException("A line argument has to be a JSON Object!");
+		JsonObject obj = element.getAsJsonObject();
+
+		String type = require(obj,"type").getAsString().toUpperCase();
 		
-		public static LinePatternArgument parse(JsonObject obj) throws Exception{
-			String type = obj.get("type").getAsString();
-			switch(type.toUpperCase()) {
-			case "GET_TAG":
-				return GET_TAG(obj.get("tag").getAsString());
-			case "CONSTANT":
-				return CONSTANT(obj.get("text").getAsString());
-			case "TRANSLATE_TEXT":
-				List<LinePatternArgument> args = new ArrayList<>();
-				if(obj.get("arguments").isJsonArray()) {
-					for(JsonElement element : obj.get("arguments").getAsJsonArray()) {
-						if(element.isJsonObject())
-							args.add(LinePatternArgument.parse(element.getAsJsonObject()));
-					}
-				}
-				return TRANSLATE_TEXT(obj.get("translationKey").getAsString(), args.toArray(new LinePatternArgument[args.size()]));
-			default:
-				return new LinePatternArgument();
-			}
-		}
+		//Logging
+		logType(type);
 		
-		public static LinePatternArgument GET_TAG(String path) {
-			return new LinePatternArgument() {
-				@Override
+		switch (type) {
+		case "GET_TAG": {
+			String path = require(obj,"tag").getAsString();
+			
+			//Logging
+			retractPath();
+			
+			return new DeserializedLineArgument() {
 				public String getText(Item item, CompoundTag tag, TooltipContext context) {
-					return findPath(path, tag);
+					return tracePath(path, tag);
 				}
-				
-				private String findPath(String p, CompoundTag tag) {
-					if(tag == null) return "-";
-					if(p.trim().isEmpty()) return "-";
-					
+
+				private String tracePath(String p, CompoundTag tag) {
+					if (tag == null)
+						return "";
+					if (p.trim().isEmpty())
+						return "";
+
 					int idx;
-					if((idx = p.indexOf('.')) >= 0) {
+					if ((idx = p.indexOf('.')) >= 0) {
 						String compound = p.substring(0, idx);
-						String nextPath = p.substring(idx+1);
-						
-						if(!tag.getCompound(compound).isEmpty()) {
-							return findPath(nextPath, tag.getCompound(compound));
+						String nextPath = p.substring(idx + 1);
+
+						if (!tag.getCompound(compound).isEmpty()) {
+							return tracePath(nextPath, tag.getCompound(compound));
 						} else {
-							return "-";
+							return "";
 						}
 					} else {
 						try {
 							return tag.get(p).asString();
 						} catch (Exception e) {
-							return "-";
+							return "";
 						}
 					}
 				}
 			};
 		}
-		
-		public static LinePatternArgument TRANSLATE_TEXT(String key, LinePatternArgument[] args) {
-			return new LinePatternArgument() {
-				@Override
-				public String getText(Item item, CompoundTag tag, TooltipContext context) {
-					Object[] resolved = new Object[args.length];
-					for(int i = 0; i < resolved.length; i++) {
-						resolved[i] = args[i].getText(item, tag, context);
-					}
-					return I18n.translate(key, resolved);
+		case "PATTERN": {
+			DeserializedLine line = deserializeLine(obj);
+			
+			//Logging
+			retractPath();
+			
+			return (item,tag,context) -> line.shouldDisplay(item, tag, context) ? line.getText(item, tag, context) : "";
+		}
+		case "TRANSLATE_TEXT": {
+			String translationKey = require(obj,"translationKey").getAsString();
+
+			DeserializedLineArgument[] arguments;
+			if (obj.has("arguments")) {
+				arguments = deserializeLineArguments(obj);
+			} else {
+				arguments = new DeserializedLineArgument[0];
+			}
+
+			//Logging
+			retractPath();
+			
+			return (item, tag, context) -> {
+				Object[] args = new Object[arguments.length];
+				for (int i = 0; i < args.length; i++) {
+					args[i] = arguments[i].getText(item, tag, context);
 				}
-				
+				return I18n.translate(translationKey, args);
 			};
 		}
-		
-		public static LinePatternArgument CONSTANT(String constant) {
-			return new LinePatternArgument() {
-				@Override
-				public String getText(Item item, CompoundTag tag, TooltipContext context) {
-					return constant;
-				}
-				
+		case "FORMATTED": {
+			DeserializedLineArgument argument = deserializeLineArgument(require(obj,"argument"));
+
+			boolean bold = obj.has("bold") ? obj.get("bold").getAsBoolean() : false;
+			boolean italic = obj.has("italic") ? obj.get("italic").getAsBoolean() : false;
+			boolean strikethrough = obj.has("strikethrough") ? obj.get("strikethrough").getAsBoolean() : false;
+			boolean underline = obj.has("underline") ? obj.get("underline").getAsBoolean() : false;
+			boolean obfuscated = obj.has("obfuscated") ? obj.get("obfuscated").getAsBoolean() : false;
+
+			String color = obj.has("color") ? obj.get("color").getAsString() : "";
+
+			//Logging
+			retractPath();
+			
+			return (item, tag, context) -> {
+				String text = argument.getText(item, tag, context);
+
+				if (bold)
+					text = Formatting.BOLD + text;
+				if (italic)
+					text = Formatting.ITALIC + text;
+				if (strikethrough)
+					text = Formatting.STRIKETHROUGH + text;
+				if (underline)
+					text = Formatting.UNDERLINE + text;
+				if (obfuscated)
+					text = Formatting.OBFUSCATED + text;
+
+				if (!color.isEmpty() && Formatting.byName(color) != null && Formatting.byName(color).isColor())
+					text = Formatting.byName(color) + text;
+
+				return Formatting.RESET + text + Formatting.RESET;
 			};
+
 		}
-		
+		case "CONDITIONAL": {
+			TooltipCondition condition = deserializeCondition(require(obj,"condition"));
+
+			DeserializedLineArgument success;
+			if (obj.has("success")) {
+				success = deserializeLineArgument(obj.get("success"));
+			} else {
+				success = (i, t, c) -> "";
+			}
+
+			DeserializedLineArgument fail;
+			if (obj.has("fail")) {
+				fail = deserializeLineArgument(obj.get("fail"));
+			} else {
+				fail = (i, t, c) -> "";
+			}
+
+			//Logging
+			retractPath();
+			
+			return (item, tag, context) -> condition.isConditionMet(item, tag, context)
+					? success.getText(item, tag, context)
+					: fail.getText(item, tag, context);
+
+		}
+		case "CONSTANT": {
+			String text = require(obj,"text").getAsString();
+
+			//Logging
+			retractPath();
+			
+			return (item, tag, context) -> text;
+		}
+		default:
+			//Logging
+			retractPath();
+			throw new IllegalArgumentException("unknown line argument type: " + type);
+		}
+	}
+
+	private static class DeserializedTooltipFactory implements TooltipFactory {
+
+		List<DeserializedLine> lines = new ArrayList<>();
+
+		@Override
+		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+			List<Text> result = new ArrayList<>();
+			for (DeserializedLine line : lines) {
+				if (line.shouldDisplay(item, tag, context))
+					result.add(new LiteralText(line.getText(item, tag, context)));
+			}
+			return result;
+		}
+
+	}
+
+	private static class DeserializedLine {
+
+		final String pattern;
+		TooltipCondition condition;
+
+		DeserializedLineArgument[] arguments;
+
+		public DeserializedLine(String pattern, TooltipCondition condition, DeserializedLineArgument[] arguments) {
+			this.pattern = pattern;
+			this.condition = condition;
+			this.arguments = arguments;
+		}
+
+		public boolean shouldDisplay(Item item, CompoundTag tag, TooltipContext context) {
+			return condition.isConditionMet(item, tag, context);
+		}
+
 		public String getText(Item item, CompoundTag tag, TooltipContext context) {
-			return "-";
+			Object[] args = new Object[arguments.length];
+			for (int i = 0; i < args.length; i++) {
+				args[i] = arguments[i].getText(item, tag, context);
+			}
+			return String.format(pattern, args);
+		}
+
+	}
+
+	private static interface DeserializedLineArgument {
+
+		public String getText(Item item, CompoundTag tag, TooltipContext context);
+
+	}
+
+	private static JsonElement require(JsonObject obj, String memberName) {
+		if(!obj.has(memberName)) throw new NullPointerException("Could not find " + memberName + " in json object although it is required!");
+		return obj.get(memberName);
+	}
+	
+	private static Deque<String> pathStack = new LinkedList<>();
+	
+	static {
+		pathStack.push("ROOT");
+	}
+	
+	private static void retractPath() {
+		pathStack.pop();
+	}
+	
+	private static void logPath() {
+		String text = "";
+		for(String element : pathStack) {
+			text = element + (text.isEmpty() ? "" : ".") + text;
 		}
 		
+		LOGGER.log(ConfigManager.getDeserializationOutputLevel(),"Deserializing " + text);
+	}
+	
+	private static void logArray(int index) {
+		pathStack.push("pattern[" + index + "]");
+		logPath();
+	}
+	
+	private static void logType(String name) {
+		pathStack.push(name);
+		logPath();
 	}
 }

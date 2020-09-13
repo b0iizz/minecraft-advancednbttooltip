@@ -27,5 +27,6 @@
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn": "Override Can Place On Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn.@Tooltip": "Shows what a block can be placed on regardless of the HideFlags property.",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Override Potion Hide-Flag",
-	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Shows Potion effects and custom tooltips regardless of the HideFlags property."
+	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Shows Potion effects and custom tooltips regardless of the HideFlags property.",
+	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level"
 }
