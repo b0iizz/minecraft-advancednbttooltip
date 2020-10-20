@@ -81,6 +81,12 @@ public final class CustomTooltipManager {
 	
 	/**
 	 * Used by the classes of the me.b0iizz.advancednbttooltip.mixin package to interact with the tooltip pipeline.
+	 *
+	 * @param stack The {@link ItemStack} of which a tooltip should be generated.
+	 * @param world The {@link World} where this task is being executed.
+	 * @param tooltip The List of text to add Tooltips to.
+	 * @param context The {@link TooltipContext} where the tooltip is being generated.
+	 * @param info The {@link CallbackInfo} provided by the Mixins.
 	 */
 	public static void appendCustomTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
 		appendCustomTooltip(stack, world, tooltip, context);
@@ -88,6 +94,12 @@ public final class CustomTooltipManager {
 	
 	/**
 	 * Used by the classes of the me.b0iizz.advancednbttooltip.mixin package to interact with the tooltip pipeline.
+	 * 
+	 * @param stack The {@link ItemStack} of which a tooltip should be generated.
+	 * @param world The {@link World} where this task is being executed.
+	 * @param tooltip The List of text to add Tooltips to.
+	 * @param context The {@link TooltipContext} where the tooltip is being generated.
+	 *
 	 */
 	public static void appendCustomTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
 		if(world == null) return;

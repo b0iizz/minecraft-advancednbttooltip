@@ -29,9 +29,6 @@ import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 
 /**
  * Handles communication between the mod's config and the rest of the mod.
- * <br> It is also the Entrypoint for ModMenu.
- * <br><br> <b>Implements:</b>
- * <br>{@link ModMenuApi}
  * 
  * @author B0IIZZ
  */

@@ -58,11 +58,11 @@ public class TooltipDeserializer {
 	
 	/**
 	 * Builds a {@link CustomTooltip} from a json object.
-	 * For the format please visit <a href="https://github.com/b0iizz/minecraft-advancednbttooltip/blob/master/README.md">my GitHub page</a>.
+	 * For an example please visit <a href="https://github.com/b0iizz/minecraft-advancednbttooltip/blob/master/tooltip_examples/example_tooltip.json">my GitHub page</a>.
 	 * 
 	 * @param root The root json of the tooltip
 	 * @return The parsed custom tooltip
-	 * @throws Exception
+	 * @throws Exception when an error in the parsing process occurs.
 	 */
 	public static CustomTooltip deserializeTooltip(JsonObject root) throws Exception {
 		String name = root.get("name").getAsString();
