@@ -198,6 +198,11 @@ public final class CustomTooltip {
 	public static final class TooltipCondition {
 		
 		/**
+		 * Condition which is always true
+		 */
+		public static final TooltipCondition TRUE = new TooltipCondition((i,t,c) -> true);
+		
+		/**
 		 * Condition which is always false
 		 */
 		public static final TooltipCondition FALSE = new TooltipCondition((i,t,c) -> false);

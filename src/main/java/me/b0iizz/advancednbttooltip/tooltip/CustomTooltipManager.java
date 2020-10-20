@@ -104,105 +104,137 @@ public final class CustomTooltipManager {
 
 	private static void registerBuiltInTooltips() {
 		//TODO: SUSPICIOUS STEW
-				registerTooltip(new CustomTooltip("SUSPICIOUS_STEW", (item,tag,context) ->  {
-					List<Text> result = new ArrayList<>();
-					ListTag effects = tag.getList("Effects", 10);
-					for(int i = 0; i < effects.size();i++) {
-						CompoundTag effect = effects.getCompound(i);
-						byte effectId = effect.getByte("EffectId");
-						int effectDuration = effect.contains("EffectDuration") ? effect.getInt("EffectDuration") : 160;
-						
-						StatusEffect eff = StatusEffect.byRawId(effectId);
-						StatusEffectInstance inst = new StatusEffectInstance(eff, effectDuration);
-						
-						MutableText line = new TranslatableText(inst.getTranslationKey());
-						
-						String duration = StatusEffectUtil.durationToString(inst, 1);
-						
-						line.append(" (" + duration + ")");
-						
-						result.add(line.formatted(eff.getType().getFormatting()));
-					}
-					return result;
-				}).addCondition("HAS_ITEM", Items.SUSPICIOUS_STEW).addCondition("HAS_TAG", "Effects").addCondition((i,t,c) -> {return ConfigManager.getSuspiciousStewToggle();}));
+		registerTooltip(new CustomTooltip("SUSPICIOUS_STEW", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			ListTag effects = tag.getList("Effects", 10);
+			for(int i = 0; i < effects.size();i++) {
+				CompoundTag effect = effects.getCompound(i);
+				byte effectId = effect.getByte("EffectId");
+				int effectDuration = effect.contains("EffectDuration") ? effect.getInt("EffectDuration") : 160;
 				
-				//TODO: COMPASS
-				registerTooltip(new CustomTooltip("COMPASS", (item,tag,context) ->  {
-					List<Text> result = new ArrayList<>();
-					if(tag.getBoolean("LodestoneTracked")) {
-						String lodestoneDimension = tag.getString("LodestoneDimension");
-						MutableText line = new TranslatableText(Blocks.LODESTONE.getTranslationKey()).append(": ").formatted(Formatting.DARK_GRAY);
-						if(tag.contains("LodestonePos")) {
-							CompoundTag lodestonePosition = tag.getCompound("LodestonePos");
-							
-							LiteralText position = new LiteralText("(" + lodestonePosition.getInt("X") + " " + lodestonePosition.getInt("Y") + " " + lodestonePosition.getInt("Z") + ")");
-							line.append(position.formatted(Formatting.GRAY));
-							result.add(line);
-							
-						} else {
-							result.add(line.append(" ").append(new LiteralText("UNKNOWN").formatted(Formatting.GRAY,Formatting.OBFUSCATED)));
-						}
-						line = new LiteralText("  ("+ lodestoneDimension + ")").formatted(Formatting.GRAY);
-						result.add(line);
-						
-						result.add(new LiteralText(""));
-					}
-					return result;
-				}).addCondition("HAS_ITEM", Items.COMPASS).addCondition("HAS_TAG", "LodestoneTracked").addCondition((i,t,c) -> {return ConfigManager.getCompassToggle();}));
+				StatusEffect eff = StatusEffect.byRawId(effectId);
+				StatusEffectInstance inst = new StatusEffectInstance(eff, effectDuration);
 				
-				//TODO: BOOK
-				registerTooltip(new CustomTooltip("BOOK", (item,tag,context) -> {
-					List<Text> result = new ArrayList<>();
+				MutableText line = new TranslatableText(inst.getTranslationKey());
+				
+				String duration = StatusEffectUtil.durationToString(inst, 1);
+				
+				line.append(" (" + duration + ")");
+				
+				result.add(line.formatted(eff.getType().getFormatting()));
+			}
+			return result;
+		}).addCondition("HAS_ITEM", Items.SUSPICIOUS_STEW).addCondition("HAS_TAG", "Effects").addCondition((i,t,c) -> {return ConfigManager.getSuspiciousStewToggle();}));
+		
+		//TODO: COMPASS
+		registerTooltip(new CustomTooltip("COMPASS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			if(tag.getBoolean("LodestoneTracked")) {
+				String lodestoneDimension = tag.getString("LodestoneDimension");
+				MutableText line = new TranslatableText(Blocks.LODESTONE.getTranslationKey()).append(": ").formatted(Formatting.DARK_GRAY);
+				if(tag.contains("LodestonePos")) {
+					CompoundTag lodestonePosition = tag.getCompound("LodestonePos");
 					
-					int pages = tag.getList("pages", 8).size();
-					MutableText line = new TranslatableText("book.pageIndicator",1,pages).formatted(Formatting.GRAY);
+					LiteralText position = new LiteralText("(" + lodestonePosition.getInt("X") + " " + lodestonePosition.getInt("Y") + " " + lodestonePosition.getInt("Z") + ")");
+					line.append(position.formatted(Formatting.GRAY));
 					result.add(line);
 					
-					if(tag.contains("resolved")) {
-						line = new LiteralText("Resolved: ").formatted(Formatting.GRAY);
-						boolean resolved = tag.getBoolean("resolved");
-						line.append(new LiteralText(Boolean.toString(resolved)).formatted(Formatting.YELLOW));
-						
-						result.add(line);
-					}
-					
-					if(tag.contains("title")) {
-						line = new LiteralText("Title: ").formatted(Formatting.GRAY);
-						String title = tag.getString("title");
-						line.append(new LiteralText(title).formatted(Formatting.AQUA));
-						
-						result.add(line);
-					}
-					
-					return result;
-				}).addCondition("HAS_TAG", "pages").addCondition("HAS_ITEM", Items.WRITTEN_BOOK, Items.WRITABLE_BOOK).addCondition((i,t,c) -> {return ConfigManager.getBookToggle();}));
+				} else {
+					result.add(line.append(" ").append(new LiteralText("UNKNOWN").formatted(Formatting.GRAY,Formatting.OBFUSCATED)));
+				}
+				line = new LiteralText("  ("+ lodestoneDimension + ")").formatted(Formatting.GRAY);
+				result.add(line);
 				
-				//TODO: CUSTOMMODELDATA
-				registerTooltip(new CustomTooltip("CUSTOMMODELDATA", (item,tag,context) ->  {
-					List<Text> result = new ArrayList<>();
-					int data = tag.getInt("CustomModelData");
-					
-					MutableText line = new LiteralText("CustomModelData: ").formatted(Formatting.GRAY);
-					line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
-					
-					result.add(line);
-					return result;
-				}).addCondition("HAS_TAG", "CustomModelData").addCondition((i,t,c) -> {return ConfigManager.getCustomModelDataToggle();}));
+				result.add(new LiteralText(""));
+			}
+			return result;
+		}).addCondition("HAS_ITEM", Items.COMPASS).addCondition("HAS_TAG", "LodestoneTracked").addCondition((i,t,c) -> {return ConfigManager.getCompassToggle();}));
+		
+		//TODO: BOOK
+		registerTooltip(new CustomTooltip("BOOK", (item,tag,context) -> {
+			List<Text> result = new ArrayList<>();
+			
+			int pages = tag.getList("pages", 8).size();
+			MutableText line = new TranslatableText("book.pageIndicator",1,pages).formatted(Formatting.GRAY);
+			result.add(line);
+			
+			if(tag.contains("resolved")) {
+				line = new LiteralText("Resolved: ").formatted(Formatting.GRAY);
+				boolean resolved = tag.getBoolean("resolved");
+				line.append(new LiteralText(Boolean.toString(resolved)).formatted(Formatting.YELLOW));
 				
-				//TODO: REPAIRCOST
-				registerTooltip(new CustomTooltip("REPAIRCOST", (item,tag,context) ->  {
-					List<Text> result = new ArrayList<>();
-					int data = tag.getInt("RepairCost");
-					
-					MutableText line = new LiteralText("RepairCost: ").formatted(Formatting.GRAY);
-					line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
-					
-					result.add(line);
-					return result;
-				}).addCondition("HAS_TAG", "RepairCost").addCondition((i,t,c) -> {return ConfigManager.getRepairCostToggle();}));
+				result.add(line);
+			}
+			
+			if(tag.contains("title")) {
+				line = new LiteralText("Title: ").formatted(Formatting.GRAY);
+				String title = tag.getString("title");
+				line.append(new LiteralText(title).formatted(Formatting.AQUA));
+				
+				result.add(line);
+			}
+			
+			return result;
+		}).addCondition("HAS_TAG", "pages").addCondition("HAS_ITEM", Items.WRITTEN_BOOK, Items.WRITABLE_BOOK).addCondition((i,t,c) -> {return ConfigManager.getBookToggle();}));
+		
+		//TODO: CUSTOMMODELDATA
+		registerTooltip(new CustomTooltip("CUSTOMMODELDATA", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			int data = tag.getInt("CustomModelData");
+			
+			MutableText line = new LiteralText("CustomModelData: ").formatted(Formatting.GRAY);
+			line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "CustomModelData").addCondition((i,t,c) -> {return ConfigManager.getCustomModelDataToggle();}));
+		
+		//TODO: REPAIRCOST
+		registerTooltip(new CustomTooltip("REPAIRCOST", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			int data = tag.getInt("RepairCost");
+			
+			if(data == 0) return result;
+			
+			MutableText line = new LiteralText("RepairCost: ").formatted(Formatting.GRAY);
+			line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "RepairCost").addCondition((i,t,c) -> {return ConfigManager.getRepairCostToggle();}));
+		
+		//TODO: BEES
+		registerTooltip(new CustomTooltip("BEENESTS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			
+			ListTag bees = tag.getCompound("BlockEntityTag").getList("Bees", 10);
+			int size = bees.size();
+			
+			if(size == 0) return result;
+			
+			MutableText line = new LiteralText("Bees: ").formatted(Formatting.GRAY);
+			line.append(new LiteralText(Integer.toString(size)).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "BlockEntityTag.Bees").addCondition((i,t,c) -> {return ConfigManager.getBeeToggle();}));
+		
+		//TODO: SPAWNEGGS
+		registerTooltip(new CustomTooltip("SPAWNEGGS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			
+			CompoundTag entityTag = tag.getCompound("EntityTag");
+			String id = entityTag.getString("id");
+			
+			MutableText line = new LiteralText("Entity: ").formatted(Formatting.GRAY);
+			line.append(new TranslatableText("entity." + id.replace(':', '.')).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "EntityTag").addCondition((i,t,c) -> {return ConfigManager.getSpawnEggToggle();}));
 	}
 	
-	public static void registerAllCustomTooltips() {
+	public static void reloadAllCustomTooltips() {
 		registeredTooltips.clear();
 		
 		//TODO: BuiltIn
@@ -228,7 +260,7 @@ public final class CustomTooltipManager {
 					registerTooltip(toRegister);
 					
 				} catch (Exception e) {
-					LOGGER.error("Error while parsing " + tooltip.getName() + ":" + e);
+					LOGGER.error("Error while parsing " + tooltip.getName() + ":", e);
 				}
 			}
 		} else {

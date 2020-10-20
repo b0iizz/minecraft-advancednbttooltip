@@ -22,6 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import org.apache.logging.log4j.Level;
 
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
@@ -91,6 +92,20 @@ public class ConfigManager {
 		return config.toggleRepairCostTooltip;
 	}
 	
+	/**
+	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 */
+	public static boolean getBeeToggle() {
+		return config.toggleBeeTooltip;
+	}
+	
+	/**
+	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 */
+	public static boolean getSpawnEggToggle() {
+		return config.toggleSpawnEggTooltip;
+	}
+	
 	//TODO: Category Technical Options
 	
 	/**
@@ -115,5 +130,9 @@ public class ConfigManager {
 		if(config.injectorOptions.overrideAppendTooltip) 		mask &= 0x1F;
 		
 		return mask;
+	}
+	
+	public static Level getDeserializationOutputLevel() {
+		return config.level.getLevel();
 	}
 }

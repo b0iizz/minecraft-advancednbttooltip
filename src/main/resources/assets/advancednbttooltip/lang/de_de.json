@@ -10,6 +10,10 @@
 	"text.autoconfig.advancednbttooltip.option.toggleCustomModelDataTooltip.@Tooltip": "Zeige (wenn angegeben) das Attribut CustomModelData des Gegenstandes.",
 	"text.autoconfig.advancednbttooltip.option.toggleRepairCostTooltip": "Zeige Tooltip \"RepairCost\"",
 	"text.autoconfig.advancednbttooltip.option.toggleRepairCostTooltip.@Tooltip": "Zeige das Attribut \"RepairCost\" an, welche mit Ambossen zu tun hat.",
+	"text.autoconfig.advancednbttooltip.option.toggleBeeTooltip": "Zeige Tooltip \"Biene\"",
+	"text.autoconfig.advancednbttooltip.option.toggleBeeTooltip.@Tooltip": "Zeige die Anzahl der Bienen in einem Stock/Nest.",
+	"text.autoconfig.advancednbttooltip.option.toggleSpawnEggTooltip": "Zeige Tooltip \"Eigene Spawn-Eier\"",
+	"text.autoconfig.advancednbttooltip.option.toggleSpawnEggTooltip.@Tooltip": "Zeige das Objekt, welches das modifizierte Spawn-Ei spawnt.",
 	"text.autoconfig.advancednbttooltip.option.useItemStackInjector.@PrefixText": "Technische Optionen",
 	"text.autoconfig.advancednbttooltip.option.useItemStackInjector": "Nutze Injector in die ItemStack-Klasse",
 	"text.autoconfig.advancednbttooltip.option.useItemStackInjector.@Tooltip[0]": "Aktiviert eine Methode, die Tooltips immer anzuzeigen, indem",
@@ -27,5 +31,6 @@
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn": "Überschreibe \"Kann plaziert werden\" Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn.@Tooltip": "Zeige im Abenteuermodus immer an, wo ein Block plaziert werden kann.",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Überschreibe Trankeffekt Hide-Flag",
-	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Zeige immer Trankeffekte und modifikationsspezifische Tooltips an."
+	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Zeige immer Trankeffekte und modifikationsspezifische Tooltips an.",
+	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level"
 }
