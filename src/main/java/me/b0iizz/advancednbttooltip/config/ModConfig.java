@@ -71,6 +71,18 @@ public class ModConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleRepairCostTooltip = true;
 	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean toggleBeeTooltip = true;
+	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean toggleSpawnEggTooltip = true;
+	
 	//TODO: Category Technical Options
 	
 	/**

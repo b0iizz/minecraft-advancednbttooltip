@@ -194,12 +194,44 @@ public final class CustomTooltipManager {
 			List<Text> result = new ArrayList<>();
 			int data = tag.getInt("RepairCost");
 			
+			if(data == 0) return result;
+			
 			MutableText line = new LiteralText("RepairCost: ").formatted(Formatting.GRAY);
 			line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
 			
 			result.add(line);
 			return result;
 		}).addCondition("HAS_TAG", "RepairCost").addCondition((i,t,c) -> {return ConfigManager.getRepairCostToggle();}));
+		
+		//TODO: BEES
+		registerTooltip(new CustomTooltip("BEENESTS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			
+			ListTag bees = tag.getCompound("BlockEntityTag").getList("Bees", 10);
+			int size = bees.size();
+			
+			if(size == 0) return result;
+			
+			MutableText line = new LiteralText("Bees: ").formatted(Formatting.GRAY);
+			line.append(new LiteralText(Integer.toString(size)).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "BlockEntityTag.Bees").addCondition((i,t,c) -> {return ConfigManager.getBeeToggle();}));
+		
+		//TODO: SPAWNEGGS
+		registerTooltip(new CustomTooltip("SPAWNEGGS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			
+			CompoundTag entityTag = tag.getCompound("EntityTag");
+			String id = entityTag.getString("id");
+			
+			MutableText line = new LiteralText("Entity: ").formatted(Formatting.GRAY);
+			line.append(new TranslatableText("entity." + id.replace(':', '.')).formatted(Formatting.YELLOW));
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_TAG", "EntityTag").addCondition((i,t,c) -> {return ConfigManager.getSpawnEggToggle();}));
 	}
 	
 	public static void reloadAllCustomTooltips() {

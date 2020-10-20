@@ -92,6 +92,20 @@ public class ConfigManager {
 		return config.toggleRepairCostTooltip;
 	}
 	
+	/**
+	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 */
+	public static boolean getBeeToggle() {
+		return config.toggleBeeTooltip;
+	}
+	
+	/**
+	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 */
+	public static boolean getSpawnEggToggle() {
+		return config.toggleSpawnEggTooltip;
+	}
+	
 	//TODO: Category Technical Options
 	
 	/**
