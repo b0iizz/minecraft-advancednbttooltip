@@ -27,6 +27,14 @@ import io.github.prospector.modmenu.api.ModMenuApi;
 import me.b0iizz.advancednbttooltip.ModMain;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 
+/**
+ * The entrypoint for ModMenu by prospector
+ * <br><br> <b>Implements:</b>
+ * <br>{@link ModMenuApi}
+ * 
+ * @author B0IIZZ
+ *
+ */
 public class ModMenuEntry implements ModMenuApi {
 	
 	/**

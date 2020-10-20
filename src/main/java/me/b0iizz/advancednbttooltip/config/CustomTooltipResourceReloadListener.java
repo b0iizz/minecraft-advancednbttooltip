@@ -22,13 +22,18 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
-
 import me.b0iizz.advancednbttooltip.ModMain;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
+/**
+ * A simple class responsible for notifying the mod that the resources are being reloaded, which should reload all tooltips.
+ * 
+ * @author B0IIZZ
+ *
+ */
 public class CustomTooltipResourceReloadListener implements SimpleSynchronousResourceReloadListener{
 
 	@Override
