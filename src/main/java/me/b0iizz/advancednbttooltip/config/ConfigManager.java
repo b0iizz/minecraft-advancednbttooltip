@@ -90,17 +90,39 @@ public class ConfigManager {
 	}
 	
 	/**
-	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 * @return The state of the toggle controlling the "Bee" tooltip.
 	 */
 	public static boolean getBeeToggle() {
 		return config.toggleBeeTooltip;
 	}
 	
 	/**
-	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 * @return The state of the toggle controlling the "SpawnEggs" tooltip.
 	 */
 	public static boolean getSpawnEggToggle() {
 		return config.toggleSpawnEggTooltip;
+	}
+	
+	/**
+	 * @return The state of the toggle controlling the "Signs" tooltip.
+	 */
+	public static boolean getSignsToggle() {
+		return config.toggleSignsTooltip;
+	}
+	
+	/**
+	 * @return The state of the toggle controlling the "Command Blocks" tooltip.
+	 */
+	public static boolean getCommandBlocksToggle() {
+		return config.toggleCommandBlocksTooltip;
+	}
+	
+	
+	/**
+	 * @return The state of the toggle controlling the "HideFlags" tooltip.
+	 */
+	public static boolean getHideFlagsToggle() {
+		return config.toggleHideFlagsTooltip;
 	}
 	
 	//TODO: Category Technical Options

@@ -25,10 +25,12 @@ package me.b0iizz.advancednbttooltip.tooltip;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import me.b0iizz.advancednbttooltip.ModUtils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.Text;
 
@@ -250,7 +252,7 @@ public final class CustomTooltip {
 				break;
 			case "HAS_ITEM":
 				this.name=name;
-				this.resolver = new HasItemConditionResolver(ModUtils.castArray(args,Item[].class));
+				this.resolver = new HasItemConditionResolver(ModUtils.castArray(args,ItemConvertible[].class));
 				break;
 			case "AND":
 				this.name = name;
@@ -370,10 +372,10 @@ public final class CustomTooltip {
 			private Item[] allowedItems;
 			
 			/**
-			 * @param items : The {@link Item Items} for which the condition will be met.
+			 * @param items : The {@link ItemConvertible Items} for which the condition will be met.
 			 */
-			public HasItemConditionResolver(Item... items) {
-				this.allowedItems = items;
+			public HasItemConditionResolver(ItemConvertible... items) {
+				this.allowedItems = Stream.of(items).map((itemc) -> itemc.asItem()).toArray((i) -> new Item[i]);
 			}
 			
 			@Override

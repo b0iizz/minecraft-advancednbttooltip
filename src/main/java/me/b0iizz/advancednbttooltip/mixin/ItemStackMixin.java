@@ -32,9 +32,8 @@ import net.minecraft.item.ItemStack;
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 	
-	@ModifyVariable(at = @At(value = "JUMP", ordinal = 6, shift = At.Shift.BY, by = -3), method = "getTooltip")
+	@ModifyVariable(at = @At(value = "JUMP", ordinal = 4, shift = At.Shift.BY, by = -5), method = "getTooltip")
 	public int rewriteHideFlags(int i) {
-		if(i != 0) System.out.println(i);
 		if(ConfigManager.isUsingItemStackInjection()) {
 			return i & ConfigManager.getItemStackInjectorBitmask();
 		}
