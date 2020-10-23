@@ -1,8 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "advancednbttooltip",
-  "version": "1.0.4",
-
+  "version": "1.0.5",
   "name": "Advanced NBT Tooltips",
   "description": "Shows additional NBT information about items.",
   "authors": [
@@ -11,10 +10,11 @@
   "contact": {
 	"email": "general.boiizz@gmail.com",
 	"homepage": "https://www.curseforge.com/minecraft/mc-mods/advanced-nbt-tooltips",
-	"sources": "https://github.com/b0iizz/minecraft-advancednbttooltip"
+	"sources": "https://github.com/b0iizz/minecraft-advancednbttooltip",
+	"issues": "https://github.com/b0iizz/minecraft-advancednbttooltip/issues/"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/advancednbttooltip/icon.png",
   "environment": "client",
   "entrypoints": {
