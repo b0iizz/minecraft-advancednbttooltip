@@ -38,6 +38,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -49,6 +50,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -114,6 +116,7 @@ public final class CustomTooltipManager {
 		registeredTooltips = new HashMap<>();
 	}
 
+	@SuppressWarnings("resource")
 	private static void registerBuiltInTooltips() {
 		//TODO: SUSPICIOUS STEW
 		registerTooltip(new CustomTooltip("SUSPICIOUS_STEW", (item,tag,context) ->  {
@@ -244,6 +247,79 @@ public final class CustomTooltipManager {
 			result.add(line);
 			return result;
 		}).addCondition("HAS_TAG", "EntityTag").addCondition((i,t,c) -> {return ConfigManager.getSpawnEggToggle();}));
+		
+		//TODO: SIGNS
+		registerTooltip(new CustomTooltip("SIGNS", (item,tag,context) -> {
+			final String startText = "------Text------";
+			final String endText   = "----------------";
+			
+			List<Text> result = new ArrayList<>();
+			
+			CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+			
+			int preferredWidth = MinecraftClient.getInstance().textRenderer.getWidth(endText);
+			
+			result.add(new LiteralText(startText).formatted(Formatting.GRAY));
+			
+			for(int i = 1; i < 5; i++) {
+				boolean hasText = blockEntityTag.contains("Text" + i);
+				String text = hasText ? Text.Serializer.fromJson(blockEntityTag.getString("Text" + i)).asString() : "";
+				while(preferredWidth >= MinecraftClient.getInstance().textRenderer.getWidth(' ' + text + ' ')) text = ' ' + text + ' ';
+				result.add(new LiteralText(text).formatted(Formatting.GRAY));
+			}
+			
+			result.add(new LiteralText(endText).formatted(Formatting.GRAY));
+			
+			return result;
+		}).addCondition((item,tag,context) -> {
+			if(tag == null) return false;
+			
+			boolean isSign = Block.getBlockFromItem(item).isIn(BlockTags.SIGNS);
+			
+			boolean text1 = tag.getCompound("BlockEntityTag").contains("Text1");
+			boolean text2 = tag.getCompound("BlockEntityTag").contains("Text2");
+			boolean text3 = tag.getCompound("BlockEntityTag").contains("Text3");
+			boolean text4 = tag.getCompound("BlockEntityTag").contains("Text4");
+			
+			return isSign && (text1 || text2 || text3 || text4);
+		}).addCondition((i,t,c) -> {return ConfigManager.getSignsToggle();}));
+		
+		//TODO: COMMAND_BLOCKS
+		registerTooltip(new CustomTooltip("COMMAND_BLOCKS", (item,tag,context) ->  {
+			List<Text> result = new ArrayList<>();
+			
+			CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+			
+			MutableText line = new LiteralText("Command:").formatted(Formatting.GRAY);
+			result.add(line);
+			
+			String command = blockEntityTag.getString("Command");
+			if(command.length() > 40) command = command.substring(0, 40) + "...";
+			line = new LiteralText("  " + command).formatted(Formatting.GRAY);
+			
+			result.add(line);
+			return result;
+		}).addCondition("HAS_ITEM", Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK).addCondition("HAS_TAG", "BlockEntityTag").addCondition((i,t,c) -> {return ConfigManager.getCommandBlocksToggle();}));
+		
+		
+		//TODO: HIDEFLAGS
+		
+		registerTooltip(new CustomTooltip("HIDEFLAGS", (item,tag,context) -> {
+			final String[] names = new String[] {" -Enchantements", " -Attribute Modifiers", " -Unbreakable", " -CanDestroy", " -CanPlaceOn", " -CustomPotionEffects"};
+			List<Text> result = new ArrayList<>();
+			
+			int hideFlags = tag.getInt("HideFlags");
+			
+			result.add(new LiteralText("HideFlags:").formatted(Formatting.GRAY));
+			
+			for(int i = 0; i < names.length; i++) {
+				if(((1 << i) & hideFlags) > 0) {
+					result.add(new LiteralText(names[i]).formatted(Formatting.GRAY, Formatting.ITALIC));
+				}
+			}
+			
+			return result;
+		}).addCondition("HAS_TAG", "HideFlags").addCondition((i,t,c) -> {return ConfigManager.getHideFlagsToggle();}));
 	}
 	
 	public static void reloadAllCustomTooltips() {

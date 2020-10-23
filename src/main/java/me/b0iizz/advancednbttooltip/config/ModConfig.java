@@ -83,6 +83,26 @@ public class ModConfig implements ConfigData {
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleSpawnEggTooltip = true;
 	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean toggleSignsTooltip = true;
+	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean toggleCommandBlocksTooltip = true;
+	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean toggleHideFlagsTooltip = true;
+	
+	
+	
 	//TODO: Category Technical Options
 	
 	/**
