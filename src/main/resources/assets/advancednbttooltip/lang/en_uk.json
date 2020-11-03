@@ -38,6 +38,8 @@
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn.@Tooltip": "Shows what a block can be placed on regardless of the HideFlags property.",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Override Potion Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Shows Potion effects and custom tooltips regardless of the HideFlags property.",
+	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Override Dye Hide-Flag",
+	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Shows dye color regardless of the HideFlags property.",
 	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level",
 	"text.advancednbttooltip.tooltip.book.pages": "Pages: %s",
 	"text.advancednbttooltip.tooltip.book.resolved": "Resolved: ",

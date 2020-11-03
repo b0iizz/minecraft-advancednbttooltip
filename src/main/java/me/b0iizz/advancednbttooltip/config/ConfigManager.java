@@ -147,7 +147,7 @@ public class ConfigManager {
 		if(config.injectorOptions.overrideCanDestroy) 			mask &= 0x77;
 		if(config.injectorOptions.overrideCanPlaceOn) 			mask &= 0x6F;
 		if(config.injectorOptions.overrideAppendTooltip) 		mask &= 0x5F;
-		if(config.injectorOptions.overrideDyeTootlip) 			mask &= 0x3F;
+		if(config.injectorOptions.overrideDyeTooltip) 			mask &= 0x3F;
 		
 		return mask;
 	}
