@@ -139,14 +139,15 @@ public class ConfigManager {
 	 * @return The bitmask which is then bitwise AND-ed with the HideFlags property
 	 */
 	public static int getItemStackInjectorBitmask() {
-		int mask = 0x3F;
+		int mask = 0x7F;
 		
-		if(config.injectorOptions.overrideEnchantments) 		mask &= 0x3E;
-		if(config.injectorOptions.overrideAttributeModifiers) 	mask &= 0x3D;
-		if(config.injectorOptions.overrideUnbreakable) 			mask &= 0x3B;
-		if(config.injectorOptions.overrideCanDestroy) 			mask &= 0x37;
-		if(config.injectorOptions.overrideCanPlaceOn) 			mask &= 0x2F;
-		if(config.injectorOptions.overrideAppendTooltip) 		mask &= 0x1F;
+		if(config.injectorOptions.overrideEnchantments) 		mask &= 0x7E;
+		if(config.injectorOptions.overrideAttributeModifiers) 	mask &= 0x7D;
+		if(config.injectorOptions.overrideUnbreakable) 			mask &= 0x7B;
+		if(config.injectorOptions.overrideCanDestroy) 			mask &= 0x77;
+		if(config.injectorOptions.overrideCanPlaceOn) 			mask &= 0x6F;
+		if(config.injectorOptions.overrideAppendTooltip) 		mask &= 0x5F;
+		if(config.injectorOptions.overrideDyeTooltip) 			mask &= 0x3F;
 		
 		return mask;
 	}

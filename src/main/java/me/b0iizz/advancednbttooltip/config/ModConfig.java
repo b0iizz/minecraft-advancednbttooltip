@@ -162,6 +162,12 @@ public class ModConfig implements ConfigData {
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideAppendTooltip = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean overrideDyeTooltip = false;
 	}
 	
 	static enum DeserializerLevel {

@@ -37,6 +37,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
+import me.b0iizz.advancednbttooltip.ModMain;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -170,11 +171,11 @@ public final class CustomTooltipManager {
 			List<Text> result = new ArrayList<>();
 			
 			int pages = tag.getList("pages", 8).size();
-			MutableText line = new TranslatableText("book.pageIndicator",1,pages).formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.book.pages", pages).formatted(Formatting.GRAY);
 			result.add(line);
 			
 			if(tag.contains("resolved")) {
-				line = new LiteralText("Resolved: ").formatted(Formatting.GRAY);
+				line = new TranslatableText("text." + ModMain.modid + ".tooltip.book.resolved").formatted(Formatting.GRAY);
 				boolean resolved = tag.getBoolean("resolved");
 				line.append(new LiteralText(Boolean.toString(resolved)).formatted(Formatting.YELLOW));
 				
@@ -182,7 +183,7 @@ public final class CustomTooltipManager {
 			}
 			
 			if(tag.contains("title")) {
-				line = new LiteralText("Title: ").formatted(Formatting.GRAY);
+				line = new TranslatableText("text." + ModMain.modid + ".tooltip.book.title").formatted(Formatting.GRAY);
 				String title = tag.getString("title");
 				line.append(new LiteralText(title).formatted(Formatting.AQUA));
 				
@@ -197,7 +198,7 @@ public final class CustomTooltipManager {
 			List<Text> result = new ArrayList<>();
 			int data = tag.getInt("CustomModelData");
 			
-			MutableText line = new LiteralText("CustomModelData: ").formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.custommodeldata").formatted(Formatting.GRAY);
 			line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
 			
 			result.add(line);
@@ -211,7 +212,7 @@ public final class CustomTooltipManager {
 			
 			if(data == 0) return result;
 			
-			MutableText line = new LiteralText("RepairCost: ").formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.repaircost").formatted(Formatting.GRAY);
 			line.append(new LiteralText(Integer.toString(data)).formatted(Formatting.YELLOW));
 			
 			result.add(line);
@@ -227,7 +228,7 @@ public final class CustomTooltipManager {
 			
 			if(size == 0) return result;
 			
-			MutableText line = new LiteralText("Bees: ").formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.bees").formatted(Formatting.GRAY);
 			line.append(new LiteralText(Integer.toString(size)).formatted(Formatting.YELLOW));
 			
 			result.add(line);
@@ -241,7 +242,7 @@ public final class CustomTooltipManager {
 			CompoundTag entityTag = tag.getCompound("EntityTag");
 			String id = entityTag.getString("id");
 			
-			MutableText line = new LiteralText("Entity: ").formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.spawneggs").formatted(Formatting.GRAY);
 			line.append(new TranslatableText("entity." + id.replace(':', '.')).formatted(Formatting.YELLOW));
 			
 			result.add(line);
@@ -250,7 +251,7 @@ public final class CustomTooltipManager {
 		
 		//TODO: SIGNS
 		registerTooltip(new CustomTooltip("SIGNS", (item,tag,context) -> {
-			final String startText = "------Text------";
+			final String startText = "----------------";
 			final String endText   = "----------------";
 			
 			List<Text> result = new ArrayList<>();
@@ -290,7 +291,7 @@ public final class CustomTooltipManager {
 			
 			CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
 			
-			MutableText line = new LiteralText("Command:").formatted(Formatting.GRAY);
+			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.command_blocks").formatted(Formatting.GRAY);
 			result.add(line);
 			
 			String command = blockEntityTag.getString("Command");
@@ -305,16 +306,17 @@ public final class CustomTooltipManager {
 		//TODO: HIDEFLAGS
 		
 		registerTooltip(new CustomTooltip("HIDEFLAGS", (item,tag,context) -> {
-			final String[] names = new String[] {" -Enchantements", " -Attribute Modifiers", " -Unbreakable", " -CanDestroy", " -CanPlaceOn", " -CustomPotionEffects"};
 			List<Text> result = new ArrayList<>();
 			
 			int hideFlags = tag.getInt("HideFlags");
 			
-			result.add(new LiteralText("HideFlags:").formatted(Formatting.GRAY));
+			result.add(new TranslatableText("text." + ModMain.modid + ".tooltip.hideflag").formatted(Formatting.GRAY));
 			
-			for(int i = 0; i < names.length; i++) {
+			for(int i = 0; i < ItemStack.TooltipSection.values().length; i++) {
 				if(((1 << i) & hideFlags) > 0) {
-					result.add(new LiteralText(names[i]).formatted(Formatting.GRAY, Formatting.ITALIC));
+					LiteralText line = new LiteralText(" -");
+					line.append(new TranslatableText("text." + ModMain.modid + ".hideflag." + ItemStack.TooltipSection.values()[i].name().toLowerCase()));
+					result.add(line.formatted(Formatting.GRAY, Formatting.ITALIC));
 				}
 			}
 			
