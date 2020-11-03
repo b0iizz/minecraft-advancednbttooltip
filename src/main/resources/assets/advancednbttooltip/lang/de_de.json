@@ -38,5 +38,21 @@
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideCanPlaceOn.@Tooltip": "Zeige im Abenteuermodus immer an, wo ein Block plaziert werden kann.",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip": "Überschreibe Trankeffekt Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.injectorOptions.overrideAppendTooltip.@Tooltip": "Zeige immer Trankeffekte und modifikationsspezifische Tooltips an.",
-	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level"
+	"text.autoconfig.advancednbttooltip.option.level": "JSON Loader Logging Level",
+	"text.advancednbttooltip.tooltip.book.pages": "Seiten: %s",
+	"text.advancednbttooltip.tooltip.book.resolved": "Daten geklärt: ",
+	"text.advancednbttooltip.tooltip.book.title": "Titel: ",
+	"text.advancednbttooltip.tooltip.custommodeldata": "CustomModelData: ",
+	"text.advancednbttooltip.tooltip.repaircost": "RepairCost: ",
+	"text.advancednbttooltip.tooltip.bees": "Bienen: ",
+	"text.advancednbttooltip.tooltip.spawneggs": "Entitäten: ",
+	"text.advancednbttooltip.tooltip.command_blocks": "Befehl: ",
+	"text.advancednbttooltip.tooltip.hideflag": "Versteckt: ",
+	"text.advancednbttooltip.hideflag.enchantments": "Verzaberungen",
+	"text.advancednbttooltip.hideflag.modifiers": "Attribut Modifikationen",
+	"text.advancednbttooltip.hideflag.unbreakable": "Unzerstörbarkeit",
+	"text.advancednbttooltip.hideflag.can_destroy": "Zerstörbare Blöcke",
+	"text.advancednbttooltip.hideflag.can_place": "Plazierbarkeit an Blöcken",
+	"text.advancednbttooltip.hideflag.additional": "Zusätzliche Informationen",
+	"text.advancednbttooltip.hideflag.dye": "Verfärbung"
 }
