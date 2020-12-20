@@ -22,165 +22,194 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.*;
+import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
+import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 
 /**
  * The class representation of this mod's config. Based on this class,
  * AutoConfig generates a <i>.json</i> config file as well as an option screen.
  * 
- * <br><br> <b>Implements:</b>
- * <br>{@link ConfigData}
+ * <br>
+ * <br>
+ * <b>Implements:</b> <br>
+ * {@link ConfigData}
  * 
  * @author B0IIZZ
  */
 @Config(name = "advancednbttooltip")
 public class ModConfig implements ConfigData {
-	
-	//TODO: Category General Options
-	
+
+	// TODO: Category General Options
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleSuspiciousStewTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleCompassTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleBookTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleCustomModelDataTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleRepairCostTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleBeeTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleSpawnEggTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleSignsTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleCommandBlocksTooltip = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.Tooltip
 	boolean toggleHideFlagsTooltip = true;
+
+	// TODO: Category Technical Options
+
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+	@ConfigEntry.Gui.Tooltip
+	TooltipPosition tooltipPosition = TooltipPosition.TOP;
 	
-	
-	
-	//TODO: Category Technical Options
-	
+	/**
+	 * See In-game description.
+	 */
+	@ConfigEntry.Gui.Tooltip
+	boolean mainMenuUpdateNotice = true;
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.PrefixText
 	@ConfigEntry.Gui.Tooltip(count = 2)
 	boolean useItemStackInjector = true;
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.CollapsibleObject
 	@ConfigEntry.Gui.Tooltip
 	HideFlagsOverrides injectorOptions = new HideFlagsOverrides();
-	
+
 	/**
 	 * See In-game description.
 	 */
 	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
 	DeserializerLevel level = DeserializerLevel.DEBUG;
-	
+
 	static class HideFlagsOverrides {
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideEnchantments = false;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideAttributeModifiers = false;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideUnbreakable = false;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideCanDestroy = false;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideCanPlaceOn = false;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideAppendTooltip = true;
-		
+
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
 		boolean overrideDyeTooltip = false;
 	}
-	
+
 	static enum DeserializerLevel {
-		DEBUG(Level.DEBUG),INFO(Level.INFO);
-		
+		DEBUG(Level.DEBUG), INFO(Level.INFO);
+
 		private Level level;
-		
+
 		private DeserializerLevel(Level level) {
 			this.level = level;
 		}
-		
-		public Level getLevel()  {
+
+		public Level getLevel() {
 			return level;
+		}
+	}
+	
+	public static enum TooltipPosition {
+		TOP(1),BOTTOM(-1);
+		
+		private final int offset;
+		private TooltipPosition(int offset) {
+			this.offset = offset;
+		}
+		
+		public int position(List<?> list) {
+			return offset < 0 ? list.size() + offset + 1: offset;
 		}
 	}
 }
