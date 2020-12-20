@@ -125,7 +125,21 @@ public class ConfigManager {
 		return config.toggleHideFlagsTooltip;
 	}
 	
+	/**
+	 * @return The location where custom tooltips should be placed
+	 */
+	public static ModConfig.TooltipPosition getTooltipPosition() {
+		return config.tooltipPosition;
+	}
+	
 	//TODO: Category Technical Options
+	
+	/**
+	 * @return The state of the toggle controlling whether a notice should be added to the title screen when a new update is out.
+	 */
+	public static boolean getMainMenuUpdateNoticeToggle() {
+		return config.mainMenuUpdateNotice;
+	}
 	
 	/**
 	 * @return <b>true</b>, when the result of {@link getItemStackInjectorBitmask getItemStackInjectorBitmask()} should be bitwise AND-ed with the HideFlags property. <br> <b>false</b>, when not.

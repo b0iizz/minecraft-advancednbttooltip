@@ -51,7 +51,9 @@ import net.minecraft.util.registry.Registry;
  * A class for loading {@link CustomTooltip CustomTooltips} from a Json file.
  * 
  * @author B0IIZZ
+ * @deprecated since 1.1.0
  */
+@Deprecated()
 public class TooltipDeserializer {
 
 	private static final Logger LOGGER = LogManager.getLogger();

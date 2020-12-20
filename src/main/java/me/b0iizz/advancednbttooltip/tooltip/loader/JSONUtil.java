@@ -20,29 +20,47 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.mixin;
+package me.b0iizz.advancednbttooltip.tooltip.loader;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TippedArrowItem;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
+/**
+ * A small utility class for json parsing for custom tooltips
+ * 
+ * @author B0IIZZ
+ */
+class JSONUtil {
 
+	public static final Optional<JsonElement> optional(JsonObject obj, String name) {
+		return obj.has(name) ? Optional.of(obj.get(name)) : Optional.empty();
+	}
 
-@Mixin(TippedArrowItem.class)
-public class ItemTippedArrowMixin {
+	public static final JsonElement require(JsonObject obj, String name) {
+		return optional(obj, name)
+				.orElseThrow(() -> new TooltipLoaderException("Could not find required field: " + name));
+	}
 
-	@Inject(at = @At("RETURN"), method = "appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Ljava/util/List;Lnet/minecraft/client/item/TooltipContext;)V")
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context,CallbackInfo info) {
-		CustomTooltipManager.appendCustomTooltip(stack, world, tooltip, context, info);
+	public static final boolean castBoolean(Optional<JsonElement> optional, boolean defaultt) {
+		if (!optional.isPresent())
+			return defaultt;
+		try {
+			return optional.get().getAsBoolean();
+		} catch (Throwable t) {
+			return defaultt;
+		}
 	}
 	
+	public static final String castString(Optional<JsonElement> optional, String defaultt) {
+		if (!optional.isPresent())
+			return defaultt;
+		try {
+			return optional.get().getAsString();
+		} catch (Throwable t) {
+			return defaultt;
+		}
+	}
+
 }

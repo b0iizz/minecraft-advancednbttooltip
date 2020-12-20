@@ -38,8 +38,17 @@ import net.minecraft.util.Identifier;
  */
 public class ModMain implements ClientModInitializer {
 	
+	/**
+	 * The mod's modid
+	 */
 	public static final String modid = "advancednbttooltip";
 	
+	/**
+	 * Constructs a new {@link Identifier} consisting of this mod's modid and the given name.
+	 * 
+	 * @param name a name
+	 * @return the {@link Identifier} of this mod corresponding to the given name.
+	 */
 	public static Identifier id(String name) {
 		return new Identifier(modid, name);
 	}
@@ -52,6 +61,10 @@ public class ModMain implements ClientModInitializer {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new CustomTooltipResourceReloadListener());
+		
+		UpdateChecker.refreshUpdates();
+		
+		
 	}
 
 }

@@ -345,7 +345,7 @@ public final class CustomTooltipManager {
 					JsonParser parser = new JsonParser();
 					JsonObject root = parser.parse(reader).getAsJsonObject();
 					
-					CustomTooltip toRegister = TooltipDeserializer.deserializeTooltip(root);
+					CustomTooltip toRegister = CustomTooltip.LOADER.load(root);
 					
 					registerTooltip(toRegister);
 					

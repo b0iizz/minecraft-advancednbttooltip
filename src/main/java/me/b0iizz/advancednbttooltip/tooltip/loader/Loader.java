@@ -20,28 +20,23 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.mixin;
+package me.b0iizz.advancednbttooltip.tooltip.loader;
 
-import java.util.List;
+import com.google.gson.JsonObject;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+/**
+ * 
+ * @author B0IIZZ
+ *
+ * @param <I> The class this loader can load
+ */
+public interface Loader<I> {
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.MusicDiscItem;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
-
-@Mixin(MusicDiscItem.class)
-public class ItemMusicDiscMixin {
-
-	@Inject(at = @At("RETURN"), method = "appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Ljava/util/List;Lnet/minecraft/client/item/TooltipContext;)V")
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context,CallbackInfo info) {
-		CustomTooltipManager.appendCustomTooltip(stack, world, tooltip, context, info);
-	}
+	/**
+	 * Loads {@link I} from a {@link JsonObject}
+	 * @param object the json object that the loader will load from
+	 * @return an instance of {@link I} based on the json input 
+	 */
+	public I load(JsonObject object);
 	
 }

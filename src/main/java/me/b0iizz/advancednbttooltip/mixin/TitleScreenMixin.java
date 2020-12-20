@@ -22,26 +22,31 @@
 */
 package me.b0iizz.advancednbttooltip.mixin;
 
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.ItemStack;
+import me.b0iizz.advancednbttooltip.UpdateChecker;
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
+import net.minecraft.util.Formatting;
 
-@Mixin(BannerItem.class)
-public class ItemBannerMixin {
+@Mixin(TitleScreen.class)
+public class TitleScreenMixin extends Screen {
 
-	@Inject(at = @At("RETURN"), method = "appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Ljava/util/List;Lnet/minecraft/client/item/TooltipContext;)V")
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context,CallbackInfo info) {
-		CustomTooltipManager.appendCustomTooltip(stack, world, tooltip, context, info);
+	protected TitleScreenMixin(Text title) {
+		super(title);
 	}
-	
+
+	@Inject(at = @At(value = "INVOKE", target = "net.minecraft.client.gui.screen.TitleScreen.drawStringWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V", ordinal = 0), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
+	public void drawMainMenuUpdateNotice(MatrixStack matrices, int mx, int my, float ticks, CallbackInfo ci) {
+		if (!UpdateChecker.isLatest() && ConfigManager.getMainMenuUpdateNoticeToggle())
+			this.textRenderer.drawWithShadow(matrices, UpdateChecker.UPDATE_TEXT, 2,
+					height - 20, Formatting.RED.getColorValue());
+	}
+
 }

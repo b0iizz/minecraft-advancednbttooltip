@@ -6,21 +6,8 @@
   "mixins": [
   ],
   "client": [
-	"ItemBannerMixin",
-	"ItemBannerPatternMixin",
-	"ItemCrossbowMixin",
-	"ItemFilledMapMixin",
-	"ItemFireworkChargeMixin",
-	"ItemFireworkMixin",
-	"ItemFishBucketMixin",
-	"ItemLingeringPotionMixin",
-    "ItemMixin",
-	"ItemMusicDiscMixin",
-	"ItemPotionMixin",
-	"ItemShieldMixin",
-	"ItemTippedArrowMixin",
-	"ItemWrittenBookMixin",
-	"ItemStackMixin"
+	"ItemStackMixin",
+	"TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

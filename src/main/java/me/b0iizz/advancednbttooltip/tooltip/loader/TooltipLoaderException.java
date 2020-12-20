@@ -20,28 +20,30 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.mixin;
+package me.b0iizz.advancednbttooltip.tooltip.loader;
 
-import java.util.List;
+/**
+ * An exception dedicated to errors while parsing CustomTooltips
+ * 
+ * @author B0IIZZ
+ */
+public class TooltipLoaderException extends IllegalStateException {
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.WrittenBookItem;
-import net.minecraft.text.Text;
-import net.minecraft.world.World;
-
-@Mixin(WrittenBookItem.class)
-public class ItemWrittenBookMixin {
-
-	@Inject(at = @At("RETURN"), method = "appendTooltip(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Ljava/util/List;Lnet/minecraft/client/item/TooltipContext;)V")
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context,CallbackInfo info) {
-		CustomTooltipManager.appendCustomTooltip(stack, world, tooltip, context, info);
-	}
+	private static final long serialVersionUID = 5186432346317060766L;
 	
+	public TooltipLoaderException() {
+        super("An exception occurred while parsing a CustomTooltip!");
+    }
+	
+	public TooltipLoaderException(String message) {
+        super(message);
+    }
+	
+	public TooltipLoaderException(String message, Throwable cause) {
+        super(message, cause);
+    }
+	
+	public TooltipLoaderException(Throwable cause) {
+        super("An exception occurred while parsing a CustomTooltip!", cause);
+    }
 }

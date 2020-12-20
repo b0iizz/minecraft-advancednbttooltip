@@ -23,6 +23,7 @@
 package me.b0iizz.advancednbttooltip.config;
 
 import me.b0iizz.advancednbttooltip.ModMain;
+import me.b0iizz.advancednbttooltip.UpdateChecker;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
@@ -44,6 +45,8 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 	@Override
 	public void apply(ResourceManager manager) {
 		CustomTooltipManager.reloadAllCustomTooltips();
+		
+		UpdateChecker.refreshUpdates();
 	}
 
 
