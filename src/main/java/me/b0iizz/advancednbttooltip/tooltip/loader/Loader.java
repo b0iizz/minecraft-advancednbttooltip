@@ -30,13 +30,15 @@ import com.google.gson.JsonObject;
  *
  * @param <I> The class this loader can load
  */
+@FunctionalInterface
 public interface Loader<I> {
 
 	/**
-	 * Loads {@link I} from a {@link JsonObject}
+	 * Loads <code>I</code> from a {@link JsonObject}
+	 * 
 	 * @param object the json object that the loader will load from
-	 * @return an instance of {@link I} based on the json input 
+	 * @return an instance of <code>I</code> based on the json input
 	 */
 	public I load(JsonObject object);
-	
+
 }

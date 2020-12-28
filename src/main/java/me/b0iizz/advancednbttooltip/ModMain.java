@@ -30,21 +30,23 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 /**
- * The Fabric Entrypoint of this mod.
- * <br><br> <b>Implements:</b>
- * <br>{@link ClientModInitializer}
+ * The Fabric Entrypoint of this mod. <br>
+ * <br>
+ * <b>Implements:</b> <br>
+ * {@link ClientModInitializer}
  * 
  * @author B0IIZZ
  */
 public class ModMain implements ClientModInitializer {
-	
+
 	/**
 	 * The mod's modid
 	 */
 	public static final String modid = "advancednbttooltip";
-	
+
 	/**
-	 * Constructs a new {@link Identifier} consisting of this mod's modid and the given name.
+	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
+	 * given name.
 	 * 
 	 * @param name a name
 	 * @return the {@link Identifier} of this mod corresponding to the given name.
@@ -52,7 +54,7 @@ public class ModMain implements ClientModInitializer {
 	public static Identifier id(String name) {
 		return new Identifier(modid, name);
 	}
-	
+
 	/**
 	 * Called on initialization. Registers and loads this mod's config.
 	 */
@@ -60,11 +62,11 @@ public class ModMain implements ClientModInitializer {
 	public void onInitializeClient() {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new CustomTooltipResourceReloadListener());
-		
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+				.registerReloadListener(new CustomTooltipResourceReloadListener());
+
 		UpdateChecker.refreshUpdates();
-		
-		
+
 	}
 
 }

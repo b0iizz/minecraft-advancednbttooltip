@@ -28,15 +28,16 @@ import me.b0iizz.advancednbttooltip.ModMain;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 
 /**
- * The entrypoint for ModMenu by prospector
- * <br><br> <b>Implements:</b>
- * <br>{@link ModMenuApi}
+ * The entrypoint for ModMenu by prospector <br>
+ * <br>
+ * <b>Implements:</b> <br>
+ * {@link ModMenuApi}
  * 
  * @author B0IIZZ
  *
  */
 public class ModMenuEntry implements ModMenuApi {
-	
+
 	/**
 	 * @return This mod's modid.
 	 */
@@ -44,14 +45,15 @@ public class ModMenuEntry implements ModMenuApi {
 	public String getModId() {
 		return ModMain.modid;
 	}
+
 	/**
-	 * @return This mod's config's {@link ConfigScreenFactory} 
+	 * @return This mod's config's {@link ConfigScreenFactory}
 	 */
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return parent -> {
 			return AutoConfig.getConfigScreen(ModConfig.class, parent).get();
 		};
-	
+
 	}
 }

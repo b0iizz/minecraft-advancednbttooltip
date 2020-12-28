@@ -41,23 +41,24 @@ import net.minecraft.SharedConstants;
 public final class UpdateChecker {
 
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
 	/**
-	 *	The URL to the file which contains the version of the newest release
+	 * The URL to the file which contains the version of the newest release
 	 */
 	public static final String UPDATE_URL = "https://www.dropbox.com/s/3o3hbhr94ln8ybh/versions.txt?dl=1";
 
-	
 	/**
 	 * The Text which will be displayed in the Title menu
 	 */
 	public static final String UPDATE_TEXT = "A new version of AdvancedNbtTooltips is available!";
-	
+
 	private static boolean isLatest = true;
 	private static boolean hasCheckedUpdates = false;
 
 	/**
-	 * The main interaction point of the class. Used to find whether the mod is up to date.
+	 * The main interaction point of the class. Used to find whether the mod is up
+	 * to date.
+	 * 
 	 * @return true if the current version of the mod is the latest release
 	 */
 	public static boolean isLatest() {
@@ -66,7 +67,6 @@ public final class UpdateChecker {
 		return isLatest;
 	}
 
-	
 	/**
 	 * Rechecks if the mod is up to date.
 	 */
@@ -84,21 +84,23 @@ public final class UpdateChecker {
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				String[] split = inputLine.split(":");
-				if(split[0].equals(SharedConstants.getGameVersion().getReleaseTarget()) && split[1].equals(ModMain.modid)) {
-					String version = FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata().getVersion().getFriendlyString();
+				if (split[0].equals(SharedConstants.getGameVersion().getReleaseTarget())
+						&& split[1].equals(ModMain.modid)) {
+					String version = FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
+							.getVersion().getFriendlyString();
 					version = version.substring(0, version.contains("+") ? version.indexOf('+') : version.length());
 					String[] versionsplit = version.split("\\.");
-					for(int i = 0; i < 3; i++) {
-						if(Integer.parseInt(versionsplit[i]) < Integer.parseInt(split[i+2])) {
+					for (int i = 0; i < 3; i++) {
+						if (Integer.parseInt(versionsplit[i]) < Integer.parseInt(split[i + 2])) {
 							isLatest = false;
 						}
 					}
-					
+
 				}
-			}	
+			}
 			in.close();
 		} catch (Exception e) {
-			if(e instanceof NumberFormatException)
+			if (e instanceof NumberFormatException)
 				isLatest = false;
 			LOGGER.info("(AdvancedNbtTooltip) Error in update checker! Ignore this in a development environment!");
 		}
