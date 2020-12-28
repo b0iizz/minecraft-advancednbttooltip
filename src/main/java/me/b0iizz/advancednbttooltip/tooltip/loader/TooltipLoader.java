@@ -27,24 +27,25 @@ import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
 import com.google.gson.JsonObject;
 
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
 
 /**
  * The JSON loader for {@link CustomTooltip CustomTooltips}
  * 
  * @author B0IIZZ
  */
-public class CustomTooltipLoader implements Loader<CustomTooltip> {
+public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 
 	/**
 	 * The instance of this class as there is no need for multiple instances of this
 	 * class
 	 */
-	public static final CustomTooltipLoader INSTANCE = new CustomTooltipLoader();
+	public static final TooltipLoader INSTANCE = new TooltipLoader();
 
 	@Override
-	public CustomTooltip load(JsonObject object) {
+	public AbstractCustomTooltip load(JsonObject object) {
 		try {
 			return loadUnsafe(object);
 		} catch (Exception e) {
@@ -52,7 +53,7 @@ public class CustomTooltipLoader implements Loader<CustomTooltip> {
 		}
 	}
 
-	public CustomTooltip loadUnsafe(JsonObject object) {
+	private CustomTooltip loadUnsafe(JsonObject object) {
 		String id;
 		try {
 			id = require(object, "id").getAsString();
@@ -79,7 +80,7 @@ public class CustomTooltipLoader implements Loader<CustomTooltip> {
 		return new CustomTooltip(id, factory).addCondition(condition);
 	}
 
-	private CustomTooltipLoader() {
+	private TooltipLoader() {
 	}
 
 }

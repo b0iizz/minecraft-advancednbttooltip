@@ -37,8 +37,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
+import me.b0iizz.advancednbttooltip.tooltip.util.NBTUtil;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -80,6 +82,8 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 			return parseFormatted(object);
 		case "translated":
 			return parseTranslated(object);
+		case "nbt":
+			return parseNBT(object);
 		case "conditional":
 			return parseConditional(object);
 		case "multiple":
@@ -87,7 +91,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		case "mix":
 			return parseMix(object);
 		case "empty":
-			return (i, t, c) -> Arrays.asList();
+			return TooltipFactory.EMPTY;
 		default:
 			throw new TooltipLoaderException("Unknown id parsing TooltipFactory " + id);
 		}
@@ -169,6 +173,21 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 			return (i, t, c) -> Arrays.asList(new TranslatableText(key));
 		}
 
+	}
+
+	private TooltipFactory parseNBT(JsonObject object) {
+		String path;
+		try {
+			path = require(object, "path").getAsString();
+		} catch (Throwable t) {
+			throw new TooltipLoaderException("Exception while parsing NBT: could not load path", t);
+		}
+
+		final NBTPath nbtpath = new NBTPath(path);
+
+		return (i, t, c) -> {
+			return Arrays.asList(new LiteralText(nbtpath.getOptional(t).map(NBTUtil::asString).orElse("-")));
+		};
 	}
 
 	private TooltipFactory parseConditional(JsonObject object) {
@@ -259,9 +278,11 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 				list.addAll(factory.createTooltip(i, t, c));
 			}
 
-			if(list.isEmpty()) return Arrays.asList();
-			
-			Text res = list.stream().reduce(new LiteralText(""), ((a, b) -> a.shallowCopy().append(b).append(new LiteralText(" "))));
+			if (list.isEmpty())
+				return Arrays.asList();
+
+			Text res = list.stream().reduce(new LiteralText(""),
+					((a, b) -> a.shallowCopy().append(b).append(new LiteralText(" "))));
 			return Arrays.asList(res);
 		};
 	}

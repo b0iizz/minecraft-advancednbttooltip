@@ -41,31 +41,34 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+@SuppressWarnings("javadoc")
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-	
+
 	@ModifyVariable(at = @At(value = "INVOKE_ASSIGN", target = "net.minecraft.item.ItemStack.getHideFlags()I"), method = "getTooltip")
 	public int rewriteHideFlags(int i) {
-		if(ConfigManager.isUsingItemStackInjection()) {
+		if (ConfigManager.isUsingItemStackInjection()) {
 			return i & ConfigManager.getItemStackInjectorBitmask();
 		}
-		return i;	
+		return i;
 	}
-	
-	@Shadow public ItemStack copy() {
+
+	@Shadow
+	public ItemStack copy() {
 		return ItemStack.EMPTY;
 	}
-	
+
 	@Inject(at = @At("RETURN"), method = "getTooltip", cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void appendTooltips(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci, List<Text> list) {
+	public void appendTooltips(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci,
+			List<Text> list) {
 		ArrayList<Text> text = new ArrayList<>();
 		CustomTooltipManager.appendCustomTooltip(copy(), player == null ? null : player.world, text, context, ci);
-		
-		if(!list.isEmpty() && !text.isEmpty())
-		text.add(0, new LiteralText(""));
-		
-		list.addAll(ConfigManager.getTooltipPosition().position(list),text);
-		
+
+		if (!list.isEmpty() && !text.isEmpty())
+			text.add(0, new LiteralText(""));
+
+		list.addAll(ConfigManager.getTooltipPosition().position(list), text);
+
 		ci.setReturnValue(list);
 	}
 }

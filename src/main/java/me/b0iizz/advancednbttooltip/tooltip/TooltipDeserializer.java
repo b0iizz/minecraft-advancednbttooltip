@@ -27,6 +27,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,9 +35,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
@@ -66,7 +67,7 @@ public class TooltipDeserializer {
 	 * @return The parsed custom tooltip
 	 * @throws Exception when an error in the parsing process occurs.
 	 */
-	public static CustomTooltip deserializeTooltip(JsonObject root) throws Exception {
+	public static AbstractCustomTooltip deserializeTooltip(JsonObject root) throws Exception {
 		String name = root.get("name").getAsString();
 		
 		//Logging
@@ -77,7 +78,7 @@ public class TooltipDeserializer {
 		for (DeserializedLine line : lines)
 			factory.lines.add(line);
 
-		CustomTooltip result = new CustomTooltip(name, factory);
+		AbstractCustomTooltip result = new CustomTooltip(name, factory);
 
 		TooltipCondition[] conditions = deserializeConditions(root);
 		for (TooltipCondition condition : conditions)
@@ -117,7 +118,7 @@ public class TooltipDeserializer {
 		DeserializedLineArgument[] arguments = deserializeLineArguments(obj);
 
 		TooltipCondition[] conditions = deserializeConditions(obj);
-		TooltipCondition condition = new TooltipCondition("AND", (Object[]) conditions);
+		TooltipCondition condition = TooltipCondition.builtIn("AND", (Object[]) conditions);
 
 		return new DeserializedLine(pattern, condition, arguments);
 	}
@@ -161,7 +162,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return new TooltipCondition(type, require(obj,"tag").getAsString());
+			return TooltipCondition.builtIn(type, require(obj,"tag").getAsString());
 		}
 		case "HAS_ITEM": {
 			List<Item> items = new ArrayList<>();
@@ -174,7 +175,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return new TooltipCondition(type, items.toArray());
+			return TooltipCondition.builtIn(type, items.toArray());
 		}
 		case "NOT": {
 			TooltipCondition condition = deserializeCondition(require(obj,"condition"));
@@ -182,7 +183,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return new TooltipCondition(type, condition);
+			return TooltipCondition.builtIn(type, condition);
 		}
 		case "AND": {
 			TooltipCondition[] conditions = deserializeConditions(obj);
@@ -190,7 +191,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return new TooltipCondition(type, (Object[]) conditions);
+			return TooltipCondition.builtIn(type, (Object[]) conditions);
 		}
 		case "OR": {
 			TooltipCondition[] conditions = deserializeConditions(obj);
@@ -198,7 +199,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return new TooltipCondition(type, (Object[]) conditions);
+			return TooltipCondition.builtIn(type, (Object[]) conditions);
 		}
 		case "TRUE": {
 			
@@ -441,7 +442,7 @@ public class TooltipDeserializer {
 			text = element + (text.isEmpty() ? "" : ".") + text;
 		}
 		
-		LOGGER.log(ConfigManager.getDeserializationOutputLevel(),"Deserializing " + text);
+		LOGGER.log(Level.INFO,"Deserializing " + text);
 	}
 	
 	private static void logArray(int index) {

@@ -27,23 +27,65 @@ package me.b0iizz.advancednbttooltip.tooltip.loader;
  * 
  * @author B0IIZZ
  */
-public class TooltipLoaderException extends IllegalStateException {
+public class TooltipLoaderException extends RuntimeException {
 
 	private static final long serialVersionUID = 5186432346317060766L;
-	
+
+	private static final String DEFAULT_ERROR = "An exception occurred while parsing a CustomTooltip!";
+
+	/**
+	 * Constructs a new tooltip loader exception with <i>"An exception occurred
+	 * while parsing a CustomTooltip!"</i> as its detail message. The cause is not
+	 * initialized, and may subsequently be initialized by a call to
+	 * {@link #initCause}.
+	 */
 	public TooltipLoaderException() {
-        super("An exception occurred while parsing a CustomTooltip!");
-    }
-	
+		this(DEFAULT_ERROR);
+	}
+
+	/**
+	 * Constructs a new tooltip loader exception with the specified detail message.
+	 * The cause is not initialized, and may subsequently be initialized by a call
+	 * to {@link #initCause}.
+	 *
+	 * @param message the detail message. The detail message is saved for later
+	 *                retrieval by the {@link #getMessage()} method.
+	 */
 	public TooltipLoaderException(String message) {
-        super(message);
-    }
-	
+		this(message, null);
+	}
+
+	/**
+	 * Constructs a new tooltip loader exception with the specified detail message
+	 * and cause.
+	 * <p>
+	 * Note that the detail message associated with {@code cause} is <i>not</i>
+	 * automatically incorporated in this runtime exception's detail message.
+	 *
+	 * @param message the detail message (which is saved for later retrieval by the
+	 *                {@link #getMessage()} method).
+	 * @param cause   the cause (which is saved for later retrieval by the
+	 *                {@link #getCause()} method). (A <tt>null</tt> value is
+	 *                permitted, and indicates that the cause is nonexistent or
+	 *                unknown.)
+	 */
 	public TooltipLoaderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-	
+		super(message, cause);
+	}
+
+	/**
+	 * Constructs a new tooltip loader exception with the detail message of <i>"An
+	 * exception occurred while parsing a CustomTooltip!"</i> and cause.
+	 * <p>
+	 * Note that the detail message associated with {@code cause} is <i>not</i>
+	 * automatically incorporated in this runtime exception's detail message.
+	 *
+	 * @param cause the cause (which is saved for later retrieval by the
+	 *              {@link #getCause()} method). (A <tt>null</tt> value is
+	 *              permitted, and indicates that the cause is nonexistent or
+	 *              unknown.)
+	 */
 	public TooltipLoaderException(Throwable cause) {
-        super("An exception occurred while parsing a CustomTooltip!", cause);
-    }
+		this(DEFAULT_ERROR, cause);
+	}
 }

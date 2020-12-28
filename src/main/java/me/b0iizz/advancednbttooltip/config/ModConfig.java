@@ -24,7 +24,6 @@ package me.b0iizz.advancednbttooltip.config;
 
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
 
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
@@ -114,7 +113,7 @@ public class ModConfig implements ConfigData {
 	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
 	@ConfigEntry.Gui.Tooltip
 	TooltipPosition tooltipPosition = TooltipPosition.TOP;
-	
+
 	/**
 	 * See In-game description.
 	 */
@@ -134,12 +133,6 @@ public class ModConfig implements ConfigData {
 	@ConfigEntry.Gui.CollapsibleObject
 	@ConfigEntry.Gui.Tooltip
 	HideFlagsOverrides injectorOptions = new HideFlagsOverrides();
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-	DeserializerLevel level = DeserializerLevel.DEBUG;
 
 	static class HideFlagsOverrides {
 
@@ -186,30 +179,23 @@ public class ModConfig implements ConfigData {
 		boolean overrideDyeTooltip = false;
 	}
 
-	static enum DeserializerLevel {
-		DEBUG(Level.DEBUG), INFO(Level.INFO);
-
-		private Level level;
-
-		private DeserializerLevel(Level level) {
-			this.level = level;
-		}
-
-		public Level getLevel() {
-			return level;
-		}
-	}
-	
+	/**
+	 * An enum representing the position of custom tooltips in the tooltip list
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
 	public static enum TooltipPosition {
-		TOP(1),BOTTOM(-1);
-		
+		TOP(1), BOTTOM(-1);
+
 		private final int offset;
+
 		private TooltipPosition(int offset) {
 			this.offset = offset;
 		}
-		
+
 		public int position(List<?> list) {
-			return offset < 0 ? list.size() + offset + 1: offset;
+			return offset < 0 ? list.size() + offset + 1 : offset;
 		}
 	}
 }

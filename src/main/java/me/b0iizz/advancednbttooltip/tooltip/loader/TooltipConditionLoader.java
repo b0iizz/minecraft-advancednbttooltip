@@ -32,7 +32,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -75,8 +75,10 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			return parseOr(object);
 		case "has_tag":
 			return parseHasTag(object);
+		case "tag_matches":
+			return parseTagMatches(object);
 		case "is_item":
-			return parseHasItem(object);
+			return parseIsItem(object);
 		case "true":
 			return TooltipCondition.TRUE;
 		case "false":
@@ -94,7 +96,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			throw new TooltipLoaderException("Exception while parsing NOT: could not load condition", t);
 		}
 
-		return new TooltipCondition("NOT", condition);
+		return TooltipCondition.builtIn("NOT", condition);
 	}
 
 	private TooltipCondition parseAnd(JsonObject object) {
@@ -120,7 +122,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			parsedConditions.add(condition);
 		}
 
-		return new TooltipCondition("AND", parsedConditions.toArray());
+		return TooltipCondition.builtIn("AND", parsedConditions.toArray());
 	}
 
 	private TooltipCondition parseOr(JsonObject object) {
@@ -146,7 +148,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			parsedConditions.add(condition);
 		}
 
-		return new TooltipCondition("OR", parsedConditions.toArray());
+		return TooltipCondition.builtIn("OR", parsedConditions.toArray());
 	}
 
 	private TooltipCondition parseHasTag(JsonObject object) {
@@ -165,20 +167,38 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			} catch (Throwable t) {
 				throw new TooltipLoaderException("Exception while parsing HAS_TAG: could not load type", t);
 			}
-			return new TooltipCondition("HAS_TAG", tag, type);
+			return TooltipCondition.builtIn("HAS_TAG", tag, type);
 		} else {
-			return new TooltipCondition("HAS_TAG", tag);
+			return TooltipCondition.builtIn("HAS_TAG", tag);
 		}
 	}
-
-	private TooltipCondition parseHasItem(JsonObject object) {
+	
+	private TooltipCondition parseTagMatches(JsonObject object) {
+		String tag;
+		try {
+			tag = require(object, "tag").getAsString();
+		} catch (Throwable t) {
+			throw new TooltipLoaderException("Exception while parsing TAG_MATCHES: could not load tag", t);
+		}
+		
+		String value;
+		try {
+			value = require(object, "value").toString().replaceAll("\"^", "").replaceAll("$\"", "");
+		} catch (Throwable t) {
+			throw new TooltipLoaderException("Exception while parsing TAG_MATCHES: could not load value", t);
+		}
+		
+		return TooltipCondition.builtIn("TAG_MATCHES", tag, value);
+	}
+	
+	private TooltipCondition parseIsItem(JsonObject object) {
 		ArrayList<ItemConvertible> items = new ArrayList<>();
 
 		JsonArray itemList;
 		try {
 			itemList = require(object, "items").getAsJsonArray();
 		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing HAS_ITEM: could not load items", t);
+			throw new TooltipLoaderException("Exception while parsing IS_ITEM: could not load items", t);
 		}
 
 		for (int i = 0; i < itemList.size(); i++) {
@@ -186,8 +206,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			try {
 				id = itemList.get(i).getAsString();
 			} catch (Throwable t) {
-				throw new TooltipLoaderException("Exception while parsing HAS_ITEM: could not load id for item " + i,
-						t);
+				throw new TooltipLoaderException("Exception while parsing IS_ITEM: could not load id for item " + i, t);
 			}
 			Identifier trueId = new Identifier(id);
 			if (!Registry.ITEM.containsId(trueId))
@@ -195,7 +214,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			items.add(Registry.ITEM.get(trueId));
 		}
 
-		return new TooltipCondition("HAS_ITEM", items.toArray());
+		return TooltipCondition.builtIn("IS_ITEM", items.toArray());
 	}
 
 	private TooltipConditionLoader() {

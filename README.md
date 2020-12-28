@@ -38,6 +38,10 @@ translated<br>
 >├── "key": a string containing the translation key that is to be translated<br>
 >└── "argument_provider": (optional) a TooltipFactory which gives text for arguments in the translation as lines<br>
 
+nbt<br>
+>├── all general TooltipFactory attributes<br>
+>└── "path": the path to the NBT-Tag<br>
+
 conditional<br>
 >├── all general TooltipFactory attributes<br>
 >├── "condition": a TooltipCondition<br>
@@ -77,6 +81,11 @@ has_tag<br>
 >├── all general TooltipConditon attributes<br>
 >├── "tag": the path to a NBT Tag<br>
 >└── "type" (optional) a NBT Tag type as specified in the NBT Tag classes<br>
+
+tag_matches<br>
+>├── all general TooltipConditon attributes<br>
+>├── "tag": the path to a NBT Tag<br>
+>└── "value": the value the tag should have<br>
 
 is_item<br>
 >├── all general TooltipConditon attributes<br>

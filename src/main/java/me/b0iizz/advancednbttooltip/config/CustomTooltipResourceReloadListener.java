@@ -30,12 +30,13 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 /**
- * A simple class responsible for notifying the mod that the resources are being reloaded, which should reload all tooltips.
+ * A simple class responsible for notifying the mod that the resources are being
+ * reloaded, which should reload all tooltips.
  * 
  * @author B0IIZZ
  *
  */
-public class CustomTooltipResourceReloadListener implements SimpleSynchronousResourceReloadListener{
+public class CustomTooltipResourceReloadListener implements SimpleSynchronousResourceReloadListener {
 
 	@Override
 	public Identifier getFabricId() {
@@ -45,9 +46,8 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 	@Override
 	public void apply(ResourceManager manager) {
 		CustomTooltipManager.reloadAllCustomTooltips();
-		
+
 		UpdateChecker.refreshUpdates();
 	}
-
 
 }

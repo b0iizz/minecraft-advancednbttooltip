@@ -52,7 +52,7 @@ class JSONUtil {
 			return defaultt;
 		}
 	}
-	
+
 	public static final String castString(Optional<JsonElement> optional, String defaultt) {
 		if (!optional.isPresent())
 			return defaultt;
