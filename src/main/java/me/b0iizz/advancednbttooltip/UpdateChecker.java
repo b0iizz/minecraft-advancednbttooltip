@@ -31,6 +31,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.SemanticVersion;
+import net.fabricmc.loader.api.VersionParsingException;
+import net.fabricmc.loader.util.version.VersionDeserializer;
 import net.minecraft.SharedConstants;
 
 /**
@@ -48,11 +51,18 @@ public final class UpdateChecker {
 	public static final String UPDATE_URL = "https://www.dropbox.com/s/3o3hbhr94ln8ybh/versions.txt?dl=1";
 
 	/**
-	 * The Text which will be displayed in the Title menu
+	 * The default Text which will be displayed in the Title menu
 	 */
 	public static final String UPDATE_TEXT = "A new version of AdvancedNbtTooltips is available!";
+	
+	/**
+	 * The Text which will be displayed in the Title menu when an update is mandatory due to a bug
+	 */
+	public static final String MANDATORY_UPDATE_TEXT = "This version of the mod has a critical error! Please update as soon as possible!";
 
 	private static boolean isLatest = true;
+	private static boolean isCritical = false;
+	
 	private static boolean hasCheckedUpdates = false;
 
 	/**
@@ -68,6 +78,17 @@ public final class UpdateChecker {
 	}
 
 	/**
+	 * Used to find whether a critical error has been fixed in the newer version
+	 * 
+	 * @return true if the latest version of the mod fixes a critical error
+	 */
+	public static boolean isCriticalErrorFixed() {
+		if(!hasCheckedUpdates)
+			checkUpdates();
+		return isCritical;
+	}
+	
+	/**
 	 * Rechecks if the mod is up to date.
 	 */
 	public static void refreshUpdates() {
@@ -78,31 +99,39 @@ public final class UpdateChecker {
 	private static void checkUpdates() {
 		hasCheckedUpdates = true;
 		try {
+			String currentMinecraftReleaseTarget = SharedConstants.getGameVersion().getReleaseTarget();
+			
+			SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
+					.getVersion().getFriendlyString().split("\\+")[0]);
+
 			URL update = new URL(UPDATE_URL);
 			URLConnection connection = update.openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
-				String[] split = inputLine.split(":");
-				if (split[0].equals(SharedConstants.getGameVersion().getReleaseTarget())
-						&& split[1].equals(ModMain.modid)) {
-					String version = FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
-							.getVersion().getFriendlyString();
-					version = version.substring(0, version.contains("+") ? version.indexOf('+') : version.length());
-					String[] versionsplit = version.split("\\.");
-					for (int i = 0; i < 3; i++) {
-						if (Integer.parseInt(versionsplit[i]) < Integer.parseInt(split[i + 2])) {
-							isLatest = false;
-						}
-					}
-
+				String[] attributes = inputLine.split(":");
+				String releaseTarget = attributes[0];
+				String modid = attributes[1];
+				SemanticVersion newestPatchVersion = VersionDeserializer.deserializeSemantic(attributes[2]);
+				boolean criticalError = attributes.length > 3 ? attributes[3].equals("true") : false;
+				
+				if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(ModMain.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
+					isLatest = false;
+					isCritical = criticalError;
 				}
 			}
 			in.close();
 		} catch (Exception e) {
-			if (e instanceof NumberFormatException)
+			if (e instanceof NumberFormatException || e instanceof VersionParsingException)
 				isLatest = false;
-			LOGGER.info("(AdvancedNbtTooltip) Error in update checker! Ignore this in a development environment!");
+			LOGGER.info("(AdvancedNbtTooltip) Error in update checker! Ignore this in a development environment! {}: {}", e.getClass().getCanonicalName(), e.getMessage());
 		}
+	}
+
+	/**
+	 * @return The current appropriate update Text
+	 */
+	public static String getUpdateText() {
+		return isCriticalErrorFixed() ? MANDATORY_UPDATE_TEXT : UPDATE_TEXT;
 	}
 }
