@@ -150,7 +150,7 @@ public final class CustomTooltipManager {
 				result.add(line.formatted(eff.getType().getFormatting()));
 			}
 			return result;
-		}).addCondition("HAS_ITEM", Items.SUSPICIOUS_STEW).addCondition("HAS_TAG", "Effects")
+		}).addCondition("IS_ITEM", Items.SUSPICIOUS_STEW).addCondition("HAS_TAG", "Effects")
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getSuspiciousStewToggle();
 				}));
@@ -180,7 +180,7 @@ public final class CustomTooltipManager {
 				result.add(new LiteralText(""));
 			}
 			return result;
-		}).addCondition("HAS_ITEM", Items.COMPASS).addCondition("HAS_TAG", "LodestoneTracked")
+		}).addCondition("IS_ITEM", Items.COMPASS).addCondition("HAS_TAG", "LodestoneTracked")
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getCompassToggle();
 				}));
@@ -212,7 +212,7 @@ public final class CustomTooltipManager {
 			}
 
 			return result;
-		}).addCondition("HAS_TAG", "pages").addCondition("HAS_ITEM", Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
+		}).addCondition("HAS_TAG", "pages").addCondition("IS_ITEM", Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getBookToggle();
 				}));
@@ -344,7 +344,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("HAS_ITEM", Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK)
+		}).addCondition("IS_ITEM", Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK)
 				.addCondition("HAS_TAG", "BlockEntityTag").addCondition((i, t, c) -> {
 					return ConfigManager.getCommandBlocksToggle();
 				}));
