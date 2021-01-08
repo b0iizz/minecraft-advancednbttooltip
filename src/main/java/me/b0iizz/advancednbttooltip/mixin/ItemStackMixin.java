@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -66,7 +67,10 @@ public class ItemStackMixin {
 
 		if (!list.isEmpty() && !text.isEmpty())
 			text.add(0, new LiteralText(""));
-
+		
+		if(ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && list.size() > 1)
+			text.add(new LiteralText(""));
+		
 		list.addAll(ConfigManager.getTooltipPosition().position(list), text);
 
 		ci.setReturnValue(list);
