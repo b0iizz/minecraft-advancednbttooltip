@@ -24,7 +24,7 @@ package me.b0iizz.advancednbttooltip.config;
 
 import java.util.List;
 
-
+import me.b0iizz.advancednbttooltip.ModMain;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
@@ -40,7 +40,7 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
  * 
  * @author B0IIZZ
  */
-@Config(name = "advancednbttooltip")
+@Config(name = ModMain.modid)
 public class ModConfig implements ConfigData {
 
 	// TODO: Category General Options
