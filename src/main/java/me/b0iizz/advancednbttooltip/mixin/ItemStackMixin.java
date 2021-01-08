@@ -69,7 +69,7 @@ public class ItemStackMixin {
 			text.add(0, new LiteralText(""));
 		
 		if(ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && list.size() > 1)
-			text.add(new LiteralText(""));
+			text.add(new LiteralText(" "));
 		
 		list.addAll(ConfigManager.getTooltipPosition().position(list), text);
 
