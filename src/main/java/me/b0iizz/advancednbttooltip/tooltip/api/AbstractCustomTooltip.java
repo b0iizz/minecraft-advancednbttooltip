@@ -25,6 +25,7 @@ package me.b0iizz.advancednbttooltip.tooltip.api;
 import java.util.List;
 
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipLoader;
 import me.b0iizz.advancednbttooltip.tooltip.loader.Loader;
 import net.minecraft.client.item.TooltipContext;
@@ -48,20 +49,28 @@ public interface AbstractCustomTooltip {
 	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
 	 * show the tooltip.
 	 * 
-	 * @param conditionName : One of {@link TooltipCondition.HasTagConditionResolver
-	 *                      "HAS_TAG"},{@link TooltipCondition.TagMatchesConditionResolver
-	 *                      "TAG_MATCHES"},
-	 *                      {@link TooltipCondition.IsItemConditionResolver
-	 *                      "IS_ITEM"},{@link TooltipCondition.AndConditionResolver
-	 *                      "AND"}, {@link TooltipCondition.OrConditionResolver
-	 *                      "OR"},{@link TooltipCondition.NotConditionResolver
-	 *                      "NOT"}
+	 * 
+	 * @param conditionName : See {@link BuiltInCondition}
+	 * @param args          : The appropriate arguments for the specific condition.
+	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
+	 *         chaining.
+	 *         
+	 * @deprecated since 1.2.2
+	 */
+	@Deprecated
+	public AbstractCustomTooltip addCondition(String conditionName, Object... args);
+
+	/**
+	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
+	 * show the tooltip.
+	 * 
+	 * @param condition : See {@link BuiltInCondition}
 	 * @param args          : The appropriate arguments for the specific condition.
 	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
 	 *         chaining.
 	 */
-	AbstractCustomTooltip addCondition(String conditionName, Object... args);
-
+	public AbstractCustomTooltip addCondition(BuiltInCondition condition, Object... args);
+	
 	/**
 	 * Adds a {@link TooltipCondition Condition} which has to be met to show the
 	 * tooltip.
@@ -70,7 +79,7 @@ public interface AbstractCustomTooltip {
 	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
 	 *         chaining.
 	 */
-	AbstractCustomTooltip addCondition(TooltipCondition condition);
+	public AbstractCustomTooltip addCondition(TooltipCondition condition);
 
 	/**
 	 * Decides whether the tooltip should be applied or not.
@@ -81,7 +90,7 @@ public interface AbstractCustomTooltip {
 	 * @return <b>true</b>, when the custom tooltip should be appended to the
 	 *         pre-existing tooltip. <b>false</b>, when not.
 	 */
-	boolean isTooltipVisible(Item item, CompoundTag tag, TooltipContext context);
+	public boolean isTooltipVisible(Item item, CompoundTag tag, TooltipContext context);
 
 	/**
 	 * Creates the tooltip text for the Item.
@@ -97,6 +106,6 @@ public interface AbstractCustomTooltip {
 	 * 
 	 * @return the name of the {@link AbstractCustomTooltip}
 	 */
-	String getName();
+	public String getName();
 
 }

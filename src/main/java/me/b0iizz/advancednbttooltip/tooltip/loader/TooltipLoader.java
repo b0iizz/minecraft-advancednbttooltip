@@ -44,37 +44,35 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 	 */
 	public static final TooltipLoader INSTANCE = new TooltipLoader();
 
+	// Error messages
+	private static final String GENERAL_ERROR = "Exception while parsing CustomTooltip from json";
+	private static final String GENERAL_TEXT_ERROR = "Could not load root TooltipFactory (text) object";
+	private static final String GENERAL_CONDITION_ERROR = "Could not load root condition";
+
 	@Override
 	public AbstractCustomTooltip load(JsonObject object) {
 		try {
 			return loadUnsafe(object);
 		} catch (Exception e) {
-			throw new TooltipLoaderException("Exception while parsing CustomTooltip from json", e);
+			throw new TooltipLoaderException(GENERAL_ERROR, e);
 		}
 	}
 
 	private CustomTooltip loadUnsafe(JsonObject object) {
-		String id;
-		try {
-			id = require(object, "id").getAsString();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing Custom Tooltip ??? : could not load id", t);
-		}
+		String id = require(object, "id", String.class);
 
 		TooltipFactory factory;
 		try {
-			factory = TooltipFactory.LOADER.load(require(object, "text").getAsJsonObject());
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
 		} catch (Throwable t) {
-			throw new TooltipLoaderException(
-					"Exception while parsing CustomTooltip \"" + id + "\": could not load text", t);
+			throw new TooltipLoaderException(GENERAL_TEXT_ERROR, t);
 		}
 
 		TooltipCondition condition;
 		try {
-			condition = TooltipCondition.LOADER.load(require(object, "condition").getAsJsonObject());
+			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonObject.class));
 		} catch (Throwable t) {
-			throw new TooltipLoaderException(
-					"Exception while parsing CustomTooltip \"" + id + "\": could not load condition", t);
+			throw new TooltipLoaderException(GENERAL_CONDITION_ERROR, t);
 		}
 
 		return new CustomTooltip(id, factory).addCondition(condition);

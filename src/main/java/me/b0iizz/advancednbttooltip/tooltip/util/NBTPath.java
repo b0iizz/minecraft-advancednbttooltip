@@ -15,8 +15,7 @@ import net.minecraft.nbt.Tag;
  */
 public final class NBTPath {
 
-	private static final String arrayIndexIsolator = "[^(\\[\\d\\])&&[^\\[\\]]]";
-	private static final String nameIsolator = "[(\\[\\d\\])]";
+	private static final String arrayMatcher = "([a-zA-Z]+)(\\[(\\d+)\\])?";
 
 	/**
 	 * An empty path which is parent to all other paths
@@ -106,12 +105,12 @@ public final class NBTPath {
 		Tag result = root;
 		try {
 			for (int i = 0; i < path.length; i++) {
-				String elementName = path[i].replaceAll(nameIsolator, "");
+				String elementName = path[i].replaceAll(arrayMatcher, "$1");
 				if (result instanceof CompoundTag && ((CompoundTag) result).contains(elementName)) {
 					result = ((CompoundTag) result).get(elementName);
 				} else
 					return null;
-				String idxStr = path[i].replaceAll(arrayIndexIsolator, "").replaceAll("\\[", "").replaceAll("\\]", "");
+				String idxStr = path[i].replaceAll(arrayMatcher, "$3");
 				if (!idxStr.isEmpty() && result instanceof AbstractListTag<?>) {
 					int idx = Integer.parseInt(idxStr);
 					result = (Tag) ((AbstractListTag<?>) result).get(idx);
