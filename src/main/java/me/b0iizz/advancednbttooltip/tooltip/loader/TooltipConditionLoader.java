@@ -22,7 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.tooltip.loader;
 
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.optional;
+import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.suggest;
 import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -50,64 +51,78 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 	 */
 	public static final TooltipConditionLoader INSTANCE = new TooltipConditionLoader();
 
+	// Error messages
+	private static final String GENERAL_ERROR = "Exception while parsing TooltipCondition from json";
+	private static final String GENERAL_UNKNOWN_ID = "Unknown TooltipCondition id %s";
+	private static final String GENERAL_PARSING_ERROR = "Error while parsing %s: %s";
+
+	private static final String CONDITION_PARSING_ERROR = "Could not load condition";
+	private static final String CONDITION_ARRAY_PARSING_ERROR = "Could not load condition %s";
+
+	private static final String ITEM_ARRAY_ERROR = "Could not load id for item %s";
+	private static final String ITEM_RESOLVE_ERROR = "Could not resolve item id %s";
+
+	/**
+	 * @return All possible error messages that can be caused by this class
+	 */
+	public static String[] getAllErrorMessages() {
+		return new String[] { GENERAL_ERROR, GENERAL_UNKNOWN_ID, GENERAL_PARSING_ERROR, CONDITION_PARSING_ERROR,
+				CONDITION_ARRAY_PARSING_ERROR, ITEM_ARRAY_ERROR, ITEM_RESOLVE_ERROR };
+	}
+
 	@Override
 	public TooltipCondition load(JsonObject object) {
 		try {
 			return loadUnsafe(object);
 		} catch (Exception e) {
-			throw new TooltipLoaderException("Exception while parsing TooltipCondition from json", e);
+			throw new TooltipLoaderException(GENERAL_ERROR, e);
 		}
 	}
 
 	private TooltipCondition loadUnsafe(JsonObject object) {
-		String id;
+		String id = require(object, "id", String.class);
+
 		try {
-			id = require(object, "id").getAsString();
+			switch (id) {
+			case "not":
+				return parseNot(object);
+			case "and":
+				return parseAnd(object);
+			case "or":
+				return parseOr(object);
+			case "has_tag":
+				return parseHasTag(object);
+			case "tag_matches":
+				return parseTagMatches(object);
+			case "is_item":
+				return parseIsItem(object);
+			case "true":
+				return TooltipCondition.TRUE;
+			case "false":
+				return TooltipCondition.FALSE;
+			default:
+				throw new TooltipLoaderException(String.format(GENERAL_UNKNOWN_ID, id));
+			}
 		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing ??? : could not load id", t);
-		}
-		switch (id) {
-		case "not":
-			return parseNot(object);
-		case "and":
-			return parseAnd(object);
-		case "or":
-			return parseOr(object);
-		case "has_tag":
-			return parseHasTag(object);
-		case "tag_matches":
-			return parseTagMatches(object);
-		case "is_item":
-			return parseIsItem(object);
-		case "true":
-			return TooltipCondition.TRUE;
-		case "false":
-			return TooltipCondition.FALSE;
-		default:
-			throw new TooltipLoaderException("Unknown id parsing TooltipCondition " + id);
+			throw new TooltipLoaderException(String.format(GENERAL_PARSING_ERROR, id, t.getMessage()), t);
 		}
 	}
 
 	private TooltipCondition parseNot(JsonObject object) {
 		TooltipCondition condition;
 		try {
-			condition = TooltipCondition.LOADER.load(require(object, "condition").getAsJsonObject());
+			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonObject.class));
 		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing NOT: could not load condition", t);
+			throw new TooltipLoaderException(CONDITION_PARSING_ERROR, t);
 		}
 
-		return TooltipCondition.builtIn("NOT", condition);
+		return BuiltInCondition.NOT.create(condition);
 	}
 
 	private TooltipCondition parseAnd(JsonObject object) {
 		ArrayList<TooltipCondition> parsedConditions = new ArrayList<TooltipCondition>();
 
-		JsonArray conditions;
-		try {
-			conditions = require(object, "conditions").getAsJsonArray();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing AND: could not load conditions", t);
-		}
+		JsonArray conditions = require(object, "conditions", JsonArray.class);
 
 		for (int i = 0; i < conditions.size(); i++) {
 
@@ -116,24 +131,19 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			try {
 				condition = TooltipCondition.LOADER.load(conditions.get(i).getAsJsonObject());
 			} catch (Throwable t) {
-				throw new TooltipLoaderException("Exception while parsing AND: could not load condition " + i, t);
+				throw new TooltipLoaderException(String.format(CONDITION_ARRAY_PARSING_ERROR, i), t);
 			}
 
 			parsedConditions.add(condition);
 		}
 
-		return TooltipCondition.builtIn("AND", parsedConditions.toArray());
+		return BuiltInCondition.AND.create((Object[]) parsedConditions.toArray());
 	}
 
 	private TooltipCondition parseOr(JsonObject object) {
 		ArrayList<TooltipCondition> parsedConditions = new ArrayList<TooltipCondition>();
 
-		JsonArray conditions;
-		try {
-			conditions = require(object, "conditions").getAsJsonArray();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing OR: could not load conditions", t);
-		}
+		JsonArray conditions = require(object, "conditions", JsonArray.class);
 
 		for (int i = 0; i < conditions.size(); i++) {
 
@@ -142,79 +152,55 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			try {
 				condition = TooltipCondition.LOADER.load(conditions.get(i).getAsJsonObject());
 			} catch (Throwable t) {
-				throw new TooltipLoaderException("Exception while parsing OR: could not load condition " + i, t);
+				throw new TooltipLoaderException(String.format(CONDITION_ARRAY_PARSING_ERROR, i), t);
 			}
 
 			parsedConditions.add(condition);
 		}
 
-		return TooltipCondition.builtIn("OR", parsedConditions.toArray());
+		return BuiltInCondition.OR.create((Object[]) parsedConditions.toArray());
 	}
 
 	private TooltipCondition parseHasTag(JsonObject object) {
-		String tag;
-		try {
-			tag = require(object, "tag").getAsString();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing HAS_TAG: could not load tag", t);
-		}
+		String tag = require(object, "tag", String.class);
 
-		Optional<JsonElement> typeRequirement = optional(object, "type");
+		Optional<Integer> typeRequirement = suggest(object, "type", Integer.class);
 		if (typeRequirement.isPresent()) {
-			int type;
-			try {
-				type = typeRequirement.get().getAsInt();
-			} catch (Throwable t) {
-				throw new TooltipLoaderException("Exception while parsing HAS_TAG: could not load type", t);
-			}
-			return TooltipCondition.builtIn("HAS_TAG", tag, type);
+			int type = typeRequirement.orElse(0);
+			return BuiltInCondition.HAS_TAG.create(tag, type);
 		} else {
-			return TooltipCondition.builtIn("HAS_TAG", tag);
+			return BuiltInCondition.HAS_TAG.create(tag);
 		}
 	}
-	
+
 	private TooltipCondition parseTagMatches(JsonObject object) {
-		String tag;
-		try {
-			tag = require(object, "tag").getAsString();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing TAG_MATCHES: could not load tag", t);
-		}
-		
-		String value;
-		try {
-			value = require(object, "value").toString().replaceAll("\"^", "").replaceAll("$\"", "");
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing TAG_MATCHES: could not load value", t);
-		}
-		
-		return TooltipCondition.builtIn("TAG_MATCHES", tag, value);
+		String tag = require(object, "tag", String.class);
+
+		String value = require(object, "value", JsonElement.class).toString().replaceAll("\"^", "").replaceAll("$\"",
+				"");
+
+		return BuiltInCondition.TAG_MATCHES.create(tag, value);
 	}
-	
+
 	private TooltipCondition parseIsItem(JsonObject object) {
 		ArrayList<ItemConvertible> items = new ArrayList<>();
 
-		JsonArray itemList;
-		try {
-			itemList = require(object, "items").getAsJsonArray();
-		} catch (Throwable t) {
-			throw new TooltipLoaderException("Exception while parsing IS_ITEM: could not load items", t);
-		}
+		JsonArray itemList = require(object, "items", JsonArray.class);
 
 		for (int i = 0; i < itemList.size(); i++) {
 			String id;
 			try {
 				id = itemList.get(i).getAsString();
 			} catch (Throwable t) {
-				throw new TooltipLoaderException("Exception while parsing IS_ITEM: could not load id for item " + i, t);
+				throw new TooltipLoaderException(String.format(ITEM_ARRAY_ERROR, i), t);
 			}
 			Identifier trueId = new Identifier(id);
 			if (!Registry.ITEM.containsId(trueId))
-				throw new TooltipLoaderException("Could not resolve item id " + id);
+				throw new TooltipLoaderException(String.format(ITEM_RESOLVE_ERROR, id));
 			items.add(Registry.ITEM.get(trueId));
 		}
 
-		return TooltipCondition.builtIn("IS_ITEM", items.toArray());
+		return BuiltInCondition.IS_ITEM.create((Object[]) items.toArray());
 	}
 
 	private TooltipConditionLoader() {

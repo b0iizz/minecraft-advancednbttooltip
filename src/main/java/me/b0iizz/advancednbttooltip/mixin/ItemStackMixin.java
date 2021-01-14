@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,8 +48,8 @@ public class ItemStackMixin {
 
 	@ModifyVariable(at = @At(value = "INVOKE_ASSIGN", target = "net.minecraft.item.ItemStack.getHideFlags()I"), method = "getTooltip")
 	public int rewriteHideFlags(int i) {
-		if (ConfigManager.isUsingItemStackInjection()) {
-			return i & ConfigManager.getItemStackInjectorBitmask();
+		if (ConfigManager.overrideHideFlags()) {
+			return i & ConfigManager.getHideflagOverrideBitmask();
 		}
 		return i;
 	}
@@ -61,13 +62,18 @@ public class ItemStackMixin {
 	@Inject(at = @At("RETURN"), method = "getTooltip", cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void appendTooltips(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci,
 			List<Text> list) {
-		ArrayList<Text> text = new ArrayList<>();
-		CustomTooltipManager.appendCustomTooltip(copy(), player == null ? null : player.world, text, context, ci);
+		if (ConfigManager.getTooltipToggle()) {
+			ArrayList<Text> text = new ArrayList<>();
+			CustomTooltipManager.appendCustomTooltip(copy(), player == null ? null : player.world, text, context, ci);
 
-		if (!list.isEmpty() && !text.isEmpty())
-			text.add(0, new LiteralText(""));
+			if (!list.isEmpty() && !text.isEmpty())
+				text.add(0, new LiteralText(""));
 
-		list.addAll(ConfigManager.getTooltipPosition().position(list), text);
+			if (ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && list.size() > 1)
+				text.add(new LiteralText(" "));
+
+			list.addAll(ConfigManager.getTooltipPosition().position(list), text);
+		}
 
 		ci.setReturnValue(list);
 	}

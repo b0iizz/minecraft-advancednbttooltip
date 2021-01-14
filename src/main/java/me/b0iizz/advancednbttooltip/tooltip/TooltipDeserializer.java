@@ -38,6 +38,7 @@ import com.google.gson.JsonObject;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.Item;
@@ -118,7 +119,7 @@ public class TooltipDeserializer {
 		DeserializedLineArgument[] arguments = deserializeLineArguments(obj);
 
 		TooltipCondition[] conditions = deserializeConditions(obj);
-		TooltipCondition condition = TooltipCondition.builtIn("AND", (Object[]) conditions);
+		TooltipCondition condition = BuiltInCondition.forName("AND", (Object[]) conditions);
 
 		return new DeserializedLine(pattern, condition, arguments);
 	}
@@ -162,7 +163,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return TooltipCondition.builtIn(type, require(obj,"tag").getAsString());
+			return BuiltInCondition.forName(type, require(obj,"tag").getAsString());
 		}
 		case "HAS_ITEM": {
 			List<Item> items = new ArrayList<>();
@@ -175,7 +176,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return TooltipCondition.builtIn(type, items.toArray());
+			return BuiltInCondition.forName(type, items.toArray());
 		}
 		case "NOT": {
 			TooltipCondition condition = deserializeCondition(require(obj,"condition"));
@@ -183,7 +184,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return TooltipCondition.builtIn(type, condition);
+			return BuiltInCondition.forName(type, condition);
 		}
 		case "AND": {
 			TooltipCondition[] conditions = deserializeConditions(obj);
@@ -191,7 +192,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return TooltipCondition.builtIn(type, (Object[]) conditions);
+			return BuiltInCondition.forName(type, (Object[]) conditions);
 		}
 		case "OR": {
 			TooltipCondition[] conditions = deserializeConditions(obj);
@@ -199,7 +200,7 @@ public class TooltipDeserializer {
 			//Logging
 			retractPath();
 			
-			return TooltipCondition.builtIn(type, (Object[]) conditions);
+			return BuiltInCondition.forName(type, (Object[]) conditions);
 		}
 		case "TRUE": {
 			

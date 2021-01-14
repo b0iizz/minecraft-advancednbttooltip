@@ -40,6 +40,7 @@ import com.google.gson.stream.JsonReader;
 import me.b0iizz.advancednbttooltip.ModMain;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -150,7 +151,7 @@ public final class CustomTooltipManager {
 				result.add(line.formatted(eff.getType().getFormatting()));
 			}
 			return result;
-		}).addCondition("IS_ITEM", Items.SUSPICIOUS_STEW).addCondition("HAS_TAG", "Effects")
+		}).addCondition(BuiltInCondition.IS_ITEM, Items.SUSPICIOUS_STEW).addCondition(BuiltInCondition.HAS_TAG, "Effects")
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getSuspiciousStewToggle();
 				}));
@@ -176,11 +177,9 @@ public final class CustomTooltipManager {
 				}
 				line = new LiteralText("  (" + lodestoneDimension + ")").formatted(Formatting.GRAY);
 				result.add(line);
-
-				result.add(new LiteralText(""));
 			}
 			return result;
-		}).addCondition("IS_ITEM", Items.COMPASS).addCondition("HAS_TAG", "LodestoneTracked")
+		}).addCondition(BuiltInCondition.IS_ITEM, Items.COMPASS).addCondition(BuiltInCondition.HAS_TAG, "LodestoneTracked")
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getCompassToggle();
 				}));
@@ -212,7 +211,7 @@ public final class CustomTooltipManager {
 			}
 
 			return result;
-		}).addCondition("HAS_TAG", "pages").addCondition("IS_ITEM", Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
+		}).addCondition(BuiltInCondition.HAS_TAG, "pages").addCondition(BuiltInCondition.IS_ITEM, Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
 				.addCondition((i, t, c) -> {
 					return ConfigManager.getBookToggle();
 				}));
@@ -228,7 +227,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("HAS_TAG", "CustomModelData").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.HAS_TAG, "CustomModelData").addCondition((i, t, c) -> {
 			return ConfigManager.getCustomModelDataToggle();
 		}));
 
@@ -246,7 +245,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("HAS_TAG", "RepairCost").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.HAS_TAG, "RepairCost").addCondition((i, t, c) -> {
 			return ConfigManager.getRepairCostToggle();
 		}));
 
@@ -266,7 +265,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("HAS_TAG", "BlockEntityTag.Bees").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag.Bees").addCondition((i, t, c) -> {
 			return ConfigManager.getBeeToggle();
 		}));
 
@@ -283,7 +282,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("HAS_TAG", "EntityTag").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.HAS_TAG, "EntityTag").addCondition((i, t, c) -> {
 			return ConfigManager.getSpawnEggToggle();
 		}));
 
@@ -344,8 +343,8 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition("IS_ITEM", Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK)
-				.addCondition("HAS_TAG", "BlockEntityTag").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.IS_ITEM, Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK)
+				.addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag").addCondition((i, t, c) -> {
 					return ConfigManager.getCommandBlocksToggle();
 				}));
 
@@ -368,7 +367,7 @@ public final class CustomTooltipManager {
 			}
 
 			return result;
-		}).addCondition("HAS_TAG", "HideFlags").addCondition((i, t, c) -> {
+		}).addCondition(BuiltInCondition.HAS_TAG, "HideFlags").addCondition((i, t, c) -> {
 			return ConfigManager.getHideFlagsToggle();
 		}));
 	}

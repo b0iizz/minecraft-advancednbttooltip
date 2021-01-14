@@ -28,6 +28,7 @@ import java.util.List;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
@@ -71,10 +72,16 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 
 	@Override
 	public CustomTooltip addCondition(String conditionName, Object... args) {
-		addCondition(TooltipCondition.builtIn(conditionName, args));
+		addCondition(BuiltInCondition.valueOf(conditionName).create(args));
 		return this;
 	}
 
+	@Override
+	public AbstractCustomTooltip addCondition(BuiltInCondition condition, Object... args) {
+		addCondition(condition.create(args));
+		return this;
+	}
+	
 	@Override
 	public CustomTooltip addCondition(TooltipCondition condition) {
 		conditions.add(condition);
@@ -103,5 +110,6 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 	public String getName() {
 		return name;
 	}
+
 
 }

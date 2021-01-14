@@ -25,7 +25,6 @@ package me.b0iizz.advancednbttooltip.config;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
 import me.b0iizz.advancednbttooltip.ModMain;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 
 /**
  * The entrypoint for ModMenu by prospector <br>
@@ -52,7 +51,7 @@ public class ModMenuEntry implements ModMenuApi {
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return parent -> {
-			return AutoConfig.getConfigScreen(ModConfig.class, parent).get();
+			return ConfigManager.getConfigScreen(parent).get();
 		};
 
 	}

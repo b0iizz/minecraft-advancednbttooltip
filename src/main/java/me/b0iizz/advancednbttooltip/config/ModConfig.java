@@ -24,10 +24,11 @@ package me.b0iizz.advancednbttooltip.config;
 
 import java.util.List;
 
-
+import me.b0iizz.advancednbttooltip.ModMain;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
 
 /**
  * The class representation of this mod's config. Based on this class,
@@ -40,143 +41,170 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
  * 
  * @author B0IIZZ
  */
-@Config(name = "advancednbttooltip")
-public class ModConfig implements ConfigData {
+@Config(name = ModMain.modid)
+public class ModConfig extends PartitioningSerializer.GlobalData {
 
-	// TODO: Category General Options
-
+	@ConfigEntry.Category("nbt_general")
+	@ConfigEntry.Gui.TransitiveObject
+	GeneralConfig general = new GeneralConfig();
+	
+	@ConfigEntry.Category("nbt_toggle")
+	@ConfigEntry.Gui.TransitiveObject
+	ToggleConfig toggles = new ToggleConfig();
+	
 	/**
-	 * See In-game description.
+	 * The Category of the config containing all general options
+	 *
+	 * @author B0IIZZ
 	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleSuspiciousStewTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleCompassTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleBookTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleCustomModelDataTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleRepairCostTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleBeeTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleSpawnEggTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleSignsTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleCommandBlocksTooltip = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean toggleHideFlagsTooltip = true;
-
-	// TODO: Category Technical Options
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-	@ConfigEntry.Gui.Tooltip
-	TooltipPosition tooltipPosition = TooltipPosition.TOP;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.Tooltip
-	boolean mainMenuUpdateNotice = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.PrefixText
-	@ConfigEntry.Gui.Tooltip(count = 2)
-	boolean useItemStackInjector = true;
-
-	/**
-	 * See In-game description.
-	 */
-	@ConfigEntry.Gui.CollapsibleObject
-	@ConfigEntry.Gui.Tooltip
-	HideFlagsOverrides injectorOptions = new HideFlagsOverrides();
-
-	static class HideFlagsOverrides {
+	@Config(name = "nbt_general")
+	public static class GeneralConfig implements ConfigData {
+		
+		/**
+		 * See In-game description.
+		 */
+		boolean enableTooltips = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+		@ConfigEntry.Gui.Tooltip
+		TooltipPosition tooltipPosition = TooltipPosition.TOP;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideEnchantments = false;
+		boolean mainMenuUpdateNotice = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.PrefixText
+		@ConfigEntry.Gui.Tooltip(count = 2)
+		boolean overrideHideFlags = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.CollapsibleObject
+		@ConfigEntry.Gui.Tooltip
+		HideFlagsOverrides hideflagOverrides = new HideFlagsOverrides();
+		
+		static class HideFlagsOverrides {
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideEnchantments = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideAttributeModifiers = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideUnbreakable = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideCanDestroy = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideCanPlaceOn = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideAppendTooltip = true;
+
+			/**
+			 * See In-game description.
+			 */
+			@ConfigEntry.Gui.Tooltip
+			boolean overrideDyeTooltip = true;
+		}
+	}
+	
+	/**
+	 * The Category of the config containing all toggles
+	 *
+	 * @author B0IIZZ
+	 */
+	@Config(name = "nbt_toggle")
+	public static class ToggleConfig implements ConfigData {
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideAttributeModifiers = false;
+		boolean toggleSuspiciousStewTooltip = true;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideUnbreakable = false;
+		boolean toggleCompassTooltip = true;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideCanDestroy = false;
+		boolean toggleBookTooltip = true;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideCanPlaceOn = false;
+		boolean toggleCustomModelDataTooltip = true;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideAppendTooltip = true;
+		boolean toggleRepairCostTooltip = true;
 
 		/**
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean overrideDyeTooltip = false;
+		boolean toggleBeeTooltip = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleSpawnEggTooltip = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleSignsTooltip = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleCommandBlocksTooltip = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleHideFlagsTooltip = true;
 	}
 
 	/**
