@@ -24,7 +24,9 @@ package me.b0iizz.advancednbttooltip;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.config.CustomTooltipResourceReloadListener;
+import me.b0iizz.advancednbttooltip.config.ModKeybinds;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -62,9 +64,12 @@ public class ModMain implements ClientModInitializer {
 	public void onInitializeClient() {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
-				.registerReloadListener(new CustomTooltipResourceReloadListener());
 
+		ModKeybinds.initKeyBindings();
+		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
+		
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+		.registerReloadListener(new CustomTooltipResourceReloadListener());
 		UpdateChecker.refreshUpdates();
 
 	}
