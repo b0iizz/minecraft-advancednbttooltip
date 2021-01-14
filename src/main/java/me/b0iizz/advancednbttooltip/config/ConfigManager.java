@@ -22,8 +22,12 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import java.util.function.Supplier;
+
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
+import net.minecraft.client.gui.screen.Screen;
 
 /**
  * Handles communication between the mod's config and the rest of the mod.
@@ -42,7 +46,7 @@ public class ConfigManager {
 	 * called except in {@link me.b0iizz.advancednbttooltip.ModMain ModMain}
 	 */
 	public static void registerConfig() {
-		AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
+		AutoConfig.register(ModConfig.class, PartitioningSerializer.wrap(GsonConfigSerializer::new));
 	}
 
 	/**
@@ -52,126 +56,142 @@ public class ConfigManager {
 	public static void loadConfig() {
 		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 	}
-
+	
+	/**
+	 * @param parent The parent screen
+	 * @return A new Config Screen
+	 */
+	public static Supplier<Screen> getConfigScreen(Screen parent) {
+		return AutoConfig.getConfigScreen(ModConfig.class, parent);
+	}
+	
 	// TODO: Category General Options
 
 	/**
-	 * @return The state of the toggle controlling the "Suspicious Stew" tooltip.
+	 * @return true when custom tooltips should be shown
 	 */
-	public static boolean getSuspiciousStewToggle() {
-		return config.toggleSuspiciousStewTooltip;
+	public static boolean getTooltipToggle() {
+		return config.general.enableTooltips;
 	}
-
+	
 	/**
-	 * @return The state of the toggle controlling the "Compass" tooltip.
+	 * @return The state of the toggle controlling whether a notice should be added
+	 *         to the title screen when a new update is out.
 	 */
-	public static boolean getCompassToggle() {
-		return config.toggleCompassTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Book" tooltip.
-	 */
-	public static boolean getBookToggle() {
-		return config.toggleBookTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "CustomModelData" tooltip.
-	 */
-	public static boolean getCustomModelDataToggle() {
-		return config.toggleCustomModelDataTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "RepairCost" tooltip.
-	 */
-	public static boolean getRepairCostToggle() {
-		return config.toggleRepairCostTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Bee" tooltip.
-	 */
-	public static boolean getBeeToggle() {
-		return config.toggleBeeTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "SpawnEggs" tooltip.
-	 */
-	public static boolean getSpawnEggToggle() {
-		return config.toggleSpawnEggTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Signs" tooltip.
-	 */
-	public static boolean getSignsToggle() {
-		return config.toggleSignsTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Command Blocks" tooltip.
-	 */
-	public static boolean getCommandBlocksToggle() {
-		return config.toggleCommandBlocksTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "HideFlags" tooltip.
-	 */
-	public static boolean getHideFlagsToggle() {
-		return config.toggleHideFlagsTooltip;
+	public static boolean getMainMenuUpdateNoticeToggle() {
+		return config.general.mainMenuUpdateNotice;
 	}
 
 	/**
 	 * @return The location where custom tooltips should be placed
 	 */
 	public static ModConfig.TooltipPosition getTooltipPosition() {
-		return config.tooltipPosition;
-	}
-
-	// TODO: Category Technical Options
-
-	/**
-	 * @return The state of the toggle controlling whether a notice should be added
-	 *         to the title screen when a new update is out.
-	 */
-	public static boolean getMainMenuUpdateNoticeToggle() {
-		return config.mainMenuUpdateNotice;
+		return config.general.tooltipPosition;
 	}
 
 	/**
-	 * @return <b>true</b>, when the result of {@link "getItemStackInjectorBitmask()"} should be bitwise AND-ed with the
-	 *         HideFlags property. <br>
+	 * @return <b>true</b>, when the result of
+	 *         {@link "getItemStackInjectorBitmask()"} should be bitwise AND-ed with
+	 *         the HideFlags property. <br>
 	 *         <b>false</b>, when not.
 	 */
-	public static boolean isUsingItemStackInjection() {
-		return config.useItemStackInjector;
+	public static boolean overrideHideFlags() {
+		return config.general.overrideHideFlags;
 	}
 
 	/**
 	 * @return The bitmask which is then bitwise AND-ed with the HideFlags property
 	 */
-	public static int getItemStackInjectorBitmask() {
+	public static int getHideflagOverrideBitmask() {
 		int mask = 0x7F;
 
-		if (config.injectorOptions.overrideEnchantments)
+		if (config.general.hideflagOverrides.overrideEnchantments)
 			mask &= 0x7E;
-		if (config.injectorOptions.overrideAttributeModifiers)
+		if (config.general.hideflagOverrides.overrideAttributeModifiers)
 			mask &= 0x7D;
-		if (config.injectorOptions.overrideUnbreakable)
+		if (config.general.hideflagOverrides.overrideUnbreakable)
 			mask &= 0x7B;
-		if (config.injectorOptions.overrideCanDestroy)
+		if (config.general.hideflagOverrides.overrideCanDestroy)
 			mask &= 0x77;
-		if (config.injectorOptions.overrideCanPlaceOn)
+		if (config.general.hideflagOverrides.overrideCanPlaceOn)
 			mask &= 0x6F;
-		if (config.injectorOptions.overrideAppendTooltip)
+		if (config.general.hideflagOverrides.overrideAppendTooltip)
 			mask &= 0x5F;
-		if (config.injectorOptions.overrideDyeTooltip)
+		if (config.general.hideflagOverrides.overrideDyeTooltip)
 			mask &= 0x3F;
 
 		return mask;
+	}
+
+	// TODO: Category Toggle Options
+
+	/**
+	 * @return The state of the toggle controlling the "Suspicious Stew" tooltip.
+	 */
+	public static boolean getSuspiciousStewToggle() {
+		return config.toggles.toggleSuspiciousStewTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "Compass" tooltip.
+	 */
+	public static boolean getCompassToggle() {
+		return config.toggles.toggleCompassTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "Book" tooltip.
+	 */
+	public static boolean getBookToggle() {
+		return config.toggles.toggleBookTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "CustomModelData" tooltip.
+	 */
+	public static boolean getCustomModelDataToggle() {
+		return config.toggles.toggleCustomModelDataTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "RepairCost" tooltip.
+	 */
+	public static boolean getRepairCostToggle() {
+		return config.toggles.toggleRepairCostTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "Bee" tooltip.
+	 */
+	public static boolean getBeeToggle() {
+		return config.toggles.toggleBeeTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "SpawnEggs" tooltip.
+	 */
+	public static boolean getSpawnEggToggle() {
+		return config.toggles.toggleSpawnEggTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "Signs" tooltip.
+	 */
+	public static boolean getSignsToggle() {
+		return config.toggles.toggleSignsTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "Command Blocks" tooltip.
+	 */
+	public static boolean getCommandBlocksToggle() {
+		return config.toggles.toggleCommandBlocksTooltip;
+	}
+
+	/**
+	 * @return The state of the toggle controlling the "HideFlags" tooltip.
+	 */
+	public static boolean getHideFlagsToggle() {
+		return config.toggles.toggleHideFlagsTooltip;
 	}
 }

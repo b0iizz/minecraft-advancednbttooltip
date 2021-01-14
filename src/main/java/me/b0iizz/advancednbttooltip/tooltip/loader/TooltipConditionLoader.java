@@ -51,17 +51,25 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 	 */
 	public static final TooltipConditionLoader INSTANCE = new TooltipConditionLoader();
 
-	//Error messages
+	// Error messages
 	private static final String GENERAL_ERROR = "Exception while parsing TooltipCondition from json";
 	private static final String GENERAL_UNKNOWN_ID = "Unknown TooltipCondition id %s";
 	private static final String GENERAL_PARSING_ERROR = "Error while parsing %s: %s";
-	
+
 	private static final String CONDITION_PARSING_ERROR = "Could not load condition";
 	private static final String CONDITION_ARRAY_PARSING_ERROR = "Could not load condition %s";
-	
+
 	private static final String ITEM_ARRAY_ERROR = "Could not load id for item %s";
 	private static final String ITEM_RESOLVE_ERROR = "Could not resolve item id %s";
-	
+
+	/**
+	 * @return All possible error messages that can be caused by this class
+	 */
+	public static String[] getAllErrorMessages() {
+		return new String[] { GENERAL_ERROR, GENERAL_UNKNOWN_ID, GENERAL_PARSING_ERROR, CONDITION_PARSING_ERROR,
+				CONDITION_ARRAY_PARSING_ERROR, ITEM_ARRAY_ERROR, ITEM_RESOLVE_ERROR };
+	}
+
 	@Override
 	public TooltipCondition load(JsonObject object) {
 		try {
@@ -168,7 +176,8 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 	private TooltipCondition parseTagMatches(JsonObject object) {
 		String tag = require(object, "tag", String.class);
 
-		String value = require(object, "value", JsonElement.class).toString().replaceAll("\"^", "").replaceAll("$\"", "");
+		String value = require(object, "value", JsonElement.class).toString().replaceAll("\"^", "").replaceAll("$\"",
+				"");
 
 		return BuiltInCondition.TAG_MATCHES.create(tag, value);
 	}

@@ -43,6 +43,10 @@ import com.google.gson.JsonPrimitive;
  */
 class JSONUtil {
 
+	public JSONUtil() {
+		throw new UnsupportedOperationException();
+	}
+	
 	// Error messages
 	private static final String FIELD_NOT_FOUND = "Could not find required field: %s";
 	private static final String WRONG_TYPE = "Required field %s is not of expected type %s!";

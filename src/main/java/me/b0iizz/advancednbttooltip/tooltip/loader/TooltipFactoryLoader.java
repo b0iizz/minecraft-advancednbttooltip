@@ -64,6 +64,15 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	private static final String CONDITIONAL_FAIL_PARSING_ERROR = "Could not load fail case text";
 	private static final String CONDITION_PARSING_ERROR = "Could not load condition";
 
+	/**
+	 * @return All possible error messages that can be caused by this class
+	 */
+	public static String[] getAllErrorMessages() {
+		return new String[] { GENERAL_ERROR, GENERAL_UNKNOWN_ID, GENERAL_PARSING_ERROR, TEXT_PARSING_ERROR,
+				TEXT_ARRAY_PARSING_ERROR, ARGUMENTPROVIDER_PARSING_ERROR, CONDITIONAL_SUCCESS_PARSING_ERROR,
+				CONDITIONAL_FAIL_PARSING_ERROR, CONDITION_PARSING_ERROR };
+	}
+
 	@Override
 	public TooltipFactory load(JsonObject object) {
 		try {

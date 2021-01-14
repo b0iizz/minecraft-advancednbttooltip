@@ -49,6 +49,13 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 	private static final String GENERAL_TEXT_ERROR = "Could not load root TooltipFactory (text) object";
 	private static final String GENERAL_CONDITION_ERROR = "Could not load root condition";
 
+	/**
+	 * @return All possible error messages that can be caused by this utility class
+	 */
+	public static String[] getAllErrorMessages() {
+		return new String[] { GENERAL_ERROR, GENERAL_TEXT_ERROR, GENERAL_CONDITION_ERROR};
+	}
+	
 	@Override
 	public AbstractCustomTooltip load(JsonObject object) {
 		try {
