@@ -91,7 +91,7 @@ public class ConfigManager {
 
 	/**
 	 * @return <b>true</b>, when the result of
-	 *         {@link "getItemStackInjectorBitmask()"} should be bitwise AND-ed with
+	 *         {@link #getHideflagOverrideBitmask()} should be bitwise AND-ed with
 	 *         the HideFlags property. <br>
 	 *         <b>false</b>, when not.
 	 */
