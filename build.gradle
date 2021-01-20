@@ -22,7 +22,7 @@ dependencies {
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
-	modImplementation "io.github.prospector:modmenu:1.14.6+build.31"
+	modImplementation "io.github.prospector:modmenu:1.14.9+build.14"
 	modApi("me.shedaniel.cloth:config-2:4.8.2") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}

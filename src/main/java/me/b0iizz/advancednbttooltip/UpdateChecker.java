@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
@@ -92,40 +93,43 @@ public final class UpdateChecker {
 	 * Rechecks if the mod is up to date.
 	 */
 	public static void refreshUpdates() {
+		if(!ConfigManager.getMainMenuUpdateNoticeToggle()) return;
 		hasCheckedUpdates = false;
 		checkUpdates();
 	}
 
 	private static void checkUpdates() {
-		hasCheckedUpdates = true;
-		try {
-			String currentMinecraftReleaseTarget = SharedConstants.getGameVersion().getReleaseTarget();
-			
-			SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
-					.getVersion().getFriendlyString().split("\\+")[0]);
-
-			URL update = new URL(UPDATE_URL);
-			URLConnection connection = update.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				String[] attributes = inputLine.split(":");
-				String releaseTarget = attributes[0];
-				String modid = attributes[1];
-				SemanticVersion newestPatchVersion = VersionDeserializer.deserializeSemantic(attributes[2]);
-				boolean criticalError = attributes.length > 3 ? attributes[3].equals("true") : false;
+		new Thread(() -> {
+			hasCheckedUpdates = true;
+			try {
+				String currentMinecraftReleaseTarget = SharedConstants.getGameVersion().getReleaseTarget();
 				
-				if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(ModMain.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
-					isLatest = false;
-					isCritical = criticalError;
+				SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
+						.getVersion().getFriendlyString().split("\\+")[0]);
+
+				URL update = new URL(UPDATE_URL);
+				URLConnection connection = update.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String inputLine;
+				while ((inputLine = in.readLine()) != null) {
+					String[] attributes = inputLine.split(":");
+					String releaseTarget = attributes[0];
+					String modid = attributes[1];
+					SemanticVersion newestPatchVersion = VersionDeserializer.deserializeSemantic(attributes[2]);
+					boolean criticalError = attributes.length > 3 ? attributes[3].equals("true") : false;
+					
+					if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(ModMain.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
+						isLatest = false;
+						isCritical = criticalError;
+					}
 				}
+				in.close();
+			} catch (Exception e) {
+				if (e instanceof NumberFormatException || e instanceof VersionParsingException)
+					isLatest = false;
+				LOGGER.info(" Error in update checker! Ignore this in a development environment! {}: {}", e.getClass().getCanonicalName(), e.getMessage());
 			}
-			in.close();
-		} catch (Exception e) {
-			if (e instanceof NumberFormatException || e instanceof VersionParsingException)
-				isLatest = false;
-			LOGGER.info("(AdvancedNbtTooltip) Error in update checker! Ignore this in a development environment! {}: {}", e.getClass().getCanonicalName(), e.getMessage());
-		}
+		},"adv-nbt-tool-update").start();
 	}
 
 	/**
