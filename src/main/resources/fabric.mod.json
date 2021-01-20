@@ -13,7 +13,9 @@
 	"sources": "https://github.com/b0iizz/minecraft-advancednbttooltip",
 	"issues": "https://github.com/b0iizz/minecraft-advancednbttooltip/issues/new"
   },
-
+  "contributors": [
+	"GuNanOvO"
+  ], 
   "license": "MIT",
   "icon": "assets/advancednbttooltip/icon.png",
   "environment": "client",
