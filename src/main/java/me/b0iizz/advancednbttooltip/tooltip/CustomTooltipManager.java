@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -39,6 +38,7 @@ import com.google.gson.stream.JsonReader;
 
 import me.b0iizz.advancednbttooltip.ModMain;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.block.Block;
@@ -59,7 +59,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
 
 /**
  * A class handling registering and appending all the {@link CustomTooltip
@@ -88,35 +87,38 @@ public final class CustomTooltipManager {
 	}
 
 	/**
-	 * Used by the classes of the me.b0iizz.advancednbttooltip.mixin package to
-	 * interact with the tooltip pipeline.
-	 *
-	 * @param stack   The {@link ItemStack} of which a tooltip should be generated.
-	 * @param world   The {@link World} where this task is being executed.
-	 * @param tooltip The List of text to add Tooltips to.
-	 * @param context The {@link TooltipContext} where the tooltip is being
-	 *                generated.
-	 * @param info    The {@link CallbackInfo} provided by the mixins.
+	 * The tooltip handler for the ItemTooltipCallback
+	 * 
+	 * @param stack The item stack
+	 * @param ctx The context of the tooltip
+	 * @param lines The lines in the tooltip
 	 */
-	public static void appendCustomTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context,
-			CallbackInfo info) {
-		appendCustomTooltip(stack, world, tooltip, context);
-	}
+	public static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
+		if (ConfigManager.getTooltipToggle()) {
+			ArrayList<Text> text = new ArrayList<>();
+			CustomTooltipManager.appendCustomTooltip(stack.copy(), text, ctx);
 
+			if (!lines.isEmpty() && !text.isEmpty())
+				text.add(0, new LiteralText(""));
+
+			if (ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && lines.size() > 1)
+				text.add(new LiteralText(" "));
+
+			lines.addAll(ConfigManager.getTooltipPosition().position(lines), text);
+		}
+	}
+	
 	/**
-	 * Used by the classes of the me.b0iizz.advancednbttooltip.mixin package to
+	 * Used by the ItemTooltipCallback function to
 	 * interact with the tooltip pipeline.
 	 * 
 	 * @param stack   The {@link ItemStack} of which a tooltip should be generated.
-	 * @param world   The {@link World} where this task is being executed.
 	 * @param tooltip The List of text to add Tooltips to.
 	 * @param context The {@link TooltipContext} where the tooltip is being
 	 *                generated.
 	 *
 	 */
-	public static void appendCustomTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-		if (world == null)
-			return;
+	public static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
 		CompoundTag tag = stack.getTag();
 		for (AbstractCustomTooltip t : registeredTooltips.values()) {

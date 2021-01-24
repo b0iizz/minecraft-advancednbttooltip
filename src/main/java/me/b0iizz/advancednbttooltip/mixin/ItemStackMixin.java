@@ -22,25 +22,12 @@
 */
 package me.b0iizz.advancednbttooltip.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 
 @SuppressWarnings("javadoc")
 @Mixin(ItemStack.class)
@@ -52,29 +39,5 @@ public class ItemStackMixin {
 			return i & ConfigManager.getHideflagOverrideBitmask();
 		}
 		return i;
-	}
-
-	@Shadow
-	public ItemStack copy() {
-		return ItemStack.EMPTY;
-	}
-
-	@Inject(at = @At("RETURN"), method = "getTooltip", cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void appendTooltips(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci,
-			List<Text> list) {
-		if (ConfigManager.getTooltipToggle()) {
-			ArrayList<Text> text = new ArrayList<>();
-			CustomTooltipManager.appendCustomTooltip(copy(), player == null ? null : player.world, text, context, ci);
-
-			if (!list.isEmpty() && !text.isEmpty())
-				text.add(0, new LiteralText(""));
-
-			if (ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && list.size() > 1)
-				text.add(new LiteralText(" "));
-
-			list.addAll(ConfigManager.getTooltipPosition().position(list), text);
-		}
-
-		ci.setReturnValue(list);
 	}
 }
