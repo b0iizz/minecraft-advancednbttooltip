@@ -30,7 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 
 /**
  * An interface used to restrict the visibility of a tooltip.
- * 
+ * A lambda or built-in implementation is recommended.
  * @author B0IIZZ
  */
 @FunctionalInterface
