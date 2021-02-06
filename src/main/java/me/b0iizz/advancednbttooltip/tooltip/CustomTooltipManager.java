@@ -41,7 +41,6 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -53,7 +52,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -130,7 +128,6 @@ public final class CustomTooltipManager {
 		registeredTooltips = new HashMap<>();
 	}
 
-	@SuppressWarnings("resource")
 	private static void registerBuiltInTooltips() {
 		// TODO: SUSPICIOUS STEW
 		registerTooltip(new CustomTooltip("SUSPICIOUS_STEW", (item, tag, context) -> {
@@ -316,14 +313,12 @@ public final class CustomTooltipManager {
 			if (tag == null)
 				return false;
 
-			boolean isSign = Block.getBlockFromItem(item).isIn(BlockTags.SIGNS);
-
 			boolean text1 = tag.getCompound("BlockEntityTag").contains("Text1");
 			boolean text2 = tag.getCompound("BlockEntityTag").contains("Text2");
 			boolean text3 = tag.getCompound("BlockEntityTag").contains("Text3");
 			boolean text4 = tag.getCompound("BlockEntityTag").contains("Text4");
 
-			return isSign && (text1 || text2 || text3 || text4);
+			return (text1 || text2 || text3 || text4);
 		}).addCondition((i, t, c) -> {
 			return ConfigManager.getSignsToggle();
 		}));
@@ -384,7 +379,6 @@ public final class CustomTooltipManager {
 		registerBuiltInTooltips();
 
 		// TODO: Custom
-		@SuppressWarnings("resource")
 		File tooltipsFolder = new File(MinecraftClient.getInstance().runDirectory, "tooltips");
 
 		LOGGER.info("Attempting to load custom tooltips from " + tooltipsFolder.getAbsolutePath());
