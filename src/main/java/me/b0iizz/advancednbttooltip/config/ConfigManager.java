@@ -24,6 +24,7 @@ package me.b0iizz.advancednbttooltip.config;
 
 import java.util.function.Supplier;
 
+import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipPosition;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
@@ -193,5 +194,56 @@ public class ConfigManager {
 	 */
 	public static boolean getHideFlagsToggle() {
 		return config.toggles.toggleHideFlagsTooltip;
+	}
+	
+	//TODO: HUD options
+	
+	/**
+	 * @return true when HUD rendering is enabled
+	 */
+	public static boolean isHudRenderingEnabled() {
+		return config.hud.enableHudRendering;
+	}
+	
+	/**
+	 * @return true when the HUD shows tooltips on dropped items
+	 */
+	public static boolean getDroppedItemToggle() {
+		return config.hud.toggleDroppedItem;
+	}
+	
+	/**
+	 * @return true when the HUD shows tooltips on dropped items
+	 */
+	public static boolean getItemFrameToggle() {
+		return config.hud.toggleItemFrame;
+	}
+	
+	/**
+	 * @return true when the HUD shows tooltips on dropped items
+	 */
+	public static boolean getArmorStandToggle() {
+		return config.hud.toggleArmorStand;
+	}
+	
+	/**
+	 * @return the number of allowed lines in the HUD tooltip
+	 */
+	public static int getHudTooltipLineLimt() {
+		return config.hud.tooltipLineLimit;
+	}
+	
+	/**
+	 * @return the color of the HUD tooltip
+	 */
+	public static int getHudTooltipColor() {
+		return config.hud.tooltipColor;
+	}
+	
+	/**
+	 * @return the color of the HUD tooltip
+	 */
+	public static HudTooltipPosition getHudTooltipPosition() {
+		return config.hud.hudTooltipPosition;
 	}
 }

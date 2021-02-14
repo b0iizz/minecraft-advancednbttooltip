@@ -26,6 +26,7 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.config.CustomTooltipResourceReloadListener;
 import me.b0iizz.advancednbttooltip.config.ModKeybinds;
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
+import me.b0iizz.advancednbttooltip.tooltip.hud.HudTooltipRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -71,6 +72,8 @@ public class ModMain implements ClientModInitializer {
 		
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
+		
+		HudTooltipRenderer.registerDefaultHandlers();
 		
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
 		.registerReloadListener(new CustomTooltipResourceReloadListener());

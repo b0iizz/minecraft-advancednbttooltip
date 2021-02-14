@@ -52,6 +52,10 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 	@ConfigEntry.Gui.TransitiveObject
 	ToggleConfig toggles = new ToggleConfig();
 	
+	@ConfigEntry.Category("nbt_hud")
+	@ConfigEntry.Gui.TransitiveObject
+	HudConfig hud = new HudConfig();
+	
 	/**
 	 * The Category of the config containing all general options
 	 *
@@ -208,6 +212,61 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 	}
 
 	/**
+	 * The Category of the config containing everything related to the HUD rendering
+	 *
+	 * @author B0IIZZ
+	 */
+	@Config(name = "nbt_hud")
+	public static class HudConfig implements ConfigData {
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean enableHudRendering = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleDroppedItem = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleItemFrame = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean toggleArmorStand = true;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.BoundedDiscrete(min = 0, max = 10)
+		@ConfigEntry.Gui.Tooltip
+		int tooltipLineLimit = 7;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.ColorPicker
+		@ConfigEntry.Gui.Tooltip
+		int tooltipColor = 0x5000ff;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+		@ConfigEntry.Gui.Tooltip
+		HudTooltipPosition hudTooltipPosition = HudTooltipPosition.TOP_LEFT;
+		
+	}
+	
+	/**
 	 * An enum representing the position of custom tooltips in the tooltip list
 	 * 
 	 * @author B0IIZZ
@@ -225,5 +284,61 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		public int position(List<?> list) {
 			return offset < 0 ? list.size() + offset + 1 : offset;
 		}
+	}
+	
+	/**
+	 * An enum representing the position of the HUD tooltip 
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
+	public static enum HudTooltipPosition {
+		TOP_LEFT(Anchor.START, Anchor.START), TOP(Anchor.MIDDLE, Anchor.START), TOP_RIGHT(Anchor.END, Anchor.START), CENTER(Anchor.MIDDLE, Anchor.MIDDLE_START), BOTTOM_LEFT(Anchor.START, Anchor.END), BOTTOM_RIGHT(Anchor.END, Anchor.END);
+		
+		private final Anchor x;
+		private final Anchor y;
+		
+		private HudTooltipPosition(Anchor x, Anchor y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		public Anchor getX() {
+			return x;
+		}
+		
+		public Anchor getY() {
+			return y;
+		}
+		
+		public static enum Anchor {
+			START,MIDDLE,MIDDLE_START,END;
+			
+			
+			public int get(int sizeObj, int maxSize, int offset) {
+				int maxS = maxSize - 2 * offset;
+				int prefX = 0;
+				switch(this) {
+				case START:
+					prefX = 0;
+					break;
+				case MIDDLE:
+					prefX = maxS / 2 - sizeObj / 2;
+					break;
+				case MIDDLE_START:
+					prefX = maxS / 2 + 2 * offset;
+					if(prefX + offset + sizeObj > maxSize) {
+						prefX = maxSize - offset - sizeObj;
+					}
+					break;
+				case END:
+					prefX = maxS-sizeObj;
+					break;
+				}
+				return prefX + offset;
+			}
+			
+		}
+		
 	}
 }
