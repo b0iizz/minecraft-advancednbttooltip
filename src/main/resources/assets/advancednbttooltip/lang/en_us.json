@@ -62,6 +62,8 @@
 	"text.autoconfig.advancednbttooltip.option.hud.tooltipColor.@Tooltip": "The color of the background of the HUD tooltip.",
 	"text.autoconfig.advancednbttooltip.option.hud.hudTooltipPosition": "HUD tooltip position",
 	"text.autoconfig.advancednbttooltip.option.hud.hudTooltipPosition.@Tooltip": "The position of the HUD tooltip on the screen.",
+	"text.autoconfig.advancednbttooltip.option.hud.hudTooltipZ": "HUD tooltip Layer",
+	"text.autoconfig.advancednbttooltip.option.hud.hudTooltipZ.@Tooltip": "Whether the tooltip will be shown on top or below all other HUD elements.",
 	"text.advancednbttooltip.tooltip.book.pages": "Pages: %s",
 	"text.advancednbttooltip.tooltip.book.resolved": "Resolved: ",
 	"text.advancednbttooltip.tooltip.book.title": "Title: ",

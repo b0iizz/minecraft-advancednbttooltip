@@ -92,6 +92,12 @@ is_item<br>
 >└── "items": a list of item ids to check against<br>
 >>└── an item id<br>
 
+is_advanced_context<br>
+>└── all general TooltipConditon attributes<br>
+
+is_hud_context<br>
+>└── all general TooltipConditon attributes<br>
+
 true<br>
 >└── all general TooltipConditon attributes<br>
 
