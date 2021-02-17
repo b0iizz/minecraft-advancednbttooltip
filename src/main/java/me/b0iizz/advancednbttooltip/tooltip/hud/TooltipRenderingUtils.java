@@ -49,7 +49,7 @@ final class TooltipRenderingUtils {
 		itemRenderer.renderInGui(stack, x + 4, y + 4);
 
 		if (!lines.isEmpty()) {
-			drawBox(matrices, x + 24, y, width - 24, height, z, color);
+			drawBox(matrices, x + 23, y, width - 23, height, z, color);
 			drawLines(textRenderer, matrices, x + 28, y + 4, z, lines);
 		}
 		matrices.pop();
@@ -69,8 +69,8 @@ final class TooltipRenderingUtils {
 		int g = (accentColor >> 8) & 0xff;
 		int b = (accentColor >> 0) & 0xff;
 
-		int accent = alpha << 24 | getPrimaryColor(r, g, b);
-		int main = alpha << 24 | getSecondaryColor(r, g, b);
+		int primary = alpha << 24 | getPrimaryColor(r, g, b);
+		int secondary = alpha << 24 | getSecondaryColor(r, g, b);
 		int background = backgroundAlpha << 24 | getBackgroundColor(r, g, b);
 
 		int innerX = x + 4;
@@ -89,13 +89,13 @@ final class TooltipRenderingUtils {
 		fillGradient(modelMatrix, bufferBuilder, innerX + innerW + 3, innerY - 3, innerX + innerW + 4,
 				innerY + innerH + 3, z, background, background);
 		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY - 3 + 1, innerX - 3 + 1, innerY + innerH + 3 - 1, z,
-				accent, main);
+				primary, secondary);
 		fillGradient(modelMatrix, bufferBuilder, innerX + innerW + 2, innerY - 3 + 1, innerX + innerW + 3,
-				innerY + innerH + 3 - 1, z, accent, main);
-		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY - 3, innerX + innerW + 3, innerY - 3 + 1, z, accent,
-				accent);
+				innerY + innerH + 3 - 1, z, primary, secondary);
+		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY - 3, innerX + innerW + 3, innerY - 3 + 1, z, primary,
+				primary);
 		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY + innerH + 2, innerX + innerW + 3,
-				innerY + innerH + 3, z, main, main);
+				innerY + innerH + 3, z, secondary, secondary);
 
 		RenderSystem.enableDepthTest();
 		RenderSystem.disableTexture();
@@ -139,7 +139,7 @@ final class TooltipRenderingUtils {
 
 	public static int getWidth(TextRenderer textRenderer, List<? extends OrderedText> lines) {
 		int width = lines.stream().mapToInt(text -> (textRenderer.getWidth(text) + 8)).reduce(Math::max).orElse(0);
-		return width + 24;
+		return width + 23;
 	}
 
 	public static int getHeight(TextRenderer textRenderer, List<? extends OrderedText> lines) {
