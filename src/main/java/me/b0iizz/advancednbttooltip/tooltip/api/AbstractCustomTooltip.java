@@ -49,21 +49,6 @@ public interface AbstractCustomTooltip {
 	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
 	 * show the tooltip.
 	 * 
-	 * 
-	 * @param conditionName : See {@link BuiltInCondition}
-	 * @param args          : The appropriate arguments for the specific condition.
-	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
-	 *         chaining.
-	 *         
-	 * @deprecated since 1.2.2
-	 */
-	@Deprecated
-	public AbstractCustomTooltip addCondition(String conditionName, Object... args);
-
-	/**
-	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
-	 * show the tooltip.
-	 * 
 	 * @param condition : See {@link BuiltInCondition}
 	 * @param args          : The appropriate arguments for the specific condition.
 	 * @return The original {@link AbstractCustomTooltip} object. Generally used for

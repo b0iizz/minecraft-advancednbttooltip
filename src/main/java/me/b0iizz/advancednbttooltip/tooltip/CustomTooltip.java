@@ -71,12 +71,6 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 	}
 
 	@Override
-	public CustomTooltip addCondition(String conditionName, Object... args) {
-		addCondition(BuiltInCondition.valueOf(conditionName).create(args));
-		return this;
-	}
-
-	@Override
 	public AbstractCustomTooltip addCondition(BuiltInCondition condition, Object... args) {
 		addCondition(condition.create(args));
 		return this;

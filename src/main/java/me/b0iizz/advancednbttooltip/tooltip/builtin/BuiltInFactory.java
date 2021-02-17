@@ -122,7 +122,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory LITERAL}
+	 * See {@link BuiltInFactory#LITERAL}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -152,7 +152,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory FORMATTED}
+	 * See {@link BuiltInFactory#FORMATTED}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -186,7 +186,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory TRANSLATED}
+	 * See {@link BuiltInFactory#TRANSLATED}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -229,7 +229,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory NBT}
+	 * See {@link BuiltInFactory#NBT}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -259,7 +259,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory CONDITIONAL}
+	 * See {@link BuiltInFactory#CONDITIONAL}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -300,7 +300,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory MULTIPLE}
+	 * See {@link BuiltInFactory#MULTIPLE}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -335,7 +335,7 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory MIX}
+	 * See {@link BuiltInFactory#MIX}
 	 * 
 	 * @author B0IIZZ
 	 */
