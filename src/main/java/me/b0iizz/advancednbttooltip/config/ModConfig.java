@@ -1,6 +1,6 @@
 /*	MIT License
 	
-	Copyright (c) 2020 b0iizz
+	Copyright (c) 2020-present b0iizz
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -255,7 +255,7 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 */
 		@ConfigEntry.ColorPicker
 		@ConfigEntry.Gui.Tooltip
-		int tooltipColor = 0x5000ff;
+		int tooltipColor = 0x270080;
 		
 		/**
 		 * See In-game description.
@@ -263,6 +263,13 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
 		@ConfigEntry.Gui.Tooltip
 		HudTooltipPosition hudTooltipPosition = HudTooltipPosition.TOP_LEFT;
+		
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+		@ConfigEntry.Gui.Tooltip
+		HudTooltipZIndex hudTooltipZ = HudTooltipZIndex.TOP;
 		
 	}
 	
@@ -283,6 +290,11 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 
 		public int position(List<?> list) {
 			return offset < 0 ? list.size() + offset + 1 : offset;
+		}
+		
+		@Override
+		public String toString() {
+			return name().toLowerCase();
 		}
 	}
 	
@@ -311,6 +323,11 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 			return y;
 		}
 		
+		@Override
+		public String toString() {
+			return name().toLowerCase().replace('_', ' ');
+		}
+		
 		public static enum Anchor {
 			START,MIDDLE,MIDDLE_START,END;
 			
@@ -326,9 +343,9 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 					prefX = maxS / 2 - sizeObj / 2;
 					break;
 				case MIDDLE_START:
-					prefX = maxS / 2 + 2 * offset;
+					prefX = maxS / 2 + offset;
 					if(prefX + offset + sizeObj > maxSize) {
-						prefX = maxSize - offset - sizeObj;
+						prefX = maxSize - 2 * offset - sizeObj;
 					}
 					break;
 				case END:
@@ -340,5 +357,30 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 			
 		}
 		
+	}
+	
+	/**
+	 * An enum representing the position of custom tooltips in the tooltip list
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
+	public static enum HudTooltipZIndex {
+		TOP(400), BOTTOM(-100);
+		
+		private final int z;
+		
+		private HudTooltipZIndex(int z) {
+			this.z = z;
+		}
+		
+		public int getZ() {
+			return z;
+		}
+		
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
 	}
 }

@@ -1,6 +1,6 @@
 /*	MIT License
 	
-	Copyright (c) 2020 b0iizz
+	Copyright (c) 2020-present b0iizz
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -96,6 +96,10 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 				return parseTagMatches(object);
 			case "is_item":
 				return parseIsItem(object);
+			case "is_advanced_context":
+				return BuiltInCondition.IS_ADVANCED_CONTEXT.create();
+			case "is_hud_context":
+				return BuiltInCondition.IS_HUD_CONTEXT.create();
 			case "true":
 				return TooltipCondition.TRUE;
 			case "false":

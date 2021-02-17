@@ -1,6 +1,6 @@
 /*	MIT License
 	
-	Copyright (c) 2020 b0iizz
+	Copyright (c) 2020-present b0iizz
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.tooltip.hud.HudTooltipRenderer.HudTooltipContext;
 import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
 import me.b0iizz.advancednbttooltip.tooltip.util.NBTUtil;
 import net.minecraft.client.item.TooltipContext;
@@ -96,7 +97,15 @@ public enum BuiltInCondition {
 	 * {@link TooltipCondition TooltipCondition[]} conditions - The children of the
 	 * {@link TooltipCondition}<br>
 	 */
-	OR(OrConditionResolver::new);
+	OR(OrConditionResolver::new),
+	/**
+	 * A condition which is true when {@link TooltipContext#isAdvanced() TooltipContext.isAdvanced()} returns true.
+	 */
+	IS_ADVANCED_CONTEXT(AdvancedContextConditionResolver::new),
+	/**
+	 * A condition which is true when the Tooltip is shown using the HUD feature.
+	 */
+	IS_HUD_CONTEXT(HudContextConditionResolver::new);
 
 	/**
 	 * Creates a pre-defined {@link TooltipCondition Condition}.
@@ -126,7 +135,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition AND}
+	 * See {@link BuiltInCondition#AND}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -160,7 +169,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition IS_ITEM}
+	 * See {@link BuiltInCondition#IS_ITEM}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -199,7 +208,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition HAS_TAG}
+	 * See {@link BuiltInCondition#HAS_TAG}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -241,7 +250,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition TAG_MATCHES}
+	 * See {@link BuiltInCondition#TAG_MATCHES}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -275,7 +284,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition NOT}
+	 * See {@link BuiltInCondition#NOT}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -304,7 +313,7 @@ public enum BuiltInCondition {
 	}
 
 	/**
-	 * See {@link BuiltInCondition OR}
+	 * See {@link BuiltInCondition#OR}
 	 * 
 	 * @author B0IIZZ
 	 */
@@ -335,6 +344,62 @@ public enum BuiltInCondition {
 			}
 			return false;
 		}
+	}
+	
+	/**
+	 * See {@link BuiltInCondition#IS_ADVANCED_CONTEXT}
+	 * 
+	 * @author B0IIZZ
+	 */
+	protected static class AdvancedContextConditionResolver implements TooltipCondition {
+
+		/**
+		 * 
+		 */
+		public AdvancedContextConditionResolver() {
+			
+		}
+		
+		/**
+		 * @param args The arguments required for the {@link TooltipCondition}
+		 */
+		public AdvancedContextConditionResolver(Object... args) {
+			this();
+		}
+		
+		@Override
+		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+			return context.isAdvanced();
+		}
+		
+	}
+	
+	/**
+	 * See {@link BuiltInCondition#IS_HUD_CONTEXT}
+	 * 
+	 * @author B0IIZZ
+	 */
+	protected static class HudContextConditionResolver implements TooltipCondition {
+
+		/**
+		 * 
+		 */
+		public HudContextConditionResolver() {
+			
+		}
+		
+		/**
+		 * @param args The arguments required for the {@link TooltipCondition}
+		 */
+		public HudContextConditionResolver(Object... args) {
+			this();
+		}
+		
+		@Override
+		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+			return context instanceof HudTooltipContext;
+		}
+		
 	}
 
 }

@@ -1,9 +1,29 @@
+/*	MIT License
+	
+	Copyright (c) 2020-present b0iizz
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
 package me.b0iizz.advancednbttooltip.tooltip.hud;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -37,7 +58,7 @@ import net.minecraft.util.math.Vec3d;
  */
 public class HudTooltipRenderer {
 
-	private static final Map<Class<? extends Entity>, EntityHandler> entityHandlers = new HashMap<>();
+	private static final List<Pair<Predicate<Entity>, BiFunction<Entity, Vec3d, ItemStack>>> entityHandlers = new ArrayList<>();
 
 	/**
 	 * @param <T>           The Handled Entity
@@ -60,14 +81,13 @@ public class HudTooltipRenderer {
 	 */
 	public static <T extends Entity> void registerHandler(Class<T> entityClass, Predicate<Entity> predicate,
 			BiFunction<T, Vec3d, ItemStack> stackSupplier) {
-		entityHandlers.putIfAbsent(entityClass,
-				new EntityHandler(predicate.and(e -> entityClass.isAssignableFrom(e.getClass())), (e, hitPos) -> {
-					try {
-						return stackSupplier.apply(entityClass.cast(e), hitPos);
-					} catch (Throwable t) {
-						return ItemStack.EMPTY;
-					}
-				}));
+		entityHandlers.add(new Pair<>(predicate.and(e -> entityClass.isAssignableFrom(e.getClass())), (e, hitPos) -> {
+			try {
+				return stackSupplier.apply(entityClass.cast(e), hitPos);
+			} catch (Throwable t) {
+				return ItemStack.EMPTY;
+			}
+		}));
 	}
 
 	/**
@@ -104,36 +124,37 @@ public class HudTooltipRenderer {
 
 	private void drawItemInfo(MatrixStack matrices, ItemStack stack) {
 		if (stack != null && stack != ItemStack.EMPTY) {
-			
-			List<Text> tooltip = stack.getTooltip(this.client.player, this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
-			
+			List<Text> tooltip = stack.getTooltip(this.client.player,
+					HudTooltipContext.valueOf(this.client.options.advancedItemTooltips));
+
 			int lineLimit = ConfigManager.getHudTooltipLineLimt();
-			if(tooltip.size() > lineLimit && lineLimit > 0) {
+			if (tooltip.size() > lineLimit && lineLimit > 0) {
 				tooltip = tooltip.stream().limit(lineLimit).collect(Collectors.toCollection(ArrayList::new));
 				tooltip.add(new LiteralText("..."));
 			}
-			
+
 			List<OrderedText> lines = Lists.transform(tooltip, Text::asOrderedText);
-			
+
 			int width = this.client.getWindow().getScaledWidth();
 			int height = this.client.getWindow().getScaledHeight();
-			
-			int expectedWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, lines) + 20;
+
+			int expectedWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, lines);
 			int expectedHeight = TooltipRenderingUtils.getHeight(this.client.textRenderer, lines);
-			
+
 			HudTooltipPosition position = ConfigManager.getHudTooltipPosition();
-			
+
 			int x = position.getX().get(expectedWidth, width, 10);
 			int y = position.getY().get(expectedHeight, height, 10);
-			
-			this.client.getItemRenderer().renderGuiItemIcon(stack, x - 8, y - 3);
-			TooltipRenderingUtils.drawTooltip(this.client.textRenderer, matrices, Lists.transform(tooltip, Text::asOrderedText), x + 14, y, width, height, ConfigManager.getHudTooltipColor());
+
+			TooltipRenderingUtils.drawItem(stack, this.client.getItemRenderer(), this.client.textRenderer, matrices,
+					lines, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
+					ConfigManager.getHudTooltipColor());
 		}
 	}
 
 	private ItemStack getItemFromEntity(Entity e, Vec3d hitPos) {
-		return entityHandlers.values().stream().filter(handler -> handler.predicate.test(e))
-				.map(handler -> handler.stackSupplier.apply(e, hitPos))
+		return entityHandlers.stream().filter(handler -> handler.getLeft().test(e))
+				.map(handler -> handler.getRight().apply(e, hitPos))
 				.filter(stack -> stack != null && stack != ItemStack.EMPTY).findFirst().orElse(ItemStack.EMPTY);
 	}
 
@@ -160,7 +181,7 @@ public class HudTooltipRenderer {
 				1.0D);
 		EntityHitResult entityHitResult = ProjectileUtil.raycast(cameraEntity, raycastStart, raycastEnd,
 				raycastCollider, (entityx) -> {
-					return entityHandlers.values().stream().anyMatch(handler -> handler.predicate.test(entityx));
+					return entityHandlers.stream().anyMatch(handler -> handler.getLeft().test(entityx));
 				}, reachSq);
 		return entityHitResult;
 	}
@@ -197,13 +218,17 @@ public class HudTooltipRenderer {
 		return result;
 	}
 
-	private static class EntityHandler {
-		public final Predicate<Entity> predicate;
-		public final BiFunction<Entity, Vec3d, ItemStack> stackSupplier;
+	@SuppressWarnings("javadoc")
+	public static enum HudTooltipContext implements TooltipContext {
+		NORMAL, ADVANCED;
 
-		public EntityHandler(Predicate<Entity> predicate, BiFunction<Entity, Vec3d, ItemStack> stackSupplier) {
-			this.predicate = predicate;
-			this.stackSupplier = stackSupplier;
+		@Override
+		public boolean isAdvanced() {
+			return this.ordinal() >= ADVANCED.ordinal();
+		}
+
+		public static HudTooltipContext valueOf(boolean isAdvanced) {
+			return isAdvanced ? ADVANCED : NORMAL;
 		}
 
 	}

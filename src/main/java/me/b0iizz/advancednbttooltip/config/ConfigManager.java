@@ -1,6 +1,6 @@
 /*	MIT License
 	
-	Copyright (c) 2020 b0iizz
+	Copyright (c) 2020-present b0iizz
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package me.b0iizz.advancednbttooltip.config;
 import java.util.function.Supplier;
 
 import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipPosition;
+import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipZIndex;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
@@ -245,5 +246,12 @@ public class ConfigManager {
 	 */
 	public static HudTooltipPosition getHudTooltipPosition() {
 		return config.hud.hudTooltipPosition;
+	}
+	
+	/**
+	 * @return the z-index of the HUD tooltip
+	 */
+	public static HudTooltipZIndex getHudTooltipZIndex() {
+		return config.hud.hudTooltipZ;
 	}
 }
