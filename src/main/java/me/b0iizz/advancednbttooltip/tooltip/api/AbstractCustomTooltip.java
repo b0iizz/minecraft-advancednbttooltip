@@ -23,6 +23,7 @@
 package me.b0iizz.advancednbttooltip.tooltip.api;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
@@ -50,12 +51,12 @@ public interface AbstractCustomTooltip {
 	 * show the tooltip.
 	 * 
 	 * @param condition : See {@link BuiltInCondition}
-	 * @param args          : The appropriate arguments for the specific condition.
+	 * @param args      : The appropriate arguments for the specific condition.
 	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
 	 *         chaining.
 	 */
 	public AbstractCustomTooltip addCondition(BuiltInCondition condition, Object... args);
-	
+
 	/**
 	 * Adds a {@link TooltipCondition Condition} which has to be met to show the
 	 * tooltip.
@@ -65,6 +66,18 @@ public interface AbstractCustomTooltip {
 	 *         chaining.
 	 */
 	public AbstractCustomTooltip addCondition(TooltipCondition condition);
+
+	/**
+	 * Adds a {@link BooleanSupplier boolean condition} which has to be met to show
+	 * the tooltip.
+	 * 
+	 * @param condition The condition to be added.
+	 * @return The original {@link AbstractCustomTooltip} object. Generally used for
+	 *         chaining.
+	 */
+	public default AbstractCustomTooltip addCondition(BooleanSupplier condition) {
+		return this.addCondition((i, t, c) -> condition.getAsBoolean());
+	}
 
 	/**
 	 * Decides whether the tooltip should be applied or not.

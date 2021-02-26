@@ -27,15 +27,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
-import me.b0iizz.advancednbttooltip.tooltip.util.NBTUtil;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -63,34 +67,43 @@ public enum BuiltInFactory {
 	 * A factory which creates a simple {@link TranslatableText} <br>
 	 * <b>Parameters: </b><br>
 	 * {@link String} translationKey - The translation key used<br>
-	 * {@link TooltipFactory} argument_provider - <i>(optional)</i> A factory which creates arguments
-	 * for the translated text as lines<br>
+	 * {@link TooltipFactory} argument_provider - <i>(optional)</i> A factory which
+	 * creates arguments for the translated text as lines<br>
 	 */
 	TRANSLATED(TranslatedFactory::new),
 	/**
-	 * A factory which creates a simple {@link LiteralText} containing the value of a specified {@link NBTPath} <br>
+	 * A factory which creates a simple {@link LiteralText} containing the value of
+	 * a specified {@link NBTPath} <br>
 	 * <b>Parameters: </b><br>
 	 * {@link NBTPath} path - The path to the value in an {@link Item} tag<br>
 	 */
 	NBT(NBTFactory::new),
 	/**
-	 * A factory which creates two different tooltips depending on a {@link TooltipCondition condition} <br>
+	 * A factory which creates two different tooltips depending on a
+	 * {@link TooltipCondition condition} <br>
 	 * <b>Parameters: </b><br>
-	 * {@link TooltipFactory} successFactory - The {@link TooltipFactory} which will create the Tooltip when the condition is met<br>
-	 * {@link TooltipFactory} failFactory - The {@link TooltipFactory} which will create the Tooltip when the condition is not met<br>
-	 * {@link TooltipCondition} condition - The condition which decides which factory produces the tooltip.<br>
+	 * {@link TooltipFactory} successFactory - The {@link TooltipFactory} which will
+	 * create the Tooltip when the condition is met<br>
+	 * {@link TooltipFactory} failFactory - The {@link TooltipFactory} which will
+	 * create the Tooltip when the condition is not met<br>
+	 * {@link TooltipCondition} condition - The condition which decides which
+	 * factory produces the tooltip.<br>
 	 */
 	CONDITIONAL(ConditionalFactory::new),
 	/**
-	 * Combines multiple {@link TooltipFactory TooltipFactories} under each other together. <br>
+	 * Combines multiple {@link TooltipFactory TooltipFactories} under each other
+	 * together. <br>
 	 * <b>Parameters: </b><br>
-	 * {@link TooltipFactory TooltipFactory[]} multiple - An array of factories to be appended under on another<br>
+	 * {@link TooltipFactory TooltipFactory[]} multiple - An array of factories to
+	 * be appended under on another<br>
 	 */
 	MULTIPLE(MultipleFactory::new),
 	/**
-	 * Combines multiple {@link TooltipFactory TooltipFactories} next to each other together. <br>
+	 * Combines multiple {@link TooltipFactory TooltipFactories} next to each other
+	 * together. <br>
 	 * <b>Parameters: </b><br>
-	 * {@link TooltipFactory TooltipFactory[]} mix - An array of factories to be appended next to on another<br>
+	 * {@link TooltipFactory TooltipFactory[]} mix - An array of factories to be
+	 * appended next to on another<br>
 	 */
 	MIX(MixFactory::new);
 
@@ -223,7 +236,7 @@ public enum BuiltInFactory {
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
 			List<Text> args = argument_provider.createTooltip(item, tag, context);
-			return Arrays.asList(new TranslatableText(translationKey, args.stream().map(Text::asString).toArray()));
+			return Arrays.asList(new TranslatableText(translationKey, args.toArray()));
 		}
 
 	}
@@ -236,24 +249,51 @@ public enum BuiltInFactory {
 	protected static class NBTFactory implements TooltipFactory {
 
 		final NBTPath path;
-
+		final boolean traverseCompound;
+		final boolean traverseList;
+		
 		/**
 		 * @param path The path to the NBT-value to be copied
+		 * @param flags The NBT tree traversal flags {@code 0x1 = Traverse {@link CompoundTag}} {@code 0x2 = Traverse {@link AbstractListTag}}
 		 */
-		public NBTFactory(NBTPath path) {
+		public NBTFactory(NBTPath path, int flags) {
 			this.path = path;
+			this.traverseCompound = (flags & 0x1) != 0;
+			this.traverseList = (flags & 0x2) != 0;
 		}
 
 		/**
 		 * @param args The arguments required for the {@link TooltipFactory}
 		 */
 		public NBTFactory(Object... args) {
-			this((NBTPath) args[0]);
+			this((NBTPath) args[0], args.length > 1 ? (int) args[1] : 0);
 		}
 
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			return Arrays.asList(new LiteralText(path.getOptional(tag).map(NBTUtil::asString).orElse("-")));
+			return fromTag(path.getOptional(tag).orElse(StringTag.of("-")));
+		}
+
+		private List<Text> fromTag(Tag tag) {
+			if (tag instanceof CompoundTag) {
+				if(!traverseCompound)
+					return Arrays.asList(new LiteralText("{...}").formatted(Formatting.YELLOW));
+				return ((CompoundTag) tag).getKeys().stream()
+						.flatMap(key -> Stream.concat(Stream.of(new LiteralText(key + ": ").formatted(Formatting.GRAY)),
+								fromTag(((CompoundTag) tag).get(key)).stream().map(this::indent)))
+						.collect(Collectors.toList());
+			} else if (tag instanceof AbstractListTag) {
+				if(!traverseList)
+					return Arrays.asList(new LiteralText("[...]").formatted(Formatting.YELLOW));
+				return ((AbstractListTag<Tag>) tag).stream()
+						.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText(""))))
+						.map(this::indent).collect(Collectors.toList());
+			} else
+				return Arrays.asList(new LiteralText(tag.asString()).formatted(Formatting.YELLOW));
+		}
+
+		private MutableText indent(Text text) {
+			return new LiteralText(" ").append(text);
 		}
 
 	}

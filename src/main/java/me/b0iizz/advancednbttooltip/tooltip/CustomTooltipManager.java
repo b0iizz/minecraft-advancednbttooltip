@@ -41,6 +41,8 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
+import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInFactory;
+import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -88,7 +90,7 @@ public final class CustomTooltipManager {
 	 * The tooltip handler for the ItemTooltipCallback
 	 * 
 	 * @param stack The item stack
-	 * @param ctx The context of the tooltip
+	 * @param ctx   The context of the tooltip
 	 * @param lines The lines in the tooltip
 	 */
 	public static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
@@ -105,10 +107,10 @@ public final class CustomTooltipManager {
 			lines.addAll(ConfigManager.getTooltipPosition().position(lines), text);
 		}
 	}
-	
+
 	/**
-	 * Used by the ItemTooltipCallback function to
-	 * interact with the tooltip pipeline.
+	 * Used by the ItemTooltipCallback function to interact with the tooltip
+	 * pipeline.
 	 * 
 	 * @param stack   The {@link ItemStack} of which a tooltip should be generated.
 	 * @param tooltip The List of text to add Tooltips to.
@@ -150,10 +152,9 @@ public final class CustomTooltipManager {
 				result.add(line.formatted(eff.getType().getFormatting()));
 			}
 			return result;
-		}).addCondition(BuiltInCondition.IS_ITEM, Items.SUSPICIOUS_STEW).addCondition(BuiltInCondition.HAS_TAG, "Effects")
-				.addCondition((i, t, c) -> {
-					return ConfigManager.getSuspiciousStewToggle();
-				}));
+		}).addCondition(BuiltInCondition.IS_ITEM, Items.SUSPICIOUS_STEW)
+				.addCondition(BuiltInCondition.HAS_TAG, "Effects")
+				.addCondition(ConfigManager::getSuspiciousStewToggle));
 
 		// TODO: COMPASS
 		registerTooltip(new CustomTooltip("COMPASS", (item, tag, context) -> {
@@ -178,10 +179,9 @@ public final class CustomTooltipManager {
 				result.add(line);
 			}
 			return result;
-		}).addCondition(BuiltInCondition.IS_ITEM, Items.COMPASS).addCondition(BuiltInCondition.HAS_TAG, "LodestoneTracked")
-				.addCondition((i, t, c) -> {
-					return ConfigManager.getCompassToggle();
-				}));
+		}).addCondition(BuiltInCondition.IS_ITEM, Items.COMPASS)
+				.addCondition(BuiltInCondition.HAS_TAG, "LodestoneTracked")
+				.addCondition(ConfigManager::getCompassToggle));
 
 		// TODO: BOOK
 		registerTooltip(new CustomTooltip("BOOK", (item, tag, context) -> {
@@ -210,10 +210,9 @@ public final class CustomTooltipManager {
 			}
 
 			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "pages").addCondition(BuiltInCondition.IS_ITEM, Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
-				.addCondition((i, t, c) -> {
-					return ConfigManager.getBookToggle();
-				}));
+		}).addCondition(BuiltInCondition.HAS_TAG, "pages")
+				.addCondition(BuiltInCondition.IS_ITEM, Items.WRITTEN_BOOK, Items.WRITABLE_BOOK)
+				.addCondition(ConfigManager::getBookToggle));
 
 		// TODO: CUSTOMMODELDATA
 		registerTooltip(new CustomTooltip("CUSTOMMODELDATA", (item, tag, context) -> {
@@ -226,9 +225,8 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "CustomModelData").addCondition((i, t, c) -> {
-			return ConfigManager.getCustomModelDataToggle();
-		}));
+		}).addCondition(BuiltInCondition.HAS_TAG, "CustomModelData")
+				.addCondition(ConfigManager::getCustomModelDataToggle));
 
 		// TODO: REPAIRCOST
 		registerTooltip(new CustomTooltip("REPAIRCOST", (item, tag, context) -> {
@@ -244,9 +242,7 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "RepairCost").addCondition((i, t, c) -> {
-			return ConfigManager.getRepairCostToggle();
-		}));
+		}).addCondition(BuiltInCondition.HAS_TAG, "RepairCost").addCondition(ConfigManager::getRepairCostToggle));
 
 		// TODO: BEES
 		registerTooltip(new CustomTooltip("BEENESTS", (item, tag, context) -> {
@@ -264,26 +260,11 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag.Bees").addCondition((i, t, c) -> {
-			return ConfigManager.getBeeToggle();
-		}));
+		}).addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag.Bees").addCondition(ConfigManager::getBeeToggle));
 
 		// TODO: SPAWNEGGS
-		registerTooltip(new CustomTooltip("SPAWNEGGS", (item, tag, context) -> {
-			List<Text> result = new ArrayList<>();
-
-			CompoundTag entityTag = tag.getCompound("EntityTag");
-			String id = entityTag.getString("id");
-
-			MutableText line = new TranslatableText("text." + ModMain.modid + ".tooltip.spawneggs")
-					.formatted(Formatting.GRAY);
-			line.append(new TranslatableText("entity." + id.replace(':', '.')).formatted(Formatting.YELLOW));
-
-			result.add(line);
-			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "EntityTag").addCondition((i, t, c) -> {
-			return ConfigManager.getSpawnEggToggle();
-		}));
+		registerTooltip(new CustomTooltip("SPAWNEGGS", BuiltInFactory.NBT.create(new NBTPath("EntityTag"), 3))
+				.addCondition(BuiltInCondition.HAS_TAG, "EntityTag").addCondition(ConfigManager::getSpawnEggToggle));
 
 		// TODO: SIGNS
 		registerTooltip(new CustomTooltip("SIGNS", (item, tag, context) -> {
@@ -319,9 +300,7 @@ public final class CustomTooltipManager {
 			boolean text4 = tag.getCompound("BlockEntityTag").contains("Text4");
 
 			return (text1 || text2 || text3 || text4);
-		}).addCondition((i, t, c) -> {
-			return ConfigManager.getSignsToggle();
-		}));
+		}).addCondition(ConfigManager::getSignsToggle));
 
 		// TODO: COMMAND_BLOCKS
 		registerTooltip(new CustomTooltip("COMMAND_BLOCKS", (item, tag, context) -> {
@@ -340,10 +319,9 @@ public final class CustomTooltipManager {
 
 			result.add(line);
 			return result;
-		}).addCondition(BuiltInCondition.IS_ITEM, Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK, Blocks.CHAIN_COMMAND_BLOCK)
-				.addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag").addCondition((i, t, c) -> {
-					return ConfigManager.getCommandBlocksToggle();
-				}));
+		}).addCondition(BuiltInCondition.IS_ITEM, Blocks.COMMAND_BLOCK, Blocks.REPEATING_COMMAND_BLOCK,
+				Blocks.CHAIN_COMMAND_BLOCK).addCondition(BuiltInCondition.HAS_TAG, "BlockEntityTag")
+				.addCondition(ConfigManager::getCommandBlocksToggle));
 
 		// TODO: HIDEFLAGS
 
@@ -364,9 +342,7 @@ public final class CustomTooltipManager {
 			}
 
 			return result;
-		}).addCondition(BuiltInCondition.HAS_TAG, "HideFlags").addCondition((i, t, c) -> {
-			return ConfigManager.getHideFlagsToggle();
-		}));
+		}).addCondition(BuiltInCondition.HAS_TAG, "HideFlags").addCondition(ConfigManager::getHideFlagsToggle));
 	}
 
 	/**

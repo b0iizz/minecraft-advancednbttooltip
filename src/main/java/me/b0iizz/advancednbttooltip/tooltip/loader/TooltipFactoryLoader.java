@@ -178,7 +178,9 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 
 		final NBTPath nbtpath = new NBTPath(path);
 
-		return BuiltInFactory.NBT.create(nbtpath);
+		int flags = suggest(object, "flags", int.class).orElse(0);
+		
+		return BuiltInFactory.NBT.create(nbtpath, flags);
 	}
 
 	private TooltipFactory parseConditional(JsonObject object) {
