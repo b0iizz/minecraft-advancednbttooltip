@@ -45,7 +45,7 @@ public class ConfigManager {
 
 	/**
 	 * Registers the config for AutoConfig at the start of the game. Should not be
-	 * called except in {@link me.b0iizz.advancednbttooltip.ModMain ModMain}
+	 * called except in {@link me.b0iizz.advancednbttooltip.AdvancedNBTTooltips ModMain}
 	 */
 	public static void registerConfig() {
 		AutoConfig.register(ModConfig.class, PartitioningSerializer.wrap(GsonConfigSerializer::new));
@@ -53,7 +53,7 @@ public class ConfigManager {
 
 	/**
 	 * Loads the config at the start of the game. Should not be called except in
-	 * {@link me.b0iizz.advancednbttooltip.ModMain ModMain}
+	 * {@link me.b0iizz.advancednbttooltip.AdvancedNBTTooltips ModMain}
 	 */
 	public static void loadConfig() {
 		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();

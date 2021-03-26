@@ -20,11 +20,12 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.config;
+package me.b0iizz.advancednbttooltip.misc;
 
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
-import me.b0iizz.advancednbttooltip.ModMain;
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
 
 /**
  * The entrypoint for ModMenu by prospector <br>
@@ -42,7 +43,7 @@ public class ModMenuEntry implements ModMenuApi {
 	 */
 	@Override
 	public String getModId() {
-		return ModMain.modid;
+		return AdvancedNBTTooltips.modid;
 	}
 
 	/**

@@ -137,16 +137,16 @@ class JSONUtil {
 	private static enum JsonPredicate {
 		ANY((e) -> true), ARRAY(JsonElement::isJsonArray, JsonArray.class),
 		BOOLEAN(((Predicate<JsonElement>) JsonElement::isJsonPrimitive)
-				.and(((prim) -> ((JsonPrimitive) prim).isBoolean())), Boolean.class, boolean.class),
+				.and((prim -> prim.getAsJsonPrimitive().isBoolean())), Boolean.class, boolean.class),
 		NULL(JsonElement::isJsonNull, JsonNull.class, Void.TYPE, null),
 		NUMBER(((Predicate<JsonElement>) JsonElement::isJsonPrimitive)
-				.and(((prim) -> ((JsonPrimitive) prim).isNumber())), Number.class, BigInteger.class, BigDecimal.class,
+				.and((prim -> prim.getAsJsonPrimitive().isNumber())), Number.class, BigInteger.class, BigDecimal.class,
 				Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class, byte.class, short.class,
 				int.class, long.class, float.class, double.class),
 		OBJECT(JsonElement::isJsonObject, JsonObject.class),
 		PRIMITIVE(JsonElement::isJsonPrimitive, JsonPrimitive.class),
 		STRING(((Predicate<JsonElement>) JsonElement::isJsonPrimitive)
-				.and(((prim) -> ((JsonPrimitive) prim).isString())), String.class, Character.class, char.class);
+				.and((prim -> prim.getAsJsonPrimitive().isString())), String.class, Character.class, char.class);
 
 		private static final Map<Class<?>, JsonPredicate> classToPredicate = new HashMap<>();
 

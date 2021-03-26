@@ -66,8 +66,6 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 	}
 
 	private CustomTooltip loadUnsafe(JsonObject object) {
-		String id = require(object, "id", String.class);
-
 		TooltipFactory factory;
 		try {
 			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
@@ -82,7 +80,7 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 			throw new TooltipLoaderException(GENERAL_CONDITION_ERROR, t);
 		}
 
-		return new CustomTooltip(id, factory).addCondition(condition);
+		return new CustomTooltip(factory).addCondition(condition);
 	}
 
 	private TooltipLoader() {

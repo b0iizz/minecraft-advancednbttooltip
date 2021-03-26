@@ -1,0 +1,84 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "multiple",
+			"texts": [
+				{
+					"id": "conditional",
+					"success": {
+						"id": "mix",
+						"texts": [
+							{
+								"id": "literal",
+								"text": "("
+							},
+							{
+								"id": "nbt",
+								"tag": "LodestonePos.X"
+							},
+							{
+								"id": "nbt",
+								"tag": "LodestonePos.Y"
+							},
+							{
+								"id": "nbt",
+								"tag": "LodestonePos.Z"
+							},
+							{
+								"id": "literal",
+								"text": ")"
+							}
+						]
+					},
+					"fail": {
+						"id": "formatted",
+						"obfuscated": true,
+						"text": {
+							"id": "literal",
+							"text": "UNKNOWN"
+						}
+					},
+					"condition": {
+						"id": "has_tag",
+						"tag": "LodestonePos"
+					}
+				},
+				{
+					"id": "mix",
+					"texts": [
+						{
+							"id": "literal",
+							"text": "("
+						},
+						{
+							"id": "nbt",
+							"tag": "LodestoneDimension"
+						},
+						{
+							"id": "literal",
+							"text": ")"
+						}
+					]
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "and",
+		"conditions": [
+			{
+				"id": "is_item",
+				"items": [
+					"minecraft:compass"
+				]
+			},
+			{
+				"id": "tag_matches",
+				"tag": "LodestoneTracked",
+				"value": 1
+			}
+		]
+	}
+}

@@ -41,7 +41,7 @@ translated<br>
 nbt<br>
 >├── all general TooltipFactory attributes<br>
 >├── "flags": (optional) 1st bit for going into compound tags, 2nd bit for going into list tags<br>
->└── "path": the path to the NBT-Tag<br>
+>└── "tag": the path to the NBT-Tag<br>
 
 conditional<br>
 >├── all general TooltipFactory attributes<br>

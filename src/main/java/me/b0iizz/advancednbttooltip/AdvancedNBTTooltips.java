@@ -22,16 +22,28 @@
 */
 package me.b0iizz.advancednbttooltip;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.config.CustomTooltipResourceReloadListener;
-import me.b0iizz.advancednbttooltip.config.ModKeybinds;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
+import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
+import me.b0iizz.advancednbttooltip.misc.CustomTooltipResourceReloadListener;
+import me.b0iizz.advancednbttooltip.misc.ModKeybinds;
+import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.hud.HudTooltipRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**
@@ -42,12 +54,17 @@ import net.minecraft.util.Identifier;
  * 
  * @author B0IIZZ
  */
-public class ModMain implements ClientModInitializer {
+public class AdvancedNBTTooltips implements ClientModInitializer {
 
 	/**
 	 * The mod's modid
 	 */
 	public static final String modid = "advancednbttooltip";
+
+	/**
+	 * The list of all loaded tooltips
+	 */
+	public static final Map<Identifier, AbstractCustomTooltip> TOOLTIPS = new HashMap<>();
 
 	/**
 	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
@@ -68,17 +85,55 @@ public class ModMain implements ClientModInitializer {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
 
-		ItemTooltipCallback.EVENT.register(CustomTooltipManager::getTooltip);
-		
+		ItemTooltipCallback.EVENT.register(AdvancedNBTTooltips::getTooltip);
+
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
-		
-		HudTooltipRenderer.registerDefaultHandlers();
-		
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
-		.registerReloadListener(new CustomTooltipResourceReloadListener());
-		UpdateChecker.refreshUpdates();
 
+		HudTooltipRenderer.registerDefaultHandlers();
+
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+				.registerReloadListener(new CustomTooltipResourceReloadListener());
+
+		UpdateChecker.refreshUpdates();
+	}
+
+	/**
+	 * The tooltip handler for the ItemTooltipCallback
+	 * 
+	 * @param stack The item stack
+	 * @param ctx   The context of the tooltip
+	 * @param lines The lines in the tooltip
+	 */
+	public static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
+		if (ConfigManager.getTooltipToggle()) {
+			ArrayList<Text> text = new ArrayList<>();
+			appendCustomTooltip(stack.copy(), text, ctx);
+
+			if (!lines.isEmpty() && !text.isEmpty())
+				text.add(0, new LiteralText(""));
+
+			if (ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && lines.size() > 1)
+				text.add(new LiteralText(" "));
+
+			lines.addAll(ConfigManager.getTooltipPosition().position(lines), text);
+		}
+	}
+
+	/**
+	 * Used by the ItemTooltipCallback function to interact with the tooltip
+	 * pipeline.
+	 * 
+	 * @param stack   The {@link ItemStack} of which a tooltip should be generated.
+	 * @param tooltip The List of text to add Tooltips to.
+	 * @param context The {@link TooltipContext} where the tooltip is being
+	 *                generated.
+	 *
+	 */
+	public static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
+		Item item = stack.getItem();
+		CompoundTag tag = stack.getTag();
+		TOOLTIPS.values().forEach(t -> tooltip.addAll(t.makeTooltip(item, tag, context)));
 	}
 
 }

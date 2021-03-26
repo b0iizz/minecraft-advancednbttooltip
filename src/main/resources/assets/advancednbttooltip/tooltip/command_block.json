@@ -1,0 +1,40 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "mix",
+			"texts": [
+				{
+					"id": "translated",
+					"key": "text.advancednbttooltip.tooltip.command_blocks"
+				},
+				{
+					"id": "limit",
+					"length": 40,
+					"text": {
+						"id": "nbt",
+						"tag": "BlockEntityTag.Command"
+					}
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "and",
+		"conditions": [
+			{
+				"id": "is_item",
+				"items": [
+					"minecraft:command_block",
+					"minecraft:repeating_command_block",
+					"minecraft:chain_command_block"
+				]
+			},
+			{
+				"id": "has_tag",
+				"tag": "BlockEntityTag.Command"
+			}
+		]
+	}
+}

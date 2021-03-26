@@ -22,10 +22,12 @@
 */
 package me.b0iizz.advancednbttooltip.tooltip.loader;
 
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.suggest;
 import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
+import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.suggest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.gson.JsonArray;
@@ -95,12 +97,28 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 				return parseTranslated(object);
 			case "nbt":
 				return parseNBT(object);
+			case "nbt_size":
+				return parseNBTSize(object);
 			case "conditional":
 				return parseConditional(object);
 			case "multiple":
 				return parseMultiple(object);
 			case "mix":
 				return parseMix(object);
+			case "expression":
+				return parseExpression(object);
+			case "effect":
+				return parseEffect(object);
+			case "limit":
+				return parseLimit(object);
+			case "limit_lines":
+				return parseLimitLines(object);
+			case "builtin_suspicious_stew":
+				return BuiltInFactory.BUILTIN_SUSPICIOUS_STEW.create();
+			case "builtin_signs":
+				return BuiltInFactory.BUILTIN_SIGNS.create();
+			case "builtin_hideflags":
+				return BuiltInFactory.BUILTIN_HIDEFLAGS.create();
 			case "empty":
 				return TooltipFactory.EMPTY;
 			default:
@@ -174,13 +192,23 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	}
 
 	private TooltipFactory parseNBT(JsonObject object) {
-		String path = require(object, "path", String.class);
+		String path = require(object, "tag", String.class);
 
 		final NBTPath nbtpath = new NBTPath(path);
 
 		int flags = suggest(object, "flags", int.class).orElse(0);
+
+		boolean colored = suggest(object, "colored", boolean.class).orElse(false);
 		
-		return BuiltInFactory.NBT.create(nbtpath, flags);
+		return BuiltInFactory.NBT.create(nbtpath, flags, colored);
+	}
+	
+	private TooltipFactory parseNBTSize(JsonObject object) {
+		String path = require(object, "tag", String.class);
+
+		final NBTPath nbtpath = new NBTPath(path);
+		
+		return BuiltInFactory.NBT_SIZE.create(nbtpath);
 	}
 
 	private TooltipFactory parseConditional(JsonObject object) {
@@ -248,6 +276,59 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		}
 
 		return BuiltInFactory.MIX.create(parsedFactories.toArray());
+	}
+
+	private TooltipFactory parseExpression(JsonObject object) {
+		String expression = require(object, "expression", String.class);
+
+		Map<String, TooltipFactory> variables = new HashMap<>();
+		object.entrySet().stream().filter(e -> !e.getKey().equals("expression") && !e.getKey().equals("id"))
+				.forEach(e -> {
+					try {
+						if (e.getValue().isJsonObject()) {
+							variables.put(e.getKey(), TooltipFactory.LOADER.load(e.getValue().getAsJsonObject()));
+						} else {
+							variables.put(e.getKey(), BuiltInFactory.LITERAL.create(e.getValue().getAsString()));
+						}
+					} catch (Throwable ignored) {
+					}
+				});
+
+		return BuiltInFactory.EXPRESSION.create(expression, variables);
+	}
+
+	private TooltipFactory parseEffect(JsonObject object) {
+		byte rawId = require(object, "rawId", byte.class);
+		int duration = require(object, "duration", int.class);
+		int strength = suggest(object, "strength", int.class).orElse(0);
+
+		return BuiltInFactory.EFFECT.create(rawId, duration, strength);
+	}
+
+	private TooltipFactory parseLimit(JsonObject object) {
+		TooltipFactory factory;
+		try {
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+		} catch (Throwable t) {
+			throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
+		}
+
+		int limit = require(object, "length", int.class);
+
+		return BuiltInFactory.LIMIT.create(factory, limit);
+	}
+
+	private TooltipFactory parseLimitLines(JsonObject object) {
+		TooltipFactory factory;
+		try {
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+		} catch (Throwable t) {
+			throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
+		}
+
+		int limit = require(object, "limit", int.class);
+
+		return BuiltInFactory.LIMIT_LINES.create(factory, limit);
 	}
 
 	private TooltipFactoryLoader() {

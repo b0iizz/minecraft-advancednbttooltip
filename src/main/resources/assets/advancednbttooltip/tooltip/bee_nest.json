@@ -1,0 +1,27 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "mix",
+			"texts": [
+				{
+					"id": "translated",
+					"key": "text.advancednbttooltip.tooltip.bees"
+				},
+				{
+					"id": "formatted",
+					"color": "yellow",
+					"text": {
+						"id": "nbt_size",
+						"tag": "BlockEntityTag.Bees"
+					}
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "has_tag",
+		"tag": "BlockEntityTag.Bees"
+	}
+}

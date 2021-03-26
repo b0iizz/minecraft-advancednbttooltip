@@ -1,0 +1,24 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "mix",
+			"texts": [
+				{
+					"id": "translated",
+					"key": "text.advancednbttooltip.tooltip.repaircost"
+				},
+				{
+					"id": "nbt",
+					"tag": "RepairCost",
+					"colored": true
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "has_tag",
+		"tag": "RepairCost"
+	}
+}

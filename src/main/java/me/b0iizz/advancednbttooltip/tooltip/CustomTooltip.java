@@ -25,8 +25,8 @@ package me.b0iizz.advancednbttooltip.tooltip;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
 import net.minecraft.client.item.TooltipContext;
@@ -44,11 +44,6 @@ import net.minecraft.text.Text;
 public final class CustomTooltip implements AbstractCustomTooltip {
 
 	/**
-	 * The identifier for this tooltip used for registration.
-	 */
-	public final String name;
-
-	/**
 	 * Provider of the actual tooltip text.
 	 */
 	public final TooltipFactory tooltipProvider;
@@ -61,11 +56,9 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 	/**
 	 * Constructs a new CustomTooltip with the given name and TooltipFactory
 	 * 
-	 * @param name            a name used for registration
 	 * @param tooltipProvider a provider for {@link Text} for the tooltip
 	 */
-	public CustomTooltip(String name, TooltipFactory tooltipProvider) {
-		this.name = name;
+	public CustomTooltip(TooltipFactory tooltipProvider) {
 		this.tooltipProvider = tooltipProvider;
 		conditions = new ArrayList<>();
 	}
@@ -98,11 +91,6 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 		} else {
 			return tooltipProvider.createTooltipWhenDisabled(item, tag, context);
 		}
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 

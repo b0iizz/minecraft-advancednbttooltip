@@ -20,31 +20,43 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.config;
+package me.b0iizz.advancednbttooltip.misc;
 
-import me.b0iizz.advancednbttooltip.ModMain;
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltipManager;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
+
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 /**
- * A simple class responsible for notifying the mod that the resources are being
- * reloaded, which should reload all tooltips.
+ * A class containing everything important to Keybindings
  * 
  * @author B0IIZZ
- *
  */
-public class CustomTooltipResourceReloadListener implements SimpleSynchronousResourceReloadListener {
+public final class ModKeybinds {
 
-	@Override
-	public Identifier getFabricId() {
-		return ModMain.id("resource_listener");
+	private static KeyBinding openConfig;
+
+	/**
+	 * Initializes all KeyBindings
+	 */
+	public static void initKeyBindings() {
+		openConfig = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + AdvancedNBTTooltips.modid + ".openConfig",
+				InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "category." + AdvancedNBTTooltips.modid + ".keys"));
 	}
 
-	@Override
-	public void apply(ResourceManager manager) {
-		CustomTooltipManager.reloadAllCustomTooltips();
+	/**
+	 * Updates all KeyBindings
+	 * 
+	 * @param client The Minecraft Client
+	 */
+	public static void updateKeyBindings(MinecraftClient client) {
+		if (openConfig.isPressed() && client.currentScreen == null) {
+			client.openScreen(ConfigManager.getConfigScreen(null).get());
+		}
 	}
 
 }

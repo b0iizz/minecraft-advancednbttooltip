@@ -104,7 +104,7 @@ public final class UpdateChecker {
 			try {
 				String currentMinecraftReleaseTarget = SharedConstants.getGameVersion().getReleaseTarget();
 				
-				SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(ModMain.modid).get().getMetadata()
+				SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(AdvancedNBTTooltips.modid).get().getMetadata()
 						.getVersion().getFriendlyString().split("\\+")[0]);
 
 				URL update = new URL(UPDATE_URL);
@@ -118,7 +118,7 @@ public final class UpdateChecker {
 					SemanticVersion newestPatchVersion = VersionDeserializer.deserializeSemantic(attributes[2]);
 					boolean criticalError = attributes.length > 3 ? attributes[3].equals("true") : false;
 					
-					if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(ModMain.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
+					if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(AdvancedNBTTooltips.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
 						isLatest = false;
 						isCritical = criticalError;
 					}

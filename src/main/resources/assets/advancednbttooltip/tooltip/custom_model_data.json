@@ -1,0 +1,24 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "mix",
+			"texts": [
+				{
+					"id": "translated",
+					"key": "text.advancednbttooltip.tooltip.custommodeldata"
+				},
+				{
+					"id": "nbt",
+					"tag": "CustomModelData",
+					"colored": true
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "has_tag",
+		"tag": "CustomModelData"
+	}
+}

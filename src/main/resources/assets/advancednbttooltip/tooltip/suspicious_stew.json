@@ -1,0 +1,20 @@
+{
+	"text": {
+		"id": "builtin_suspicious_stew"
+	},
+	"condition": {
+		"id": "and",
+		"conditions": [
+			{
+				"id": "is_item",
+				"items": [
+					"minecraft:suspicious_stew"
+				]
+			},
+			{
+				"id": "has_tag",
+				"tag": "Effects"
+			}
+		]
+	}
+}

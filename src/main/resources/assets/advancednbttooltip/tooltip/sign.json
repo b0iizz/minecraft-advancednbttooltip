@@ -1,0 +1,26 @@
+{
+	"text": {
+		"id": "builtin_signs"
+	},
+	"condition": {
+		"id": "or",
+		"conditions": [
+			{
+				"id": "has_tag",
+				"tag": "BlockEntityTag.Text1"
+			},
+			{
+				"id": "has_tag",
+				"tag": "BlockEntityTag.Text2"
+			},
+			{
+				"id": "has_tag",
+				"tag": "BlockEntityTag.Text3"
+			},
+			{
+				"id": "has_tag",
+				"tag": "BlockEntityTag.Text4"
+			}
+		]
+	}
+}

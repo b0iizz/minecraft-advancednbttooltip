@@ -21,10 +21,10 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.b0iizz.advancednbttooltip.ModMain"
+      "me.b0iizz.advancednbttooltip.AdvancedNBTTooltips"
     ],
 	"modmenu": [
-	  "me.b0iizz.advancednbttooltip.config.ModMenuEntry"
+	  "me.b0iizz.advancednbttooltip.misc.ModMenuEntry"
 	]
   },
   "mixins": [

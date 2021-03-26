@@ -27,8 +27,8 @@ import java.util.function.BooleanSupplier;
 
 import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
 import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
-import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipLoader;
 import me.b0iizz.advancednbttooltip.tooltip.loader.Loader;
+import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +45,7 @@ public interface AbstractCustomTooltip {
 	 * The {@link Loader} of this class
 	 */
 	public static final Loader<AbstractCustomTooltip> LOADER = TooltipLoader.INSTANCE;
-
+	
 	/**
 	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
 	 * show the tooltip.
@@ -99,11 +99,5 @@ public interface AbstractCustomTooltip {
 	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
 	 */
 	List<Text> makeTooltip(Item item, CompoundTag tag, TooltipContext context);
-
-	/**
-	 * 
-	 * @return the name of the {@link AbstractCustomTooltip}
-	 */
-	public String getName();
 
 }

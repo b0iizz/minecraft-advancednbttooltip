@@ -1,0 +1,16 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "nbt",
+			"tag": "EntityTag",
+			"flags": 3,
+			"colored": true
+		}
+	},
+	"condition": {
+		"id": "has_tag",
+		"tag": "EntityTag"
+	}
+}

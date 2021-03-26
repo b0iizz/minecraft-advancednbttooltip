@@ -24,7 +24,7 @@ package me.b0iizz.advancednbttooltip.config;
 
 import java.util.List;
 
-import me.b0iizz.advancednbttooltip.ModMain;
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
@@ -41,7 +41,7 @@ import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
  * 
  * @author B0IIZZ
  */
-@Config(name = ModMain.modid)
+@Config(name = AdvancedNBTTooltips.modid)
 public class ModConfig extends PartitioningSerializer.GlobalData {
 
 	@ConfigEntry.Category("nbt_general")

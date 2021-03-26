@@ -1,0 +1,87 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "multiple",
+			"texts": [
+				{
+					"id": "translated",
+					"key": "text.advancednbttooltip.tooltip.book.pages",
+					"argument_provider": {
+						"id": "nbt_size",
+						"tag": "pages"
+					}
+				},
+				{
+					"id": "conditional",
+					"success": {
+						"id": "mix",
+						"texts": [
+							{
+								"id": "translated",
+								"key": "text.advancednbttooltip.tooltip.book.resolved"
+							},
+							{
+								"id": "nbt",
+								"tag": "resolved",
+								"colored": true
+							}
+						]
+					},
+					"fail": {
+						"id": "empty"
+					},
+					"condition": {
+						"id": "has_tag",
+						"tag": "resolved"
+					}
+				},
+				{
+					"id": "conditional",
+					"success": {
+						"id": "mix",
+						"texts": [
+							{
+								"id": "translated",
+								"key": "text.advancednbttooltip.tooltip.book.title"
+							},
+							{
+								"id": "formatted",
+								"color": "aqua",
+								"bold": true,
+								"text": {
+									"id": "nbt",
+									"tag": "title"
+								}
+							}
+						]
+					},
+					"fail": {
+						"id": "empty"
+					},
+					"condition": {
+						"id": "has_tag",
+						"tag": "title"
+					}
+				}
+			]
+		}
+	},
+	"condition": {
+		"id": "and",
+		"conditions": [
+			{
+				"id": "is_item",
+				"items": [
+					"minecraft:written_book",
+					"minecraft:writable_book"
+				]
+			},
+			{
+				"id": "has_tag",
+				"tag": "pages"
+			}
+		]
+	}
+}
