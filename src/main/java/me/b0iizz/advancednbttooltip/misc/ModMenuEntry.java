@@ -24,7 +24,6 @@ package me.b0iizz.advancednbttooltip.misc;
 
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
-import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 
 /**
@@ -37,14 +36,6 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
  *
  */
 public class ModMenuEntry implements ModMenuApi {
-
-	/**
-	 * @return This mod's modid.
-	 */
-	@Override
-	public String getModId() {
-		return AdvancedNBTTooltips.modid;
-	}
 
 	/**
 	 * @return This mod's config's {@link ConfigScreenFactory}

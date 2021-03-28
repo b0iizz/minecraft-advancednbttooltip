@@ -123,6 +123,11 @@ public final class NBTPath {
 		return ROOT;
 	}
 
+	@Override
+	public String toString() {
+		return Arrays.stream(path).reduce("", (a,b) -> a + "." + b);
+	}
+	
 	private Tag unsafeSearch(CompoundTag root) {
 		Tag result = root;
 		try {

@@ -126,13 +126,14 @@ public final class NBTUtil {
 			return false;
 		if (tag instanceof AbstractNumberTag) {
 			try {
-				BigDecimal a = new BigDecimal(tag.toString());
-				BigDecimal b = new BigDecimal(value.replaceAll("\"", ""));
-				return a.equals(b);
+				BigDecimal a = new BigDecimal(tag.toString().replaceAll("[A-Za-z]$", ""));
+				BigDecimal b = new BigDecimal(value);
+				return a.compareTo(b) == 0;
 			} catch (Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 		} else
-			return ("\"" + tag.asString() + "\"").equals(value);
+			return tag.asString().equals(value);
 	}
 }

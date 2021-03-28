@@ -197,8 +197,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 	private TooltipCondition parseTagMatches(JsonObject object) {
 		String tag = require(object, "tag", String.class);
 
-		String value = require(object, "value", JsonElement.class).toString().replaceAll("\"^", "").replaceAll("$\"",
-				"");
+		String value = require(object, "value", JsonElement.class).getAsString();
 
 		return BuiltInCondition.TAG_MATCHES.create(tag, value);
 	}

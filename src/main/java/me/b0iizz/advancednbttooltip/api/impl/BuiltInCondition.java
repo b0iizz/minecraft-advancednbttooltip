@@ -279,7 +279,9 @@ public enum BuiltInCondition {
 
 		@Override
 		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
-			return path.getOptional(tag).filter((t) -> NBTUtil.isEqualTo(t, value)).isPresent();
+			return path.getOptional(tag).filter((t) -> {
+				return NBTUtil.isEqualTo(t, value);
+			}).isPresent();
 		}
 
 	}
