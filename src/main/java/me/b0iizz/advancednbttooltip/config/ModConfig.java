@@ -26,10 +26,10 @@ import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.TooltipPosition;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipPosition;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipZIndex;
-import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 
 /**
  * The class representation of this mod's config. Based on this class,
