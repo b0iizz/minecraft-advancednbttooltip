@@ -20,9 +20,9 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.loader;
+package me.b0iizz.advancednbttooltip.misc.loader;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 /**
  * 
@@ -34,11 +34,11 @@ import com.google.gson.JsonObject;
 public interface Loader<I> {
 
 	/**
-	 * Loads <code>I</code> from a {@link JsonObject}
+	 * Loads <code>I</code> from a {@link JsonElement}
 	 * 
 	 * @param object the json object that the loader will load from
 	 * @return an instance of <code>I</code> based on the json input
 	 */
-	public I load(JsonObject object);
+	public I load(JsonElement object);
 
 }

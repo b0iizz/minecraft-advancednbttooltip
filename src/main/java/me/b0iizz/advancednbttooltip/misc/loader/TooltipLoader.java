@@ -20,16 +20,17 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.loader;
+package me.b0iizz.advancednbttooltip.misc.loader;
 
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
+import static me.b0iizz.advancednbttooltip.misc.loader.JSONUtil.require;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.api.impl.CustomTooltip;
 
 /**
  * The JSON loader for {@link CustomTooltip CustomTooltips}
@@ -53,13 +54,13 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 	 * @return All possible error messages that can be caused by this utility class
 	 */
 	public static String[] getAllErrorMessages() {
-		return new String[] { GENERAL_ERROR, GENERAL_TEXT_ERROR, GENERAL_CONDITION_ERROR};
+		return new String[] { GENERAL_ERROR, GENERAL_TEXT_ERROR, GENERAL_CONDITION_ERROR };
 	}
-	
+
 	@Override
-	public AbstractCustomTooltip load(JsonObject object) {
+	public AbstractCustomTooltip load(JsonElement object) {
 		try {
-			return loadUnsafe(object);
+			return loadUnsafe(object.getAsJsonObject());
 		} catch (Exception e) {
 			throw new TooltipLoaderException(GENERAL_ERROR, e);
 		}
@@ -68,14 +69,14 @@ public class TooltipLoader implements Loader<AbstractCustomTooltip> {
 	private CustomTooltip loadUnsafe(JsonObject object) {
 		TooltipFactory factory;
 		try {
-			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(GENERAL_TEXT_ERROR, t);
 		}
 
 		TooltipCondition condition;
 		try {
-			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonObject.class));
+			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(GENERAL_CONDITION_ERROR, t);
 		}

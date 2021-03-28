@@ -20,7 +20,7 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.loader;
+package me.b0iizz.advancednbttooltip.misc.loader;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -46,7 +46,7 @@ class JSONUtil {
 	public JSONUtil() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	// Error messages
 	private static final String FIELD_NOT_FOUND = "Could not find required field: %s";
 	private static final String WRONG_TYPE = "Required field %s is not of expected type %s!";

@@ -20,7 +20,7 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.util;
+package me.b0iizz.advancednbttooltip.util;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -116,7 +116,7 @@ public final class NBTPath {
 	 * 
 	 * @return The parent of the current path or <code>ROOT</code>
 	 */
-	public NBTPath getParent() {
+	public NBTPath parent() {
 		if (path.length > 0) {
 			return new NBTPath(Arrays.copyOf(path, path.length - 1));
 		}

@@ -20,10 +20,10 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.loader;
+package me.b0iizz.advancednbttooltip.misc.loader;
 
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.suggest;
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
+import static me.b0iizz.advancednbttooltip.misc.loader.JSONUtil.require;
+import static me.b0iizz.advancednbttooltip.misc.loader.JSONUtil.suggest;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,8 +32,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.impl.BuiltInCondition;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -71,7 +71,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 	}
 
 	@Override
-	public TooltipCondition load(JsonObject object) {
+	public TooltipCondition load(JsonElement object) {
 		try {
 			return loadUnsafe(object);
 		} catch (Exception e) {
@@ -79,7 +79,13 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 		}
 	}
 
-	private TooltipCondition loadUnsafe(JsonObject object) {
+	private TooltipCondition loadUnsafe(JsonElement element) {
+		if (!element.isJsonObject()) {
+			return parseImplicit(element);
+		}
+
+		JsonObject object = element.getAsJsonObject();
+
 		String id = require(object, "id", String.class);
 
 		try {
@@ -112,10 +118,21 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 		}
 	}
 
+	private TooltipCondition parseImplicit(JsonElement element) {
+		switch (element.getAsString()) {
+		case "true":
+			return TooltipCondition.TRUE;
+		case "false":
+			return TooltipCondition.FALSE;
+		default:
+			throw new TooltipLoaderException(String.format(GENERAL_UNKNOWN_ID, element.getAsString()));
+		}
+	}
+
 	private TooltipCondition parseNot(JsonObject object) {
 		TooltipCondition condition;
 		try {
-			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonObject.class));
+			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(CONDITION_PARSING_ERROR, t);
 		}
@@ -133,7 +150,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			TooltipCondition condition;
 
 			try {
-				condition = TooltipCondition.LOADER.load(conditions.get(i).getAsJsonObject());
+				condition = TooltipCondition.LOADER.load(conditions.get(i));
 			} catch (Throwable t) {
 				throw new TooltipLoaderException(String.format(CONDITION_ARRAY_PARSING_ERROR, i), t);
 			}
@@ -154,7 +171,7 @@ public class TooltipConditionLoader implements Loader<TooltipCondition> {
 			TooltipCondition condition;
 
 			try {
-				condition = TooltipCondition.LOADER.load(conditions.get(i).getAsJsonObject());
+				condition = TooltipCondition.LOADER.load(conditions.get(i));
 			} catch (Throwable t) {
 				throw new TooltipLoaderException(String.format(CONDITION_ARRAY_PARSING_ERROR, i), t);
 			}

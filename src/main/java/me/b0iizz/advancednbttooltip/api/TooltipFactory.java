@@ -20,14 +20,14 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.api;
+package me.b0iizz.advancednbttooltip.api;
 
 import java.util.Arrays;
 import java.util.List;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.loader.Loader;
-import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipFactoryLoader;
+import me.b0iizz.advancednbttooltip.api.impl.CustomTooltip;
+import me.b0iizz.advancednbttooltip.misc.loader.Loader;
+import me.b0iizz.advancednbttooltip.misc.loader.TooltipFactoryLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;

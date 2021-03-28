@@ -20,23 +20,22 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.loader;
+package me.b0iizz.advancednbttooltip.misc.loader;
 
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.require;
-import static me.b0iizz.advancednbttooltip.tooltip.loader.JSONUtil.suggest;
+import static me.b0iizz.advancednbttooltip.misc.loader.JSONUtil.require;
+import static me.b0iizz.advancednbttooltip.misc.loader.JSONUtil.suggest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInFactory;
-import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.api.impl.BuiltInFactory;
+import me.b0iizz.advancednbttooltip.util.NBTPath;
 import net.minecraft.util.Formatting;
 
 /**
@@ -76,7 +75,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	}
 
 	@Override
-	public TooltipFactory load(JsonObject object) {
+	public TooltipFactory load(JsonElement object) {
 		try {
 			return loadUnsafe(object);
 		} catch (Exception e) {
@@ -84,7 +83,13 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		}
 	}
 
-	private TooltipFactory loadUnsafe(JsonObject object) {
+	private TooltipFactory loadUnsafe(JsonElement element) {
+		if (!element.isJsonObject()) {
+			return parseImplicit(element);
+		}
+
+		JsonObject object = element.getAsJsonObject();
+
 		String id = require(object, "id", String.class);
 
 		try {
@@ -105,8 +110,6 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 				return parseMultiple(object);
 			case "mix":
 				return parseMix(object);
-			case "expression":
-				return parseExpression(object);
 			case "effect":
 				return parseEffect(object);
 			case "limit":
@@ -129,6 +132,10 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		}
 	}
 
+	private TooltipFactory parseImplicit(JsonElement element) {
+		return BuiltInFactory.LITERAL.create(element.getAsString());
+	}
+
 	private TooltipFactory parseLiteral(JsonObject object) {
 		String text;
 		text = require(object, "text", String.class);
@@ -139,7 +146,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	private TooltipFactory parseFormatted(JsonObject object) {
 		TooltipFactory factory;
 		try {
-			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
 		}
@@ -174,7 +181,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	private TooltipFactory parseTranslated(JsonObject object) {
 		String key = require(object, "key", String.class);
 
-		Optional<JsonObject> argsProvider = suggest(object, "argument_provider", JsonObject.class);
+		Optional<JsonElement> argsProvider = suggest(object, "argument_provider", JsonElement.class);
 		if (argsProvider.isPresent()) {
 			TooltipFactory provider;
 
@@ -199,36 +206,36 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		int flags = suggest(object, "flags", int.class).orElse(0);
 
 		boolean colored = suggest(object, "colored", boolean.class).orElse(false);
-		
+
 		return BuiltInFactory.NBT.create(nbtpath, flags, colored);
 	}
-	
+
 	private TooltipFactory parseNBTSize(JsonObject object) {
 		String path = require(object, "tag", String.class);
 
 		final NBTPath nbtpath = new NBTPath(path);
-		
+
 		return BuiltInFactory.NBT_SIZE.create(nbtpath);
 	}
 
 	private TooltipFactory parseConditional(JsonObject object) {
 		TooltipFactory trueFactory;
 		try {
-			trueFactory = TooltipFactory.LOADER.load(require(object, "success", JsonObject.class));
+			trueFactory = TooltipFactory.LOADER.load(require(object, "success", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(CONDITIONAL_SUCCESS_PARSING_ERROR, t);
 		}
 
 		TooltipFactory falseFactory;
 		try {
-			falseFactory = TooltipFactory.LOADER.load(require(object, "fail", JsonObject.class));
+			falseFactory = TooltipFactory.LOADER.load(require(object, "fail", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(CONDITIONAL_FAIL_PARSING_ERROR, t);
 		}
 
 		TooltipCondition condition;
 		try {
-			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonObject.class));
+			condition = TooltipCondition.LOADER.load(require(object, "condition", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(CONDITION_PARSING_ERROR, t);
 		}
@@ -246,7 +253,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 			TooltipFactory condition;
 
 			try {
-				condition = TooltipFactory.LOADER.load(factories.get(i).getAsJsonObject());
+				condition = TooltipFactory.LOADER.load(factories.get(i));
 			} catch (Throwable t) {
 				throw new TooltipLoaderException(String.format(TEXT_ARRAY_PARSING_ERROR, i), t);
 			}
@@ -267,7 +274,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 			TooltipFactory condition;
 
 			try {
-				condition = TooltipFactory.LOADER.load(factories.get(i).getAsJsonObject());
+				condition = TooltipFactory.LOADER.load(factories.get(i));
 			} catch (Throwable t) {
 				throw new TooltipLoaderException(String.format(TEXT_ARRAY_PARSING_ERROR, i), t);
 			}
@@ -276,25 +283,6 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 		}
 
 		return BuiltInFactory.MIX.create(parsedFactories.toArray());
-	}
-
-	private TooltipFactory parseExpression(JsonObject object) {
-		String expression = require(object, "expression", String.class);
-
-		Map<String, TooltipFactory> variables = new HashMap<>();
-		object.entrySet().stream().filter(e -> !e.getKey().equals("expression") && !e.getKey().equals("id"))
-				.forEach(e -> {
-					try {
-						if (e.getValue().isJsonObject()) {
-							variables.put(e.getKey(), TooltipFactory.LOADER.load(e.getValue().getAsJsonObject()));
-						} else {
-							variables.put(e.getKey(), BuiltInFactory.LITERAL.create(e.getValue().getAsString()));
-						}
-					} catch (Throwable ignored) {
-					}
-				});
-
-		return BuiltInFactory.EXPRESSION.create(expression, variables);
 	}
 
 	private TooltipFactory parseEffect(JsonObject object) {
@@ -308,7 +296,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	private TooltipFactory parseLimit(JsonObject object) {
 		TooltipFactory factory;
 		try {
-			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
 		}
@@ -321,7 +309,7 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	private TooltipFactory parseLimitLines(JsonObject object) {
 		TooltipFactory factory;
 		try {
-			factory = TooltipFactory.LOADER.load(require(object, "text", JsonObject.class));
+			factory = TooltipFactory.LOADER.load(require(object, "text", JsonElement.class));
 		} catch (Throwable t) {
 			throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
 		}

@@ -18,7 +18,20 @@
 		}
 	},
 	"condition": {
-		"id": "has_tag",
-		"tag": "RepairCost"
+		"id": "and",
+		"conditions": [
+			{
+				"id": "has_tag",
+				"tag": "RepairCost"
+			},
+			{
+				"id": "not",
+				"condition": {
+					"id": "tag_matches",
+					"tag": "RepairCost",
+					"value": 0
+				}
+			}
+		]
 	}
 }

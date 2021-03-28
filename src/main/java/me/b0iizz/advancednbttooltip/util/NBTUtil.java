@@ -20,9 +20,9 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.util;
+package me.b0iizz.advancednbttooltip.util;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import java.math.BigDecimal;
 
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
@@ -126,11 +126,9 @@ public final class NBTUtil {
 			return false;
 		if (tag instanceof AbstractNumberTag) {
 			try {
-				Number a = number(tag);
-				Number b = NumberUtils.createNumber(value.replaceAll("\"", ""));
-				return a.byteValue() == b.byteValue() || a.shortValue() == b.shortValue()
-						|| a.intValue() == b.intValue() || a.longValue() == b.longValue()
-						|| a.doubleValue() == b.doubleValue() || a.floatValue() == b.floatValue();
+				BigDecimal a = new BigDecimal(tag.toString());
+				BigDecimal b = new BigDecimal(value.replaceAll("\"", ""));
+				return a.equals(b);
 			} catch (Exception e) {
 				return false;
 			}

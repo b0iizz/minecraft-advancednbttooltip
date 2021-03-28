@@ -20,7 +20,7 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.hud;
+package me.b0iizz.advancednbttooltip.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Lists;
 
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipPosition;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -61,6 +61,24 @@ public class HudTooltipRenderer {
 	private static final List<Pair<Predicate<Entity>, BiFunction<Entity, Vec3d, ItemStack>>> entityHandlers = new ArrayList<>();
 
 	/**
+	 * Sets up the HUD Rendering
+	 */
+	public static void setup() {
+		HudTooltipRenderer tooltipHudRenderer = new HudTooltipRenderer(MinecraftClient.getInstance());
+
+		HudRenderCallback.EVENT.register((matrices, delta) -> {
+			if (ConfigManager.isHudRenderingEnabled())
+				tooltipHudRenderer.draw(matrices, delta);
+		});
+
+		registerHandler(ItemEntity.class, e -> ConfigManager.getDroppedItemToggle(), (item, pos) -> item.getStack());
+		registerHandler(ItemFrameEntity.class, e -> ConfigManager.getItemFrameToggle(),
+				(frame, pos) -> frame.getHeldItemStack());
+		registerHandler(ArmorStandEntity.class, e -> ConfigManager.getArmorStandToggle(),
+				HudTooltipRenderer::handleArmorStand);
+	}
+
+	/**
 	 * @param <T>           The Handled Entity
 	 * @param entityClass   The class of the handled entity
 	 * @param stackSupplier A function which supplies an ItemStack using the
@@ -88,17 +106,6 @@ public class HudTooltipRenderer {
 				return ItemStack.EMPTY;
 			}
 		}));
-	}
-
-	/**
-	 * Registers the default entity handlers
-	 */
-	public static void registerDefaultHandlers() {
-		registerHandler(ItemEntity.class, e -> ConfigManager.getDroppedItemToggle(), (item, pos) -> item.getStack());
-		registerHandler(ItemFrameEntity.class, e -> ConfigManager.getItemFrameToggle(),
-				(frame, pos) -> frame.getHeldItemStack());
-		registerHandler(ArmorStandEntity.class, e -> ConfigManager.getArmorStandToggle(),
-				HudTooltipRenderer::handleArmorStand);
 	}
 
 	private MinecraftClient client;
@@ -231,6 +238,93 @@ public class HudTooltipRenderer {
 			return isAdvanced ? ADVANCED : NORMAL;
 		}
 
+	}
+
+	/**
+	 * An enum representing the position of the HUD tooltip
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
+	public static enum HudTooltipPosition {
+		TOP_LEFT(Anchor.START, Anchor.START), TOP(Anchor.MIDDLE, Anchor.START), TOP_RIGHT(Anchor.END, Anchor.START),
+		CENTER(Anchor.MIDDLE, Anchor.MIDDLE_START), BOTTOM_LEFT(Anchor.START, Anchor.END),
+		BOTTOM_RIGHT(Anchor.END, Anchor.END);
+
+		private final Anchor x;
+		private final Anchor y;
+
+		private HudTooltipPosition(Anchor x, Anchor y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public Anchor getX() {
+			return x;
+		}
+
+		public Anchor getY() {
+			return y;
+		}
+
+		@Override
+		public String toString() {
+			return name().toLowerCase().replace('_', ' ');
+		}
+
+		public static enum Anchor {
+			START, MIDDLE, MIDDLE_START, END;
+
+			public int get(int sizeObj, int maxSize, int offset) {
+				int maxS = maxSize - 2 * offset;
+				int prefX = 0;
+				switch (this) {
+				case START:
+					prefX = 0;
+					break;
+				case MIDDLE:
+					prefX = maxS / 2 - sizeObj / 2;
+					break;
+				case MIDDLE_START:
+					prefX = maxS / 2 + offset;
+					if (prefX + offset + sizeObj > maxSize) {
+						prefX = maxSize - 2 * offset - sizeObj;
+					}
+					break;
+				case END:
+					prefX = maxS - sizeObj;
+					break;
+				}
+				return prefX + offset;
+			}
+
+		}
+
+	}
+
+	/**
+	 * An enum representing the position of custom tooltips in the tooltip list
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
+	public static enum HudTooltipZIndex {
+		TOP(400), BOTTOM(-100);
+
+		private final int z;
+
+		private HudTooltipZIndex(int z) {
+			this.z = z;
+		}
+
+		public int getZ() {
+			return z;
+		}
+
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
 	}
 
 }

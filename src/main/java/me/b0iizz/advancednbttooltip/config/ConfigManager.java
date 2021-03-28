@@ -22,14 +22,36 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
-import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipPosition;
-import me.b0iizz.advancednbttooltip.config.ModConfig.HudTooltipZIndex;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.TooltipPosition;
+import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipPosition;
+import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipZIndex;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.Identifier;
 
 /**
  * Handles communication between the mod's config and the rest of the mod.
@@ -38,14 +60,18 @@ import net.minecraft.client.gui.screen.Screen;
  */
 public class ConfigManager {
 
-	/**
-	 * This mod's config
-	 */
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve(AdvancedNBTTooltips.modid);
+
 	private static ModConfig config;
+
+	private static Map<Identifier, Boolean> toggles = new HashMap<>();
 
 	/**
 	 * Registers the config for AutoConfig at the start of the game. Should not be
-	 * called except in {@link me.b0iizz.advancednbttooltip.AdvancedNBTTooltips ModMain}
+	 * called except in {@link me.b0iizz.advancednbttooltip.AdvancedNBTTooltips
+	 * ModMain}
 	 */
 	public static void registerConfig() {
 		AutoConfig.register(ModConfig.class, PartitioningSerializer.wrap(GsonConfigSerializer::new));
@@ -57,8 +83,9 @@ public class ConfigManager {
 	 */
 	public static void loadConfig() {
 		config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+		readToggles();
 	}
-	
+
 	/**
 	 * @param parent The parent screen
 	 * @return A new Config Screen
@@ -66,7 +93,75 @@ public class ConfigManager {
 	public static Supplier<Screen> getConfigScreen(Screen parent) {
 		return AutoConfig.getConfigScreen(ModConfig.class, parent);
 	}
-	
+
+	// TODO: toggles
+
+	/**
+	 * Reads all toggles from the file
+	 */
+	public static void readToggles() {
+		File tFile = configPath.resolve("toggles.json").toFile();
+		if (!tFile.exists())
+			try {
+				tFile.createNewFile();
+			} catch (IOException ignored) {
+			}
+		try (InputStream is = new FileInputStream(tFile)) {
+			try (Reader r = new InputStreamReader(is)) {
+				JsonElement json = gson.fromJson(r, JsonElement.class);
+				if (json != null && json.isJsonObject()) {
+					json.getAsJsonObject().entrySet().stream().filter(e -> e.getValue().isJsonPrimitive())
+							.forEach(e -> toggles.put(new Identifier(e.getKey()), e.getValue().getAsBoolean()));
+				}
+			}
+		} catch (Throwable t) {
+			System.err.println("Could not load toggles!");
+			t.printStackTrace();
+		}
+	}
+
+	/**
+	 * Writes all toggles to the file
+	 */
+	public static void writeToggles() {
+		File tFile = configPath.resolve("toggles.json").toFile();
+		if (!tFile.exists())
+			try {
+				tFile.createNewFile();
+			} catch (IOException ignored) {
+			}
+		try (OutputStream os = new FileOutputStream(tFile)) {
+			try (Writer w = new OutputStreamWriter(os)) {
+				gson.toJson(
+						toggles.entrySet().stream().collect(JsonObject::new,
+								(obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
+								(obj, obj2) -> obj2.entrySet().forEach(e -> obj.add(e.getKey(), e.getValue()))),
+						gson.newJsonWriter(w));
+			}
+		} catch (Throwable t) {
+			System.err.println("Could not write toggles!");
+			t.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param id the id of a tooltip
+	 * @return if the tooltip is enabled
+	 */
+	public static boolean isEnabled(Identifier id) {
+		return toggles.computeIfAbsent(id, newId -> true);
+	}
+
+	/**
+	 * Toggles a tooltip with the specified id
+	 * 
+	 * @param id the id of the tooltip
+	 * @return the new state of the tooltip
+	 */
+	public static boolean toggle(Identifier id) {
+		return !toggles.put(id, !isEnabled(id));
+	}
+
 	// TODO: Category General Options
 
 	/**
@@ -75,7 +170,7 @@ public class ConfigManager {
 	public static boolean getTooltipToggle() {
 		return config.general.enableTooltips;
 	}
-	
+
 	/**
 	 * @return The state of the toggle controlling whether a notice should be added
 	 *         to the title screen when a new update is out.
@@ -87,14 +182,13 @@ public class ConfigManager {
 	/**
 	 * @return The location where custom tooltips should be placed
 	 */
-	public static ModConfig.TooltipPosition getTooltipPosition() {
+	public static TooltipPosition getTooltipPosition() {
 		return config.general.tooltipPosition;
 	}
 
 	/**
-	 * @return <b>true</b>, when the result of
-	 *         {@link #getHideflagOverrideBitmask()} should be bitwise AND-ed with
-	 *         the HideFlags property. <br>
+	 * @return <b>true</b>, when the result of {@link #getHideflagOverrideBitmask()}
+	 *         should be bitwise AND-ed with the HideFlags property. <br>
 	 *         <b>false</b>, when not.
 	 */
 	public static boolean overrideHideFlags() {
@@ -125,129 +219,57 @@ public class ConfigManager {
 		return mask;
 	}
 
-	// TODO: Category Toggle Options
+	// TODO: HUD options
 
-	/**
-	 * @return The state of the toggle controlling the "Suspicious Stew" tooltip.
-	 */
-	public static boolean getSuspiciousStewToggle() {
-		return config.toggles.toggleSuspiciousStewTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Compass" tooltip.
-	 */
-	public static boolean getCompassToggle() {
-		return config.toggles.toggleCompassTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Book" tooltip.
-	 */
-	public static boolean getBookToggle() {
-		return config.toggles.toggleBookTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "CustomModelData" tooltip.
-	 */
-	public static boolean getCustomModelDataToggle() {
-		return config.toggles.toggleCustomModelDataTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "RepairCost" tooltip.
-	 */
-	public static boolean getRepairCostToggle() {
-		return config.toggles.toggleRepairCostTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Bee" tooltip.
-	 */
-	public static boolean getBeeToggle() {
-		return config.toggles.toggleBeeTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "SpawnEggs" tooltip.
-	 */
-	public static boolean getSpawnEggToggle() {
-		return config.toggles.toggleSpawnEggTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Signs" tooltip.
-	 */
-	public static boolean getSignsToggle() {
-		return config.toggles.toggleSignsTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "Command Blocks" tooltip.
-	 */
-	public static boolean getCommandBlocksToggle() {
-		return config.toggles.toggleCommandBlocksTooltip;
-	}
-
-	/**
-	 * @return The state of the toggle controlling the "HideFlags" tooltip.
-	 */
-	public static boolean getHideFlagsToggle() {
-		return config.toggles.toggleHideFlagsTooltip;
-	}
-	
-	//TODO: HUD options
-	
 	/**
 	 * @return true when HUD rendering is enabled
 	 */
 	public static boolean isHudRenderingEnabled() {
 		return config.hud.enableHudRendering;
 	}
-	
+
 	/**
 	 * @return true when the HUD shows tooltips on dropped items
 	 */
 	public static boolean getDroppedItemToggle() {
 		return config.hud.toggleDroppedItem;
 	}
-	
+
 	/**
 	 * @return true when the HUD shows tooltips on dropped items
 	 */
 	public static boolean getItemFrameToggle() {
 		return config.hud.toggleItemFrame;
 	}
-	
+
 	/**
 	 * @return true when the HUD shows tooltips on dropped items
 	 */
 	public static boolean getArmorStandToggle() {
 		return config.hud.toggleArmorStand;
 	}
-	
+
 	/**
 	 * @return the number of allowed lines in the HUD tooltip
 	 */
 	public static int getHudTooltipLineLimt() {
 		return config.hud.tooltipLineLimit;
 	}
-	
+
 	/**
 	 * @return the color of the HUD tooltip
 	 */
 	public static int getHudTooltipColor() {
 		return config.hud.tooltipColor;
 	}
-	
+
 	/**
 	 * @return the color of the HUD tooltip
 	 */
 	public static HudTooltipPosition getHudTooltipPosition() {
 		return config.hud.hudTooltipPosition;
 	}
-	
+
 	/**
 	 * @return the z-index of the HUD tooltip
 	 */

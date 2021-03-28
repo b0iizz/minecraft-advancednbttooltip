@@ -20,17 +20,17 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.builtin;
+package me.b0iizz.advancednbttooltip.api.impl;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.hud.HudTooltipRenderer.HudTooltipContext;
-import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
-import me.b0iizz.advancednbttooltip.tooltip.util.NBTUtil;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipContext;
+import me.b0iizz.advancednbttooltip.util.NBTPath;
+import me.b0iizz.advancednbttooltip.util.NBTUtil;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -99,7 +99,8 @@ public enum BuiltInCondition {
 	 */
 	OR(OrConditionResolver::new),
 	/**
-	 * A condition which is true when {@link TooltipContext#isAdvanced() TooltipContext.isAdvanced()} returns true.
+	 * A condition which is true when {@link TooltipContext#isAdvanced()
+	 * TooltipContext.isAdvanced()} returns true.
 	 */
 	IS_ADVANCED_CONTEXT(AdvancedContextConditionResolver::new),
 	/**
@@ -117,13 +118,13 @@ public enum BuiltInCondition {
 	public static final TooltipCondition forName(String conditionName, Object... args) {
 		return valueOf(conditionName).create(args);
 	}
-	
+
 	private final Function<Object[], TooltipCondition> constructor;
-	
+
 	private BuiltInCondition(Function<Object[], TooltipCondition> constructor) {
 		this.constructor = constructor;
 	}
-	
+
 	/**
 	 * Creates a new instance of the built-in {@link TooltipCondition}
 	 * 
@@ -345,7 +346,7 @@ public enum BuiltInCondition {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * See {@link BuiltInCondition#IS_ADVANCED_CONTEXT}
 	 * 
@@ -357,23 +358,23 @@ public enum BuiltInCondition {
 		 * 
 		 */
 		public AdvancedContextConditionResolver() {
-			
+
 		}
-		
+
 		/**
 		 * @param args The arguments required for the {@link TooltipCondition}
 		 */
 		public AdvancedContextConditionResolver(Object... args) {
 			this();
 		}
-		
+
 		@Override
 		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
 			return context.isAdvanced();
 		}
-		
+
 	}
-	
+
 	/**
 	 * See {@link BuiltInCondition#IS_HUD_CONTEXT}
 	 * 
@@ -385,21 +386,21 @@ public enum BuiltInCondition {
 		 * 
 		 */
 		public HudContextConditionResolver() {
-			
+
 		}
-		
+
 		/**
 		 * @param args The arguments required for the {@link TooltipCondition}
 		 */
 		public HudContextConditionResolver(Object... args) {
 			this();
 		}
-		
+
 		@Override
 		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
 			return context instanceof HudTooltipContext;
 		}
-		
+
 	}
 
 }

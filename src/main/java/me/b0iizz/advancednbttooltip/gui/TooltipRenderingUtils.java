@@ -20,7 +20,7 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.hud;
+package me.b0iizz.advancednbttooltip.gui;
 
 import java.util.List;
 
@@ -92,8 +92,8 @@ final class TooltipRenderingUtils {
 				primary, secondary);
 		fillGradient(modelMatrix, bufferBuilder, innerX + innerW + 2, innerY - 3 + 1, innerX + innerW + 3,
 				innerY + innerH + 3 - 1, z, primary, secondary);
-		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY - 3, innerX + innerW + 3, innerY - 3 + 1, z, primary,
-				primary);
+		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY - 3, innerX + innerW + 3, innerY - 3 + 1, z,
+				primary, primary);
 		fillGradient(modelMatrix, bufferBuilder, innerX - 3, innerY + innerH + 2, innerX + innerW + 3,
 				innerY + innerH + 3, z, secondary, secondary);
 
@@ -128,9 +128,9 @@ final class TooltipRenderingUtils {
 						immediate, false, 0, 0xf000f0);
 			}
 
-			if(s == 0)
+			if (s == 0)
 				lineY += 2;
-			
+
 			lineY += 10;
 		}
 		matrices.pop();

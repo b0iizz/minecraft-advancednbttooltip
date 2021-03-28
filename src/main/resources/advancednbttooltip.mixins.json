@@ -7,8 +7,7 @@
   ],
   "client": [
 	"ItemStackMixin",
-	"TitleScreenMixin",
-	"InGameHudMixin"
+	"TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

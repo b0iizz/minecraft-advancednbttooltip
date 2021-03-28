@@ -26,7 +26,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +36,8 @@ import com.google.gson.JsonElement;
 
 import static me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.*;
 
+import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -83,7 +82,7 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 			String path = id0.getPath();
 			Identifier id = new Identifier(id0.getNamespace(), path.substring(0, path.length() - FILE_SUFFIX_LENGTH));
 
-			RES_LOGGER.info("Loading Tooltip {} from {} ", id, id0);
+			RES_LOGGER.debug("Trying to load Tooltip {} from {} ", id, id0);
 
 			try (Resource resource = manager.getResource(id0)) {
 				try (InputStream is = resource.getInputStream()) {
@@ -107,30 +106,12 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 				}
 			} catch (Throwable t) {
 				RES_LOGGER.warn("Couldn't parse tooltip {} from {} ", id, id0, t);
+				return;
 			}
-
+			RES_LOGGER.debug("Finished loading Tooltip {} from {} ", id, id0);
 		});
 
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/suspicious_stew")))
-				.ifPresent(t -> t.addCondition(ConfigManager::getSuspiciousStewToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/compass")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getCompassToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/book")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getBookToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/custom_model_data")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getCustomModelDataToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/repair_cost")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getRepairCostToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/bee_nest")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getBeeToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/spawn_egg")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getSpawnEggToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/sign")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getSignsToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/command_block")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getCommandBlocksToggle));
-		Optional.ofNullable(TOOLTIPS.get(id("tooltip/hideflags")))
-		.ifPresent(t -> t.addCondition(ConfigManager::getHideFlagsToggle));
+		TOOLTIPS.forEach((id, tooltip) -> tooltip.addCondition(() -> ConfigManager.isEnabled(id)));
 
 	}
 

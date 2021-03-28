@@ -20,15 +20,15 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.api;
+package me.b0iizz.advancednbttooltip.api;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import me.b0iizz.advancednbttooltip.tooltip.CustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
-import me.b0iizz.advancednbttooltip.tooltip.loader.Loader;
-import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipLoader;
+import me.b0iizz.advancednbttooltip.api.impl.BuiltInCondition;
+import me.b0iizz.advancednbttooltip.api.impl.CustomTooltip;
+import me.b0iizz.advancednbttooltip.misc.loader.Loader;
+import me.b0iizz.advancednbttooltip.misc.loader.TooltipLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +45,7 @@ public interface AbstractCustomTooltip {
 	 * The {@link Loader} of this class
 	 */
 	public static final Loader<AbstractCustomTooltip> LOADER = TooltipLoader.INSTANCE;
-	
+
 	/**
 	 * Adds a pre-defined {@link TooltipCondition Condition} which has to be met to
 	 * show the tooltip.

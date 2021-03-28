@@ -10,10 +10,7 @@
 					"success": {
 						"id": "mix",
 						"texts": [
-							{
-								"id": "literal",
-								"text": "("
-							},
+							"(",
 							{
 								"id": "nbt",
 								"tag": "LodestonePos.X"
@@ -26,19 +23,13 @@
 								"id": "nbt",
 								"tag": "LodestonePos.Z"
 							},
-							{
-								"id": "literal",
-								"text": ")"
-							}
+							")"
 						]
 					},
 					"fail": {
 						"id": "formatted",
 						"obfuscated": true,
-						"text": {
-							"id": "literal",
-							"text": "UNKNOWN"
-						}
+						"text": "UNKNOWN"
 					},
 					"condition": {
 						"id": "has_tag",
@@ -48,18 +39,12 @@
 				{
 					"id": "mix",
 					"texts": [
-						{
-							"id": "literal",
-							"text": "("
-						},
+						"(",
 						{
 							"id": "nbt",
 							"tag": "LodestoneDimension"
 						},
-						{
-							"id": "literal",
-							"text": ")"
-						}
+						")"
 					]
 				}
 			]

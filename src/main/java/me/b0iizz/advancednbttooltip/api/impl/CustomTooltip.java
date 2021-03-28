@@ -20,15 +20,14 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip;
+package me.b0iizz.advancednbttooltip.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.tooltip.builtin.BuiltInCondition;
+import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
@@ -68,7 +67,7 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 		addCondition(condition.create(args));
 		return this;
 	}
-	
+
 	@Override
 	public CustomTooltip addCondition(TooltipCondition condition) {
 		conditions.add(condition);
@@ -92,6 +91,5 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 			return tooltipProvider.createTooltipWhenDisabled(item, tag, context);
 		}
 	}
-
 
 }

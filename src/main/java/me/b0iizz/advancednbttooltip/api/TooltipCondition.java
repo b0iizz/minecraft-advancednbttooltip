@@ -20,17 +20,18 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.api;
+package me.b0iizz.advancednbttooltip.api;
 
-import me.b0iizz.advancednbttooltip.tooltip.loader.Loader;
-import me.b0iizz.advancednbttooltip.tooltip.loader.TooltipConditionLoader;
+import me.b0iizz.advancednbttooltip.misc.loader.Loader;
+import me.b0iizz.advancednbttooltip.misc.loader.TooltipConditionLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 
 /**
- * An interface used to restrict the visibility of a tooltip.
- * A lambda or built-in implementation is recommended.
+ * An interface used to restrict the visibility of a tooltip. A lambda or
+ * built-in implementation is recommended.
+ * 
  * @author B0IIZZ
  */
 @FunctionalInterface
@@ -60,7 +61,5 @@ public interface TooltipCondition {
 	 * @return Whether the tooltip should be displayed.
 	 */
 	public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context);
-
-	
 
 }

@@ -25,7 +25,7 @@ package me.b0iizz.advancednbttooltip.misc;
 import org.lwjgl.glfw.GLFW;
 
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
-import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import me.b0iizz.advancednbttooltip.gui.TooltipsScreen;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
@@ -44,8 +44,9 @@ public final class ModKeybinds {
 	 * Initializes all KeyBindings
 	 */
 	public static void initKeyBindings() {
-		openConfig = KeyBindingHelper.registerKeyBinding(new KeyBinding("key." + AdvancedNBTTooltips.modid + ".openConfig",
-				InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "category." + AdvancedNBTTooltips.modid + ".keys"));
+		openConfig = KeyBindingHelper
+				.registerKeyBinding(new KeyBinding("key." + AdvancedNBTTooltips.modid + ".openConfig",
+						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_B, "category." + AdvancedNBTTooltips.modid + ".keys"));
 	}
 
 	/**
@@ -55,7 +56,7 @@ public final class ModKeybinds {
 	 */
 	public static void updateKeyBindings(MinecraftClient client) {
 		if (openConfig.isPressed() && client.currentScreen == null) {
-			client.openScreen(ConfigManager.getConfigScreen(null).get());
+			client.openScreen(new TooltipsScreen());
 		}
 	}
 

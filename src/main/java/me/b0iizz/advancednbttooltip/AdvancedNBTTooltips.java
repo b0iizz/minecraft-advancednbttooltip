@@ -27,12 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import me.b0iizz.advancednbttooltip.config.ModConfig.TooltipPosition;
+import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer;
 import me.b0iizz.advancednbttooltip.misc.CustomTooltipResourceReloadListener;
 import me.b0iizz.advancednbttooltip.misc.ModKeybinds;
-import me.b0iizz.advancednbttooltip.tooltip.api.AbstractCustomTooltip;
-import me.b0iizz.advancednbttooltip.tooltip.hud.HudTooltipRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -90,7 +89,7 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
 
-		HudTooltipRenderer.registerDefaultHandlers();
+		HudTooltipRenderer.setup();
 
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
 				.registerReloadListener(new CustomTooltipResourceReloadListener());
@@ -133,7 +132,33 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 	public static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
 		CompoundTag tag = stack.getTag();
-		TOOLTIPS.values().forEach(t -> tooltip.addAll(t.makeTooltip(item, tag, context)));
+		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
+				.forEachOrdered(t -> tooltip.addAll(t.getValue().makeTooltip(item, tag, context)));
+	}
+
+	/**
+	 * An enum representing the position of custom tooltips in the tooltip list
+	 * 
+	 * @author B0IIZZ
+	 */
+	@SuppressWarnings("javadoc")
+	public static enum TooltipPosition {
+		TOP(1), BOTTOM(-1);
+
+		private final int offset;
+
+		private TooltipPosition(int offset) {
+			this.offset = offset;
+		}
+
+		public int position(List<?> list) {
+			return offset < 0 ? list.size() + offset + 1 : offset;
+		}
+
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
 	}
 
 }

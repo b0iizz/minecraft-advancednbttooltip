@@ -20,26 +20,19 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.tooltip.builtin;
+package me.b0iizz.advancednbttooltip.api.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.tooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.tooltip.util.NBTPath;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import me.b0iizz.advancednbttooltip.util.NBTPath;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffect;
@@ -93,8 +86,8 @@ public enum BuiltInFactory {
 	 */
 	NBT(NBTFactory::new),
 	/**
-	 * A factory which creates a simple {@link LiteralText} containing the size of
-	 * a specified {@link NBTPath NBT-Element} <br>
+	 * A factory which creates a simple {@link LiteralText} containing the size of a
+	 * specified {@link NBTPath NBT-Element} <br>
 	 * <b>Parameters: </b><br>
 	 * {@link NBTPath} path - The path to the value in an {@link Item} tag<br>
 	 */
@@ -127,14 +120,6 @@ public enum BuiltInFactory {
 	 * appended next to on another<br>
 	 */
 	MIX(MixFactory::new),
-	/**
-	 * Returns the result of an expression<br>
-	 * <b>Parameters: </b><br>
-	 * {@link String String} expression - The expression <br>
-	 * {@link Map}&lt;{@link String},{@link TooltipFactory}&gt; variables - The
-	 * variables <br>
-	 */
-	EXPRESSION(ExpressionFactory::new),
 	/**
 	 * Returns a line with minecraft effect formatting According to id, duration and
 	 * strength.<br>
@@ -325,9 +310,9 @@ public enum BuiltInFactory {
 		final boolean colored;
 
 		/**
-		 * @param path  The path to the NBT-value to be copied
-		 * @param flags The NBT tree traversal flags {@code 0x1 = Traverse {@link
-		 *              CompoundTag}} {@code 0x2 = Traverse {@link AbstractListTag}}
+		 * @param path    The path to the NBT-value to be copied
+		 * @param flags   The NBT tree traversal flags {@code 0x1 = Traverse {@link
+		 *                CompoundTag}} {@code 0x2 = Traverse {@link AbstractListTag}}
 		 * @param colored Whether the tooltip should be colored
 		 */
 		public NBTFactory(NBTPath path, int flags, boolean colored) {
@@ -352,19 +337,21 @@ public enum BuiltInFactory {
 		private List<Text> fromTag(Tag tag) {
 			if (tag instanceof CompoundTag) {
 				if (!traverseCompound)
-					return Arrays.asList(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
-				return ((CompoundTag) tag).getKeys().stream()
-						.flatMap(key -> Stream.concat(Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
-								fromTag(((CompoundTag) tag).get(key)).stream().map(this::indent)))
-						.collect(Collectors.toList());
+					return Arrays
+							.asList(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+				return ((CompoundTag) tag).getKeys().stream().flatMap(key -> Stream.concat(
+						Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
+						fromTag(((CompoundTag) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
 			} else if (tag instanceof AbstractListTag) {
 				if (!traverseList)
-					return Arrays.asList(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+					return Arrays
+							.asList(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 				return ((AbstractListTag<Tag>) tag).stream()
 						.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText(""))))
 						.map(this::indent).collect(Collectors.toList());
 			} else
-				return Arrays.asList(new LiteralText(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+				return Arrays.asList(
+						new LiteralText(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 		}
 
 		private MutableText indent(Text text) {
@@ -372,7 +359,7 @@ public enum BuiltInFactory {
 		}
 
 	}
-	
+
 	/**
 	 * See {@link BuiltInFactory#NBT}
 	 * 
@@ -383,7 +370,7 @@ public enum BuiltInFactory {
 		final NBTPath path;
 
 		/**
-		 * @param path  The path to the NBT-value
+		 * @param path The path to the NBT-value
 		 */
 		public NBTSizeFactory(NBTPath path) {
 			this.path = path;
@@ -530,57 +517,6 @@ public enum BuiltInFactory {
 	}
 
 	/**
-	 * See {@link BuiltInFactory#EXPRESSION}
-	 * 
-	 * @author B0IIZZ
-	 */
-	protected static class ExpressionFactory implements TooltipFactory {
-
-		private static final ScriptEngine evaluator = new ScriptEngineManager().getEngineByName("JavaScript");
-
-		final String expression;
-		final Map<String, TooltipFactory> variables;
-
-		/**
-		 * See {@link BuiltInFactory#EXPRESSION}
-		 * 
-		 * @param expression The expression
-		 * @param variables  The variables
-		 */
-		public ExpressionFactory(String expression, Map<String, TooltipFactory> variables) {
-			this.expression = expression;
-			this.variables = variables;
-		}
-
-		/**
-		 * @param args The arguments required for the {@link TooltipFactory}
-		 */
-		public ExpressionFactory(Object... args) {
-			this((String) args[0], args.length < 2 ? new HashMap<>() : (Map<String, TooltipFactory>) args[1]);
-		}
-
-		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			String fullExpr = "";
-			for (Entry<String, TooltipFactory> var : variables.entrySet()) {
-				try {
-					fullExpr += var.getKey() + " = " + var.getValue().createTooltip(item, tag, context).stream()
-							.findFirst().map(Text::asString).map(Double::parseDouble).orElse(0d) + ";";
-				} catch (Throwable t) {
-					fullExpr += var.getKey() + " = 0.0;";
-				}
-			}
-			fullExpr += expression + ";";
-			try {
-				return Arrays.asList(new LiteralText(evaluator.eval(fullExpr).toString()));
-			} catch (ScriptException e) {
-				return Arrays.asList(new LiteralText("0"));
-			}
-		}
-
-	}
-
-	/**
 	 * See {@link BuiltInFactory#EFFECT}
 	 * 
 	 * @author B0IIZZ
@@ -649,8 +585,8 @@ public enum BuiltInFactory {
 		/**
 		 * See {@link BuiltInFactory#LIMIT}
 		 * 
-		 * @param text The limited factory
-		 * @param length  The length limit
+		 * @param text   The limited factory
+		 * @param length The length limit
 		 */
 		public LimitFactory(TooltipFactory text, int length) {
 			this.factory = text;
@@ -686,8 +622,8 @@ public enum BuiltInFactory {
 		/**
 		 * See {@link BuiltInFactory#LIMIT_LINES}
 		 * 
-		 * @param text The limited factory
-		 * @param length  The length limit
+		 * @param text   The limited factory
+		 * @param length The length limit
 		 */
 		public LimitLinesFactory(TooltipFactory text, int length) {
 			this.factory = text;
@@ -737,16 +673,7 @@ public enum BuiltInFactory {
 				byte effectId = effect.getByte("EffectId");
 				int effectDuration = effect.contains("EffectDuration") ? effect.getInt("EffectDuration") : 160;
 
-				StatusEffect eff = StatusEffect.byRawId(effectId);
-				StatusEffectInstance inst = new StatusEffectInstance(eff, effectDuration);
-
-				MutableText line = new TranslatableText(inst.getTranslationKey());
-
-				String duration = StatusEffectUtil.durationToString(inst, 1);
-
-				line.append(" (" + duration + ")");
-
-				result.add(line.formatted(eff.getType().getFormatting()));
+				result.addAll(new EffectFactory(effectId, effectDuration, 0).createTooltip(item, tag, context));
 			}
 			return result;
 		}
@@ -827,7 +754,8 @@ public enum BuiltInFactory {
 
 			int hideFlags = tag.getInt("HideFlags");
 
-			result.add(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".tooltip.hideflag").formatted(Formatting.GRAY));
+			result.add(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".tooltip.hideflag")
+					.formatted(Formatting.GRAY));
 
 			for (int i = 0; i < ItemStack.TooltipSection.values().length; i++) {
 				if (((1 << i) & hideFlags) > 0) {

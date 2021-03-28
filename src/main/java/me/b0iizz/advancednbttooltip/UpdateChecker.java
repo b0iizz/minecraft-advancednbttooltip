@@ -55,15 +55,16 @@ public final class UpdateChecker {
 	 * The default Text which will be displayed in the Title menu
 	 */
 	public static final String UPDATE_TEXT = "A new version of AdvancedNbtTooltips is available!";
-	
+
 	/**
-	 * The Text which will be displayed in the Title menu when an update is mandatory due to a bug
+	 * The Text which will be displayed in the Title menu when an update is
+	 * mandatory due to a bug
 	 */
 	public static final String MANDATORY_UPDATE_TEXT = "This version of the mod has a critical error! Please update as soon as possible!";
 
 	private static boolean isLatest = true;
 	private static boolean isCritical = false;
-	
+
 	private static boolean hasCheckedUpdates = false;
 
 	/**
@@ -84,28 +85,31 @@ public final class UpdateChecker {
 	 * @return true if the latest version of the mod fixes a critical error
 	 */
 	public static boolean isCriticalErrorFixed() {
-		if(!hasCheckedUpdates)
+		if (!hasCheckedUpdates)
 			checkUpdates();
 		return isCritical;
 	}
-	
+
 	/**
 	 * Rechecks if the mod is up to date.
 	 */
 	public static void refreshUpdates() {
-		if(!ConfigManager.getMainMenuUpdateNoticeToggle()) return;
+		if (!ConfigManager.getMainMenuUpdateNoticeToggle())
+			return;
 		hasCheckedUpdates = false;
 		checkUpdates();
 	}
 
 	private static void checkUpdates() {
 		new Thread(() -> {
+			isLatest = true;
 			hasCheckedUpdates = true;
 			try {
 				String currentMinecraftReleaseTarget = SharedConstants.getGameVersion().getReleaseTarget();
-				
-				SemanticVersion currentPatchVersion = VersionDeserializer.deserializeSemantic(FabricLoader.getInstance().getModContainer(AdvancedNBTTooltips.modid).get().getMetadata()
-						.getVersion().getFriendlyString().split("\\+")[0]);
+
+				SemanticVersion currentPatchVersion = VersionDeserializer
+						.deserializeSemantic(FabricLoader.getInstance().getModContainer(AdvancedNBTTooltips.modid).get()
+								.getMetadata().getVersion().getFriendlyString().split("\\+")[0]);
 
 				URL update = new URL(UPDATE_URL);
 				URLConnection connection = update.openConnection();
@@ -117,8 +121,9 @@ public final class UpdateChecker {
 					String modid = attributes[1];
 					SemanticVersion newestPatchVersion = VersionDeserializer.deserializeSemantic(attributes[2]);
 					boolean criticalError = attributes.length > 3 ? attributes[3].equals("true") : false;
-					
-					if(currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(AdvancedNBTTooltips.modid) && newestPatchVersion.compareTo(currentPatchVersion) > 0) {
+
+					if (currentMinecraftReleaseTarget.equals(releaseTarget) && modid.equals(AdvancedNBTTooltips.modid)
+							&& newestPatchVersion.compareTo(currentPatchVersion) > 0) {
 						isLatest = false;
 						isCritical = criticalError;
 					}
@@ -127,9 +132,10 @@ public final class UpdateChecker {
 			} catch (Exception e) {
 				if (e instanceof NumberFormatException || e instanceof VersionParsingException)
 					isLatest = false;
-				LOGGER.info(" Error in update checker! Ignore this in a development environment! {}: {}", e.getClass().getCanonicalName(), e.getMessage());
+				LOGGER.info(" Error in update checker! Ignore this in a development environment! {}: {}",
+						e.getClass().getCanonicalName(), e.getMessage());
 			}
-		},"adv-nbt-tool-update").start();
+		}, "adv-nbt-tool-update").start();
 	}
 
 	/**
