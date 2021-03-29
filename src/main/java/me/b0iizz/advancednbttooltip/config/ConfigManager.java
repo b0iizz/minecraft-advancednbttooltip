@@ -149,7 +149,7 @@ public class ConfigManager {
 	 * @return if the tooltip is enabled
 	 */
 	public static boolean isEnabled(Identifier id) {
-		return toggles.computeIfAbsent(id, newId -> true);
+		return toggles.computeIfAbsent(id, newId -> newId.getNamespace().equals(AdvancedNBTTooltips.modid));
 	}
 
 	/**
@@ -159,7 +159,8 @@ public class ConfigManager {
 	 * @return the new state of the tooltip
 	 */
 	public static boolean toggle(Identifier id) {
-		return !toggles.put(id, !isEnabled(id));
+		toggles.put(id, !isEnabled(id));
+		return isEnabled(id);
 	}
 
 	// TODO: Category General Options

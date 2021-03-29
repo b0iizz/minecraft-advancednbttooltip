@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
@@ -53,7 +56,7 @@ import net.minecraft.util.Identifier;
  * 
  * @author B0IIZZ
  */
-public class AdvancedNBTTooltips implements ClientModInitializer {
+public final class AdvancedNBTTooltips implements ClientModInitializer {
 
 	/**
 	 * The mod's modid
@@ -63,7 +66,7 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 	/**
 	 * The list of all loaded tooltips
 	 */
-	public static final Map<Identifier, AbstractCustomTooltip> TOOLTIPS = new HashMap<>();
+	protected static final Map<Identifier, AbstractCustomTooltip> TOOLTIPS = new HashMap<>();
 
 	/**
 	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
@@ -76,6 +79,24 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 		return new Identifier(modid, name);
 	}
 
+	
+	/**
+	 * Registers a new Tooltip
+	 * @param id The id of the tooltip
+	 * @param tooltip The tooltip
+	 * @return Whether the registration was successful
+	 */
+	public static boolean registerTooltip(Identifier id, AbstractCustomTooltip tooltip) {
+		return TOOLTIPS.putIfAbsent(id, tooltip) == null;
+	}
+	
+	/**
+	 * @return A Set containing all registered Tooltips
+	 */
+	public static Set<Map.Entry<Identifier, AbstractCustomTooltip>> getRegisteredTooltips() {
+		return ImmutableSet.copyOf(TOOLTIPS.entrySet());
+	}
+	
 	/**
 	 * Called on initialization. Registers and loads this mod's config.
 	 */
@@ -92,7 +113,7 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 		HudTooltipRenderer.setup();
 
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
-				.registerReloadListener(new CustomTooltipResourceReloadListener());
+				.registerReloadListener(new CustomTooltipResourceReloadListener(TOOLTIPS));
 
 		UpdateChecker.refreshUpdates();
 	}
@@ -104,7 +125,7 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 	 * @param ctx   The context of the tooltip
 	 * @param lines The lines in the tooltip
 	 */
-	public static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
+	protected static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
 		if (ConfigManager.getTooltipToggle()) {
 			ArrayList<Text> text = new ArrayList<>();
 			appendCustomTooltip(stack.copy(), text, ctx);
@@ -129,7 +150,7 @@ public class AdvancedNBTTooltips implements ClientModInitializer {
 	 *                generated.
 	 *
 	 */
-	public static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
+	protected static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
 		CompoundTag tag = stack.getTag();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))

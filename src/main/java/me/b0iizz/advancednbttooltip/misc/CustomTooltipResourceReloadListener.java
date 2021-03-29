@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,11 +63,15 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 
 	private final Gson gson;
 
+	final Map<Identifier, AbstractCustomTooltip> tooltips;
+	
 	/**
+	 * @param tooltips The map containing all registered Tooltips
 	 * 
 	 */
-	public CustomTooltipResourceReloadListener() {
+	public CustomTooltipResourceReloadListener(Map<Identifier, AbstractCustomTooltip> tooltips) {
 		gson = new GsonBuilder().create();
+		this.tooltips = tooltips;
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 
 	@Override
 	public void apply(ResourceManager manager) {
-		TOOLTIPS.clear();
+		tooltips.clear();
 
 		manager.findResources("tooltip", path -> path.endsWith(".json")).forEach(id0 -> {
 			String path = id0.getPath();
@@ -95,7 +100,7 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 							try {
 								AbstractCustomTooltip tooltip = AbstractCustomTooltip.LOADER
 										.load(json.getAsJsonObject());
-								TOOLTIPS.put(id, tooltip);
+								tooltips.put(id, tooltip);
 							} catch (Throwable t) {
 								throw new IllegalStateException("Error while loading tooltip.", t);
 							}
@@ -111,7 +116,7 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 			RES_LOGGER.debug("Finished loading Tooltip {} from {} ", id, id0);
 		});
 
-		TOOLTIPS.forEach((id, tooltip) -> tooltip.addCondition(() -> ConfigManager.isEnabled(id)));
+		tooltips.forEach((id, tooltip) -> tooltip.addCondition(() -> ConfigManager.isEnabled(id)));
 
 	}
 

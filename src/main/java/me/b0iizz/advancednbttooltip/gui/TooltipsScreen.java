@@ -113,7 +113,7 @@ public class TooltipsScreen extends Screen {
 				int bottom, int itemHeight) {
 			super(minecraftClient, width, height, top, bottom, itemHeight);
 			this.screen = screen;
-			AdvancedNBTTooltips.TOOLTIPS.entrySet().stream()
+			AdvancedNBTTooltips.getRegisteredTooltips().stream()
 					.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
 					.map(e -> new Entry(this, e.getKey(), e.getValue())).forEachOrdered(this::addEntry);
 			method_31322(false);
@@ -123,6 +123,8 @@ public class TooltipsScreen extends Screen {
 
 		public static class Entry extends ElementListWidget.Entry<Entry> {
 
+			private static final int MAX_NAME_LENGTH = 35;
+
 			final TooltipListWidget widget;
 			final Text displayName;
 			final Text tooltip;
@@ -130,16 +132,33 @@ public class TooltipsScreen extends Screen {
 
 			public Entry(TooltipListWidget parent, Identifier id, AbstractCustomTooltip tooltip) {
 				this.widget = parent;
-				this.displayName = id.getNamespace().equals(AdvancedNBTTooltips.modid)
-						? new TranslatableText("text.advancednbttooltip.toggle." + id.getPath().split("/")[1])
-						: new LiteralText(id.toString());
-				this.tooltip = id.getNamespace().equals(AdvancedNBTTooltips.modid)
-						? new TranslatableText(
-								"text.advancednbttooltip.toggle." + id.getPath().split("/")[1] + ".tooltip")
-						: null;
+				this.displayName = createDisplayName(id);
+				this.tooltip = createTooltip(id);
 				this.toggleButton = new ButtonWidget(0, 0, 35, 20, getText(ConfigManager.isEnabled(id)), button -> {
 					button.setMessage(getText(ConfigManager.toggle(id)));
 				});
+			}
+
+			private Text createDisplayName(Identifier id) {
+				if (isOfMod(id))
+					return new TranslatableText("text.advancednbttooltip.toggle." + id.getPath().split("/")[1]);
+				return isNameShortened(id) ? new LiteralText(id.toString().substring(0, MAX_NAME_LENGTH) + "...")
+						: new LiteralText(id.toString());
+			}
+
+			private Text createTooltip(Identifier id) {
+				if (isOfMod(id))
+					return new TranslatableText(
+							"text.advancednbttooltip.toggle." + id.getPath().split("/")[1] + ".tooltip");
+				return isNameShortened(id) ? new LiteralText(id.toString()) : null;
+			}
+
+			private boolean isOfMod(Identifier id) {
+				return id.getNamespace().equals(AdvancedNBTTooltips.modid);
+			}
+
+			private boolean isNameShortened(Identifier id) {
+				return id.toString().length() > MAX_NAME_LENGTH;
 			}
 
 			private Text getText(boolean toggle) {
