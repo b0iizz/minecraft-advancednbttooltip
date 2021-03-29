@@ -17,7 +17,7 @@ A *TooltipCondition* defines whether the tooltip will be shown at any moment. Th
 
 ### References
 
-To see the specifics and all parameters of the TooltipFactories and TooltipConditions you can check the Learning Tooltips resource pack which you can play around with to get a feel for the json structure. To see how some things might be used there also is a resource pack mirroring the normal built-in Tooltips of the mod.<br>
+To see the specifics and all parameters of the TooltipFactories and TooltipConditions you can check the Learning Tooltips resource pack, which you can play around with to get a feel for the json structure. To see how some things might be used there also is a resource pack mirroring the normal built-in Tooltips of the mod.<br>
 
 [Learning Tooltips Pack](https://www.dropbox.com/s/jrmgt9birmzrppe/Learning-Tooltips.zip?dl=1 "Learning Tooltips Pack (Dropbox)")<br>
 [Standard Tooltips Pack](https://www.dropbox.com/s/hrfne60k77bpjh7/Standard-Tooltips.zip?dl=1 "Standard Tooltips Pack (Dropbox)")
