@@ -1,7 +1,7 @@
 ﻿# minecraft-advancednbttooltip
 Minecraft Mod (Fabric Modloader) for 1.16.1 and above.
 
-<h1>Custom JSON Tooltips</h1>
+<h1>Custom JSON Tooltips (since 1.5.0)</h1>
 
 The root object requires a <b>"text"</b> and a <b>"condition"</b>.<br>
 <h3>TooltipFactories</h3>
