@@ -132,9 +132,9 @@ public class ConfigManager {
 			}
 		try (OutputStream os = new FileOutputStream(tFile)) {
 			try (Writer w = new OutputStreamWriter(os)) {
-				gson.toJson(
-						toggles.entrySet().stream().collect(JsonObject::new,
-								(obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
+				gson.toJson(toggles.entrySet().stream()
+						.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
+						.collect(JsonObject::new, (obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
 								(obj, obj2) -> obj2.entrySet().forEach(e -> obj.add(e.getKey(), e.getValue()))),
 						gson.newJsonWriter(w));
 			}
