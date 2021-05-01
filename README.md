@@ -2,7 +2,7 @@
 Minecraft Mod (Fabric Modloader) for 1.16.1 and above.
 
 ## How to install
-To use this mod u must first [install fabric](https://fabricmc.net/wiki/install)<br>
+To use this mod you must first [install fabric](https://fabricmc.net/wiki/install)<br>
 and then [add the mod](https://fabricmc.net/wiki/tutorial:adding_mods)
 
 ## Custom JSON Tooltips (since 1.5.0)</h1>
