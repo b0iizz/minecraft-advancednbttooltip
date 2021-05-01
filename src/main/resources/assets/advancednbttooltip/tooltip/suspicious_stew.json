@@ -1,6 +1,18 @@
 {
 	"text": {
-		"id": "builtin_suspicious_stew"
+		"id": "nbt",
+		"tag": "Effects[]",
+		"text": {
+			"id": "effect",
+			"rawId": {
+				"id": "nbt",
+				"tag": "EffectId"
+			},
+			"duration": {
+				"id": "nbt",
+				"tag": "EffectDuration"
+			}
+		}
 	},
 	"condition": {
 		"id": "and",

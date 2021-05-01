@@ -22,6 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NBTPath;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffect;
@@ -42,7 +44,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.text.LiteralText;
@@ -86,6 +87,13 @@ public enum BuiltInFactory {
 	 */
 	NBT(NBTFactory::new),
 	/**
+	 * A factory which creates a simple {@link LiteralText} containing the value of
+	 * a specified {@link NBTPath} <br>
+	 * <b>Parameters: </b><br>
+	 * {@link NBTPath} path - The path to the value in an {@link Item} tag<br>
+	 */
+	NBT_REROUTE(NBTRerouteFactory::new),
+	/**
 	 * A factory which creates a simple {@link LiteralText} containing the size of a
 	 * specified {@link NBTPath NBT-Element} <br>
 	 * <b>Parameters: </b><br>
@@ -116,6 +124,8 @@ public enum BuiltInFactory {
 	 * Combines multiple {@link TooltipFactory TooltipFactories} next to each other
 	 * together. <br>
 	 * <b>Parameters: </b><br>
+	 * {@link Boolean boolean} separate - If mix should combine lines individually
+	 * or put everything on one line <br>
 	 * {@link TooltipFactory TooltipFactory[]} mix - An array of factories to be
 	 * appended next to on another<br>
 	 */
@@ -150,10 +160,6 @@ public enum BuiltInFactory {
 	 * <br>
 	 */
 	LIMIT_LINES(LimitLinesFactory::new),
-	/**
-	 * The built-in suspicious stew tooltip
-	 */
-	BUILTIN_SUSPICIOUS_STEW(BuiltInSuspiciousStewFactory::new),
 	/**
 	 * The built-in signs tooltip
 	 */
@@ -331,7 +337,7 @@ public enum BuiltInFactory {
 
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			return fromTag(path.getOptional(tag).orElse(StringTag.of("-")));
+			return path.getAll(tag).stream().map(this::fromTag).flatMap(List::stream).collect(Collectors.toList());
 		}
 
 		private List<Text> fromTag(Tag tag) {
@@ -356,6 +362,40 @@ public enum BuiltInFactory {
 
 		private MutableText indent(Text text) {
 			return new LiteralText(" ").append(text);
+		}
+
+	}
+
+	/**
+	 * See {@link BuiltInFactory#NBT_REROUTE}
+	 * 
+	 * @author B0IIZZ
+	 */
+	protected static class NBTRerouteFactory implements TooltipFactory {
+
+		final NBTPath path;
+		final TooltipFactory child;
+
+		/**
+		 * @param path    The path to the NBT-value to be defined as new root
+		 * @param child   The {@link TooltipFactory} to have the root tag redefined.
+		 */
+		public NBTRerouteFactory(NBTPath path, TooltipFactory child) {
+			this.path = path;
+			this.child = child;
+		}
+
+		/**
+		 * @param args The arguments required for the {@link TooltipFactory}
+		 */
+		public NBTRerouteFactory(Object... args) {
+			this((NBTPath) args[0], (TooltipFactory) args[1]);
+		}
+
+		@Override
+		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+			return path.getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND).map(t -> (CompoundTag) t)
+					.flatMap(t -> this.child.createTooltip(item, t, context).stream()).collect(Collectors.toList());
 		}
 
 	}
@@ -482,13 +522,17 @@ public enum BuiltInFactory {
 	 */
 	protected static class MixFactory implements TooltipFactory {
 
+		final boolean separate;
 		final TooltipFactory[] mix;
 
 		/**
-		 * @param mix An array of {@link TooltipFactory TooltipFactories} which will be
-		 *            appended next to one another.
+		 * @param separate If mix should combine lines individually or put everything on
+		 *                 one line
+		 * @param mix      An array of {@link TooltipFactory TooltipFactories} which
+		 *                 will be appended next to one another.
 		 */
-		public MixFactory(TooltipFactory[] mix) {
+		public MixFactory(boolean separate, TooltipFactory[] mix) {
+			this.separate = separate;
 			this.mix = mix;
 		}
 
@@ -496,22 +540,39 @@ public enum BuiltInFactory {
 		 * @param args The arguments required for the {@link TooltipFactory}
 		 */
 		public MixFactory(Object... args) {
-			this(Arrays.copyOf(args, args.length, TooltipFactory[].class));
+			this((boolean) args[0],
+					Arrays.copyOf((Object[]) args[1], ((Object[]) args[1]).length, TooltipFactory[].class));
 		}
 
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			ArrayList<Text> list = new ArrayList<>();
+			List<List<Text>> tooltips = new ArrayList<>();
+
 			for (TooltipFactory factory : mix) {
-				list.addAll(factory.createTooltip(item, tag, context));
+				tooltips.add(factory.createTooltip(item, tag, context));
 			}
 
-			if (list.isEmpty())
-				return Arrays.asList();
+			if (separate) {
+				int maxL = tooltips.stream().mapToInt(List::size).reduce(Integer::max).orElse(0);
 
-			Text res = list.stream().reduce(new LiteralText(""),
-					((a, b) -> a.shallowCopy().append(b).append(new LiteralText(" "))));
-			return Arrays.asList(res);
+				Text[] res = new Text[maxL];
+
+				for (int i = 0; i < maxL; i++) {
+					final int idx = i;
+					res[i] = tooltips.stream().flatMap(list -> {
+						if (idx < list.size())
+							return Stream.of(list.get(idx));
+						if (!list.isEmpty())
+							return Stream.of(list.get(list.size() - 1));
+						return Stream.empty();
+					}).map(Text::shallowCopy).reduce(MutableText::append).orElse(new LiteralText(""));
+				}
+
+				return Arrays.asList(res);
+			} else {
+				return tooltips.stream().flatMap(List::stream).map(Text::shallowCopy).reduce(MutableText::append)
+						.<List<Text>>map(Arrays::asList).orElseGet(() -> Arrays.asList());
+			}
 		}
 
 	}
@@ -523,9 +584,9 @@ public enum BuiltInFactory {
 	 */
 	protected static class EffectFactory implements TooltipFactory {
 
-		final byte rawId;
-		final int duration;
-		final int strength;
+		final TooltipFactory rawId;
+		final TooltipFactory duration;
+		final TooltipFactory strength;
 
 		/**
 		 * See {@link BuiltInFactory#EFFECT}
@@ -536,6 +597,19 @@ public enum BuiltInFactory {
 		 * 
 		 */
 		public EffectFactory(byte rawId, int duration, int strength) {
+			this((i, t, c) -> Arrays.asList(new LiteralText(Byte.toString(rawId))),
+					(i, t, c) -> Arrays.asList(new LiteralText(Integer.toString(duration))),
+					(i, t, c) -> Arrays.asList(new LiteralText(Integer.toString(strength))));
+		}
+
+		/**
+		 * 
+		 * @param rawId    The raw potion id
+		 * @param duration The duration of the effect
+		 * @param strength The strength of the effect
+		 * 
+		 */
+		public EffectFactory(TooltipFactory rawId, TooltipFactory duration, TooltipFactory strength) {
 			this.rawId = rawId;
 			this.duration = duration;
 			this.strength = strength;
@@ -545,28 +619,51 @@ public enum BuiltInFactory {
 		 * @param args The arguments required for the {@link TooltipFactory}
 		 */
 		public EffectFactory(Object... args) {
-			this((byte) args[0], (int) args[1], args.length > 2 ? (int) args[2] : 0);
+			this((TooltipFactory) args[0], (TooltipFactory) args[1], args.length > 2 ? (TooltipFactory) args[2] : null);
 		}
 
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+			List<Text> rawIds = rawId.createTooltip(item, tag, context);
+			List<Text> durations = duration.createTooltip(item, tag, context);
+			List<Text> strengths = strength != null ? strength.createTooltip(item, tag, context)
+					: Stream.generate(() -> new LiteralText("0")).limit(rawIds.size()).collect(Collectors.toList());
+
+			int numEffects = Math.max(rawIds.size(),
+					Math.max(durations.size(), strength == null ? 0 : strengths.size()));
+
 			List<Text> result = new ArrayList<>();
 
-			StatusEffect eff = StatusEffect.byRawId(rawId);
-			StatusEffectInstance inst = new StatusEffectInstance(eff, duration, strength);
+			for (int i = 0; i < numEffects; i++) {
+				byte rawId = 0;
+				int duration = 0, strength = 0;
+				try {
+					rawId = new BigDecimal(rawIds.get(i).asString().trim().replaceAll("[A-Za-z]$", "")).byteValue();
+					duration = new BigDecimal(durations.get(i).asString().trim().replaceAll("[A-Za-z]$", ""))
+							.intValue();
+					strength = new BigDecimal(strengths.get(i).asString().trim().replaceAll("[A-Za-z]$", ""))
+							.intValue();
+				} catch (Throwable t) {
+					t.printStackTrace();
+					continue;
+				}
 
-			MutableText line = new TranslatableText(inst.getTranslationKey());
+				StatusEffect eff = StatusEffect.byRawId(rawId);
+				StatusEffectInstance inst = new StatusEffectInstance(eff, duration, strength);
 
-			if (inst.getAmplifier() > 0) {
-				line = new TranslatableText("potion.withAmplifier",
-						new Object[] { line, new TranslatableText("potion.potency." + inst.getAmplifier()) });
+				MutableText line = new TranslatableText(inst.getTranslationKey());
+
+				if (inst.getAmplifier() > 0) {
+					line = new TranslatableText("potion.withAmplifier",
+							new Object[] { line, new TranslatableText("potion.potency." + inst.getAmplifier()) });
+				}
+				if (inst.getDuration() > 20) {
+					line = new TranslatableText("potion.withDuration",
+							new Object[] { line, StatusEffectUtil.durationToString(inst, 1) });
+				}
+
+				result.add(line.formatted(eff.getType().getFormatting()));
 			}
-			if (inst.getDuration() > 20) {
-				line = new TranslatableText("potion.withDuration",
-						new Object[] { line, StatusEffectUtil.durationToString(inst, 1) });
-			}
-
-			result.add(line.formatted(eff.getType().getFormatting()));
 			return result;
 		}
 
@@ -640,42 +737,6 @@ public enum BuiltInFactory {
 		@Override
 		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
 			return factory.createTooltip(item, tag, context).stream().limit(length).collect(Collectors.toList());
-		}
-
-	}
-
-	/**
-	 * See {@link BuiltInFactory#BUILTIN_SUSPICIOUS_STEW}
-	 * 
-	 * @author B0IIZZ
-	 */
-	protected static class BuiltInSuspiciousStewFactory implements TooltipFactory {
-
-		/**
-		 * See {@link BuiltInFactory#BUILTIN_SUSPICIOUS_STEW}
-		 */
-		public BuiltInSuspiciousStewFactory() {
-		}
-
-		/**
-		 * @param args The arguments required for the {@link TooltipFactory}
-		 */
-		public BuiltInSuspiciousStewFactory(Object... args) {
-			this();
-		}
-
-		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			List<Text> result = new ArrayList<>();
-			ListTag effects = tag.getList("Effects", 10);
-			for (int i = 0; i < effects.size(); i++) {
-				CompoundTag effect = effects.getCompound(i);
-				byte effectId = effect.getByte("EffectId");
-				int effectDuration = effect.contains("EffectDuration") ? effect.getInt("EffectDuration") : 160;
-
-				result.addAll(new EffectFactory(effectId, effectDuration, 0).createTooltip(item, tag, context));
-			}
-			return result;
 		}
 
 	}

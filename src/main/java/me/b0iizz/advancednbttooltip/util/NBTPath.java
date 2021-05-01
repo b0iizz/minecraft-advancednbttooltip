@@ -22,10 +22,13 @@
 */
 package me.b0iizz.advancednbttooltip.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
-import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -37,14 +40,17 @@ import net.minecraft.nbt.Tag;
  */
 public final class NBTPath {
 
-	private static final String elementPattern = "([a-zA-Z]+)(\\[(\\d+)\\])?";
+	private static final String elementPattern = "([a-zA-Z0-9_]+)(\\[(\\d*)\\])?";
 
 	/**
 	 * An empty path which is parent to all other paths
 	 */
 	public static final NBTPath ROOT = new NBTPath();
 
-	private final String[] path;
+	private final NBTPath parent;
+	private final String name;
+
+	private final Function<Tag, List<Tag>> searchFunc;
 
 	/**
 	 * Constructs a new NBTPath using the specified path. Children are separated by
@@ -54,15 +60,69 @@ public final class NBTPath {
 	 * @param path a path separated by <code>'.'</code>
 	 */
 	public NBTPath(String path) {
-		this(path.split("\\."));
+		this(ROOT, path.split("\\."));
+	}
+
+	/**
+	 * Constructs a new NBTPath using the specified path. Children are separated by
+	 * <code>'.'</code> and list items are indexed using
+	 * <code>'[<i>index</i>]'</code>
+	 * 
+	 * @param parent the parent of the path
+	 * @param path   a path separated by <code>'.'</code>
+	 */
+	public NBTPath(NBTPath parent, String path) {
+		this(parent == null ? ROOT : parent, path.split("\\."));
 	}
 
 	private NBTPath() {
-		this(new String[0]);
+		this(null, new String[0]);
 	}
 
-	private NBTPath(String[] path) {
-		this.path = path;
+	/**
+	 * @param parent The parent
+	 * @param path   The path
+	 */
+	protected NBTPath(NBTPath parent, String[] path) {
+		path = Arrays.stream(path).filter(s -> !s.isEmpty()).toArray(String[]::new);
+		if (path.length < 2) {
+			this.parent = parent;
+		} else {
+			this.parent = new NBTPath(parent, Arrays.copyOf(path, path.length - 1));
+		}
+		if (path == null || path.length == 0) {
+			this.name = "TAG_ROOT";
+		} else {
+			this.name = path[path.length - 1];
+		}
+
+		if (!this.name.matches(elementPattern))
+			System.err.printf("Format error in path %s%n", this.name);
+
+		String rest = this.name.replaceAll(elementPattern, "$1");
+		String arrS = this.name.replaceAll(elementPattern, "$2");
+		String idxS = this.name.replaceAll(elementPattern, "$3");
+
+		if (arrS.isEmpty()) {
+			this.searchFunc = (tag) -> {
+				return Optional.ofNullable(((CompoundTag) tag).get(rest)).map(Collections::singletonList).orElseGet(Collections::emptyList);
+			};
+		} else if (idxS.isEmpty()) {
+			this.searchFunc = (tag) -> {
+				return Optional.ofNullable((List<Tag>) ((CompoundTag) tag).get(rest)).orElseGet(Collections::emptyList);
+			};
+		} else {
+			int tmp = 0;
+			try {
+				tmp = Integer.parseInt(idxS);
+			} catch (Throwable t) {
+				System.err.printf("Error parsing index %s of %s%n", idxS, this.name);
+			}
+			final int idx = tmp;
+			this.searchFunc = (tag) -> {
+				return Collections.singletonList(((List<Tag>) ((CompoundTag) tag).get(rest)).get(idx));
+			};
+		}
 	}
 
 	/**
@@ -72,9 +132,7 @@ public final class NBTPath {
 	 * @return The child NBTPath of the current path
 	 */
 	public NBTPath child(String name) {
-		String[] newPath = Arrays.copyOf(path, path.length + 1);
-		newPath[newPath.length - 1] = name;
-		return new NBTPath(newPath);
+		return new NBTPath(this, name);
 	}
 
 	/**
@@ -89,7 +147,7 @@ public final class NBTPath {
 	}
 
 	/**
-	 * Gets the element with the current path for a given {@link CompoundTag}
+	 * Gets an element with the current path for a given {@link CompoundTag}
 	 * 
 	 * @param root the root {@link CompoundTag} to be checked
 	 * @return a <code>{@link Tag}</code> when an element with the current path
@@ -107,8 +165,19 @@ public final class NBTPath {
 	 *         {@link CompoundTag}
 	 */
 	public Optional<Tag> getOptional(CompoundTag root) {
-		Tag result = unsafeSearch(root);
-		return result == null ? Optional.empty() : Optional.of(result);
+		List<Tag> all = getAll(root);
+		return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0));
+	}
+
+	/**
+	 * Gets all the elements with the current path for a given {@link CompoundTag}
+	 * 
+	 * @param root the root {@link CompoundTag} to be checked
+	 * @return a <code>{@link Tag}</code> when an element with the current path
+	 *         exists in the {@link CompoundTag} or else <code>null</code>
+	 */
+	public List<Tag> getAll(CompoundTag root) {
+		return unsafeSearch(root);
 	}
 
 	/**
@@ -117,35 +186,34 @@ public final class NBTPath {
 	 * @return The parent of the current path or <code>ROOT</code>
 	 */
 	public NBTPath parent() {
-		if (path.length > 0) {
-			return new NBTPath(Arrays.copyOf(path, path.length - 1));
-		}
-		return ROOT;
+		return this.parent;
 	}
 
 	@Override
 	public String toString() {
-		return Arrays.stream(path).reduce("", (a,b) -> a + "." + b);
-	}
-	
-	private Tag unsafeSearch(CompoundTag root) {
-		Tag result = root;
-		try {
-			for (int i = 0; i < path.length; i++) {
-				String elementName = path[i].replaceAll(elementPattern, "$1");
-				if (result instanceof CompoundTag && ((CompoundTag) result).contains(elementName)) {
-					result = ((CompoundTag) result).get(elementName);
-				} else
-					return null;
-				String idxStr = path[i].replaceAll(elementPattern, "$3");
-				if (!idxStr.isEmpty() && result instanceof AbstractListTag<?>) {
-					int idx = Integer.parseInt(idxStr);
-					result = (Tag) ((AbstractListTag<?>) result).get(idx);
-				}
-			}
-		} catch (Exception e) {
-			return null;
+		NBTPath elem = this;
+		String res = elem.name;
+		while ((elem = elem.parent) != null) {
+			res = elem.name + "." + res;
 		}
-		return result;
+		return res;
+	}
+
+	private List<Tag> unsafeSearch(CompoundTag root) {
+		try {
+			if (this.parent != null) {
+				List<Tag> res = new ArrayList<>();
+				for (Tag t : this.parent.unsafeSearch(root)) {
+					try {
+						res.addAll(searchFunc.apply(t));
+					} catch (Throwable ignored) {
+					}
+				}
+				return res;
+			} else
+				return Collections.singletonList(root);
+		} catch (Throwable t) {
+			return Collections.emptyList();
+		}
 	}
 }

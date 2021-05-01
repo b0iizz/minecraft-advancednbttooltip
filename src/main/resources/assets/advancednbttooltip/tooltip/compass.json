@@ -15,10 +15,12 @@
 								"id": "nbt",
 								"tag": "LodestonePos.X"
 							},
+							" ",
 							{
 								"id": "nbt",
 								"tag": "LodestonePos.Y"
 							},
+							" ",
 							{
 								"id": "nbt",
 								"tag": "LodestonePos.Z"

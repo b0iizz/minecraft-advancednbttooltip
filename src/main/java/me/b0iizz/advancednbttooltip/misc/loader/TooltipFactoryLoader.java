@@ -116,8 +116,6 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 				return parseLimit(object);
 			case "limit_lines":
 				return parseLimitLines(object);
-			case "builtin_suspicious_stew":
-				return BuiltInFactory.BUILTIN_SUSPICIOUS_STEW.create();
 			case "builtin_signs":
 				return BuiltInFactory.BUILTIN_SIGNS.create();
 			case "builtin_hideflags":
@@ -133,6 +131,11 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 	}
 
 	private TooltipFactory parseImplicit(JsonElement element) {
+		if (element.isJsonArray()) {
+			JsonObject tmp = new JsonObject();
+			tmp.add("texts", element);
+			return parseMultiple(tmp);
+		}
 		return BuiltInFactory.LITERAL.create(element.getAsString());
 	}
 
@@ -207,6 +210,20 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 
 		boolean colored = suggest(object, "colored", boolean.class).orElse(false);
 
+		Optional<JsonElement> child = suggest(object, "text", JsonElement.class);
+		
+		if (child.isPresent()) {
+			TooltipFactory provider;
+
+			try {
+				provider = TooltipFactory.LOADER.load(child.get());
+			} catch (Throwable t) {
+				throw new TooltipLoaderException(TEXT_PARSING_ERROR, t);
+			}
+			
+			return BuiltInFactory.NBT_REROUTE.create(nbtpath, provider);
+		}
+		
 		return BuiltInFactory.NBT.create(nbtpath, flags, colored);
 	}
 
@@ -282,13 +299,16 @@ public class TooltipFactoryLoader implements Loader<TooltipFactory> {
 			parsedFactories.add(condition);
 		}
 
-		return BuiltInFactory.MIX.create(parsedFactories.toArray());
+		boolean separate_lines = suggest(object, "separate_lines", boolean.class).orElse(true);
+
+		return BuiltInFactory.MIX.create(separate_lines, parsedFactories.toArray());
 	}
 
 	private TooltipFactory parseEffect(JsonObject object) {
-		byte rawId = require(object, "rawId", byte.class);
-		int duration = require(object, "duration", int.class);
-		int strength = suggest(object, "strength", int.class).orElse(0);
+		TooltipFactory rawId = TooltipFactory.LOADER.load(require(object, "rawId", JsonElement.class));
+		TooltipFactory duration = TooltipFactory.LOADER.load(require(object, "duration", JsonElement.class));
+		TooltipFactory strength = suggest(object, "strength", JsonElement.class).map(TooltipFactory.LOADER::load)
+				.orElse(null);
 
 		return BuiltInFactory.EFFECT.create(rawId, duration, strength);
 	}
