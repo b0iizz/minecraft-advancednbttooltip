@@ -24,12 +24,13 @@ package me.b0iizz.advancednbttooltip.util;
 
 import java.math.BigDecimal;
 
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+
 
 /**
- * A utility class to cast {@link Tag Tags} into their respective Java
+ * A utility class to cast {@link NbtElement Tags} into their respective Java
  * representation
  * 
  * @author B0IIZZ
@@ -37,94 +38,94 @@ import net.minecraft.nbt.Tag;
 public final class NBTUtil {
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a number or zero when the tag is not a number
 	 */
-	public static Number number(Tag tag) {
-		if (tag instanceof AbstractNumberTag) {
-			return ((AbstractNumberTag) tag).getNumber();
+	public static Number number(NbtElement tag) {
+		if (tag instanceof AbstractNbtNumber) {
+			return ((AbstractNbtNumber) tag).numberValue();
 		} else
 			return 0;
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as an int or zero when the tag is not a number
 	 */
-	public static int asInt(Tag tag) {
+	public static int asInt(NbtElement tag) {
 		return number(tag).intValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a long or zero when the tag is not a number
 	 */
-	public static long asLong(Tag tag) {
+	public static long asLong(NbtElement tag) {
 		return number(tag).longValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a short or zero when the tag is not a number
 	 */
-	public static short asShort(Tag tag) {
+	public static short asShort(NbtElement tag) {
 		return number(tag).shortValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a double or zero when the tag is not a number
 	 */
-	public static double asDouble(Tag tag) {
+	public static double asDouble(NbtElement tag) {
 		return number(tag).doubleValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a float or zero when the tag is not a number
 	 */
-	public static float asFloat(Tag tag) {
+	public static float asFloat(NbtElement tag) {
 		return number(tag).floatValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a byte or zero when the tag is not a number
 	 */
-	public static byte asByte(Tag tag) {
+	public static byte asByte(NbtElement tag) {
 		return number(tag).byteValue();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
+	 * @param tag the given {@link NbtElement}
 	 * @return the given tag as a String
 	 */
-	public static String asString(Tag tag) {
+	public static String asString(NbtElement tag) {
 		return tag.asString();
 	}
 
 	/**
-	 * @param tag the given {@link Tag}
-	 * @return the given tag as a {@link CompoundTag} or an empty tag when the teg
-	 *         is not an instance of {@link CompoundTag}
+	 * @param tag the given {@link NbtElement}
+	 * @return the given tag as a {@link NbtCompound} or an empty tag when the teg
+	 *         is not an instance of {@link NbtCompound}
 	 */
-	public static CompoundTag asCompound(Tag tag) {
-		return tag instanceof CompoundTag ? (CompoundTag) tag : new CompoundTag();
+	public static NbtCompound asCompound(NbtElement tag) {
+		return tag instanceof NbtCompound ? (NbtCompound) tag : new NbtCompound();
 	}
 
 	/**
 	 * Returns whether a tag is equal to a String
 	 * 
-	 * @param tag   a {@link Tag}
+	 * @param tag   a {@link NbtElement}
 	 * @param value a {@link String}
 	 * @return true hen the string and the tag are equal
 	 */
-	public static boolean isEqualTo(Tag tag, String value) {
+	public static boolean isEqualTo(NbtElement tag, String value) {
 		if (tag == null && (value == null || value.isEmpty()))
 			return true;
 		if (tag == null || (value == null || value.isEmpty()))
 			return false;
-		if (tag instanceof AbstractNumberTag) {
+		if (tag instanceof AbstractNbtNumber) {
 			try {
 				BigDecimal a = new BigDecimal(tag.toString().replaceAll("[A-Za-z]$", ""));
 				BigDecimal b = new BigDecimal(value);

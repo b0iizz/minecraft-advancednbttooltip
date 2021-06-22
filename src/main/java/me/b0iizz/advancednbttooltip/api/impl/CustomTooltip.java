@@ -30,7 +30,7 @@ import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
 /**
@@ -75,7 +75,7 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 	}
 
 	@Override
-	public boolean isTooltipVisible(Item item, CompoundTag tag, TooltipContext context) {
+	public boolean isTooltipVisible(Item item, NbtCompound tag, TooltipContext context) {
 		for (TooltipCondition condition : conditions) {
 			if (!condition.isConditionMet(item, tag, context))
 				return false;
@@ -84,7 +84,7 @@ public final class CustomTooltip implements AbstractCustomTooltip {
 	}
 
 	@Override
-	public List<Text> makeTooltip(Item item, CompoundTag tag, TooltipContext context) {
+	public List<Text> makeTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		if (isTooltipVisible(item, tag, context)) {
 			return tooltipProvider.createTooltip(item, tag, context);
 		} else {

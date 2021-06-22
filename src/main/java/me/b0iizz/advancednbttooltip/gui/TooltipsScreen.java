@@ -22,6 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.gui;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -31,6 +32,7 @@ import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -68,19 +70,19 @@ public class TooltipsScreen extends Screen {
 	 * Initializes all widgets and buttons
 	 */
 	public void initWidgets() {
-		this.addButton(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20,
+		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20,
 				new TranslatableText("menu.returnToGame"), widget -> {
 					save();
 					this.client.openScreen(null);
 					this.client.mouse.lockCursor();
 				}));
-		this.addButton(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20,
+		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20,
 				new TranslatableText("text.autoconfig.advancednbttooltip.title"), widget -> {
 					save();
 					this.client.openScreen(ConfigManager.getConfigScreen(this).get());
 				}));
 		this.tooltipList = this
-				.addChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
+				.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
 	}
 
 	@Override
@@ -116,8 +118,8 @@ public class TooltipsScreen extends Screen {
 			AdvancedNBTTooltips.getRegisteredTooltips().stream()
 					.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
 					.map(e -> new Entry(this, e.getKey(), e.getValue())).forEachOrdered(this::addEntry);
-			method_31322(false);
-			method_31323(false);
+			this.setRenderBackground(false);
+			this.setRenderHorizontalShadows(false);
 
 		}
 
@@ -162,7 +164,7 @@ public class TooltipsScreen extends Screen {
 			}
 
 			private Text getText(boolean toggle) {
-				return ScreenTexts.getToggleText(toggle).copy()
+				return ScreenTexts.onOrOff(toggle).copy()
 						.formatted(toggle ? Formatting.GREEN : Formatting.DARK_RED, Formatting.BOLD);
 			}
 
@@ -185,6 +187,11 @@ public class TooltipsScreen extends Screen {
 				if (hovered && this.tooltip != null) {
 					widget.screen.renderTooltip(matrices, tooltip, mouseX, mouseY);
 				}
+			}
+
+			@Override
+			public List<? extends Selectable> method_37025() {
+				return Collections.singletonList(toggleButton);
 			}
 
 		}

@@ -29,12 +29,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 
 /**
  * 
- * A class that represents a path inside of a {@link CompoundTag}
+ * A class that represents a path inside of a {@link NbtCompound}
  * 
  * @author B0IIZZ
  */
@@ -50,7 +50,7 @@ public final class NBTPath {
 	private final NBTPath parent;
 	private final String name;
 
-	private final Function<Tag, List<Tag>> searchFunc;
+	private final Function<NbtElement, List<NbtElement>> searchFunc;
 
 	/**
 	 * Constructs a new NBTPath using the specified path. Children are separated by
@@ -105,11 +105,11 @@ public final class NBTPath {
 
 		if (arrS.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable(((CompoundTag) tag).get(rest)).map(Collections::singletonList).orElseGet(Collections::emptyList);
+				return Optional.ofNullable(((NbtCompound) tag).get(rest)).map(Collections::singletonList).orElseGet(Collections::emptyList);
 			};
 		} else if (idxS.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable((List<Tag>) ((CompoundTag) tag).get(rest)).orElseGet(Collections::emptyList);
+				return Optional.ofNullable((List<NbtElement>) ((NbtCompound) tag).get(rest)).orElseGet(Collections::emptyList);
 			};
 		} else {
 			int tmp = 0;
@@ -120,7 +120,7 @@ public final class NBTPath {
 			}
 			final int idx = tmp;
 			this.searchFunc = (tag) -> {
-				return Collections.singletonList(((List<Tag>) ((CompoundTag) tag).get(rest)).get(idx));
+				return Collections.singletonList(((List<NbtElement>) ((NbtCompound) tag).get(rest)).get(idx));
 			};
 		}
 	}
@@ -136,47 +136,47 @@ public final class NBTPath {
 	}
 
 	/**
-	 * Checks whether the path exists in the given {@link CompoundTag}
+	 * Checks whether the path exists in the given {@link NbtCompound}
 	 * 
-	 * @param root the root {@link CompoundTag} to be checked
+	 * @param root the root {@link NbtCompound} to be checked
 	 * @return <code>true</code> when an element with the current path exists in the
-	 *         {@link CompoundTag} or else <code>false</code>
+	 *         {@link NbtCompound} or else <code>false</code>
 	 */
-	public boolean exists(CompoundTag root) {
+	public boolean exists(NbtCompound root) {
 		return unsafeSearch(root) != null;
 	}
 
 	/**
-	 * Gets an element with the current path for a given {@link CompoundTag}
+	 * Gets an element with the current path for a given {@link NbtCompound}
 	 * 
-	 * @param root the root {@link CompoundTag} to be checked
-	 * @return a <code>{@link Tag}</code> when an element with the current path
-	 *         exists in the {@link CompoundTag} or else <code>null</code>
+	 * @param root the root {@link NbtCompound} to be checked
+	 * @return a <code>{@link NbtElement}</code> when an element with the current path
+	 *         exists in the {@link NbtCompound} or else <code>null</code>
 	 */
-	public Tag get(CompoundTag root) {
+	public NbtElement get(NbtCompound root) {
 		return getOptional(root).get();
 	}
 
 	/**
-	 * Creates an optional for the current path in a given {@link CompoundTag}
+	 * Creates an optional for the current path in a given {@link NbtCompound}
 	 * 
-	 * @param root the root {@link CompoundTag} to be checked
+	 * @param root the root {@link NbtCompound} to be checked
 	 * @return An {@link Optional} containing the state of this path in the given
-	 *         {@link CompoundTag}
+	 *         {@link NbtCompound}
 	 */
-	public Optional<Tag> getOptional(CompoundTag root) {
-		List<Tag> all = getAll(root);
+	public Optional<NbtElement> getOptional(NbtCompound root) {
+		List<NbtElement> all = getAll(root);
 		return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0));
 	}
 
 	/**
-	 * Gets all the elements with the current path for a given {@link CompoundTag}
+	 * Gets all the elements with the current path for a given {@link NbtCompound}
 	 * 
-	 * @param root the root {@link CompoundTag} to be checked
-	 * @return a <code>{@link Tag}</code> when an element with the current path
-	 *         exists in the {@link CompoundTag} or else <code>null</code>
+	 * @param root the root {@link NbtCompound} to be checked
+	 * @return a <code>{@link NbtElement}</code> when an element with the current path
+	 *         exists in the {@link NbtCompound} or else <code>null</code>
 	 */
-	public List<Tag> getAll(CompoundTag root) {
+	public List<NbtElement> getAll(NbtCompound root) {
 		return unsafeSearch(root);
 	}
 
@@ -199,11 +199,11 @@ public final class NBTPath {
 		return res;
 	}
 
-	private List<Tag> unsafeSearch(CompoundTag root) {
+	private List<NbtElement> unsafeSearch(NbtCompound root) {
 		try {
 			if (this.parent != null) {
-				List<Tag> res = new ArrayList<>();
-				for (Tag t : this.parent.unsafeSearch(root)) {
+				List<NbtElement> res = new ArrayList<>();
+				for (NbtElement t : this.parent.unsafeSearch(root)) {
 					try {
 						res.addAll(searchFunc.apply(t));
 					} catch (Throwable ignored) {

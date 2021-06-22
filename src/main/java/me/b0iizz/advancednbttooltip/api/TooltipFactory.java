@@ -30,7 +30,7 @@ import me.b0iizz.advancednbttooltip.misc.loader.Loader;
 import me.b0iizz.advancednbttooltip.misc.loader.TooltipFactoryLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
 /**
@@ -61,11 +61,11 @@ public interface TooltipFactory {
 	 * A lambda implementation is recommended.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link CompoundTag NBT-tag}.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
 	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
 	 */
-	public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context);
+	public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context);
 
 	/**
 	 * Creates the tooltip text for the Item when it should not be displayed.
@@ -74,11 +74,11 @@ public interface TooltipFactory {
 	 * Overwriting this method is generally not needed.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link CompoundTag NBT-tag}.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
 	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
 	 */
-	public default List<Text> createTooltipWhenDisabled(Item item, CompoundTag tag, TooltipContext context) {
+	public default List<Text> createTooltipWhenDisabled(Item item, NbtCompound tag, TooltipContext context) {
 		return Arrays.asList();
 	}
 

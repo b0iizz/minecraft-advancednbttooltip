@@ -34,7 +34,7 @@ import me.b0iizz.advancednbttooltip.util.NBTUtil;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 /**
  * An enumeration of built-in {@link TooltipCondition TooltipConditions}
@@ -61,21 +61,21 @@ public enum BuiltInCondition {
 	IS_ITEM(IsItemConditionResolver::new),
 	/**
 	 * A condition which is true when the currently checked {@link Item} has a
-	 * specified {@link net.minecraft.nbt.Tag Tag}.<br>
+	 * specified {@link net.minecraft.nbt.NbtElement Tag}.<br>
 	 * <br>
 	 * <b>Parameters: </b><br>
-	 * {@link String} path - The path of the required {@link net.minecraft.nbt.Tag
+	 * {@link String} path - The path of the required {@link net.minecraft.nbt.NbtElement
 	 * Tag}<br>
 	 * {@link Integer int} type - <i>(optional)</i> The type of
-	 * {@link net.minecraft.nbt.Tag Tag} the specified path has to lead to.<br>
+	 * {@link net.minecraft.nbt.NbtElement Tag} the specified path has to lead to.<br>
 	 */
 	HAS_TAG(HasTagConditionResolver::new),
 	/**
-	 * A condition which is true when a specified {@link net.minecraft.nbt.Tag Tag}
+	 * A condition which is true when a specified {@link net.minecraft.nbt.NbtElement Tag}
 	 * of the currently checked {@link Item} has a certain value.<br>
 	 * <br>
 	 * <b>Parameters: </b><br>
-	 * {@link String} path - The path of the required {@link net.minecraft.nbt.Tag
+	 * {@link String} path - The path of the required {@link net.minecraft.nbt.NbtElement
 	 * Tag}<br>
 	 * {@link String} value - The expected value<br>
 	 */
@@ -160,7 +160,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			for (TooltipCondition condition : conditions) {
 				if (!condition.isConditionMet(item, tag, context))
 					return false;
@@ -202,7 +202,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return getAllowedItems().contains(item);
 		}
 
@@ -219,7 +219,7 @@ public enum BuiltInCondition {
 		private int type;
 
 		/**
-		 * @param id : The path to the required {@link CompoundTag NBT-tag} from the
+		 * @param id : The path to the required {@link NbtCompound NBT-tag} from the
 		 *           root tag.
 		 */
 		public HasTagConditionResolver(String id) {
@@ -227,9 +227,9 @@ public enum BuiltInCondition {
 		}
 
 		/**
-		 * @param id   : The path to the required {@link CompoundTag NBT-tag} from the
+		 * @param id   : The path to the required {@link NbtCompound NBT-tag} from the
 		 *             root tag.
-		 * @param type : The {@link net.minecraft.nbt.Tag type} of property.
+		 * @param type : The {@link net.fabricmc.fabric.api.util.NbtType type} of property.
 		 */
 		public HasTagConditionResolver(String id, int type) {
 			this.path = new NBTPath(id);
@@ -244,7 +244,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return path.getOptional(tag).filter((t) -> this.type == 99 ? true : t.getType() == this.type).isPresent();
 		}
 
@@ -261,7 +261,7 @@ public enum BuiltInCondition {
 		private String value;
 
 		/**
-		 * @param id    : The path to the required {@link CompoundTag NBT-tag} from the
+		 * @param id    : The path to the required {@link NbtCompound NBT-tag} from the
 		 *              root tag.
 		 * @param value : The value of the given property
 		 */
@@ -278,7 +278,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return path.getOptional(tag).filter((t) -> {
 				return NBTUtil.isEqualTo(t, value);
 			}).isPresent();
@@ -310,7 +310,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return !condition.isConditionMet(item, tag, context);
 		}
 	}
@@ -340,7 +340,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			for (TooltipCondition condition : conditions) {
 				if (condition.isConditionMet(item, tag, context))
 					return true;
@@ -371,7 +371,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return context.isAdvanced();
 		}
 
@@ -399,7 +399,7 @@ public enum BuiltInCondition {
 		}
 
 		@Override
-		public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context) {
+		public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context) {
 			return context instanceof HudTooltipContext;
 		}
 

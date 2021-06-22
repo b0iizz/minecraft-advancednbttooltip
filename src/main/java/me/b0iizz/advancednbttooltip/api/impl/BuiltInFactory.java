@@ -42,10 +42,10 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.AbstractNbtList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -220,7 +220,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return Arrays.asList(new LiteralText(text));
 		}
 
@@ -253,7 +253,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return factory.createTooltip(item, tag, context).stream()
 					.<Text>map((text) -> text.shallowCopy().formatted(formatting)).collect(Collectors.toList());
 		}
@@ -296,7 +296,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			List<Text> args = argument_provider.createTooltip(item, tag, context);
 			return Arrays.asList(new TranslatableText(translationKey, args.toArray()));
 		}
@@ -336,23 +336,23 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return path.getAll(tag).stream().map(this::fromTag).flatMap(List::stream).collect(Collectors.toList());
 		}
 
-		private List<Text> fromTag(Tag tag) {
-			if (tag instanceof CompoundTag) {
+		private List<Text> fromTag(NbtElement tag) {
+			if (tag instanceof NbtCompound) {
 				if (!traverseCompound)
 					return Arrays
 							.asList(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
-				return ((CompoundTag) tag).getKeys().stream().flatMap(key -> Stream.concat(
+				return ((NbtCompound) tag).getKeys().stream().flatMap(key -> Stream.concat(
 						Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
-						fromTag(((CompoundTag) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
-			} else if (tag instanceof AbstractListTag) {
+						fromTag(((NbtCompound) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
+			} else if (tag instanceof AbstractNbtList) {
 				if (!traverseList)
 					return Arrays
 							.asList(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
-				return ((AbstractListTag<Tag>) tag).stream()
+				return ((AbstractNbtList<NbtElement>) tag).stream()
 						.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText(""))))
 						.map(this::indent).collect(Collectors.toList());
 			} else
@@ -393,8 +393,8 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			return path.getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND).map(t -> (CompoundTag) t)
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
+			return path.getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND).map(t -> (NbtCompound) t)
 					.flatMap(t -> this.child.createTooltip(item, t, context).stream()).collect(Collectors.toList());
 		}
 
@@ -424,15 +424,15 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
-			return Arrays.asList(new LiteralText(fromTag(path.getOptional(tag).orElse(StringTag.of("-")))));
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
+			return Arrays.asList(new LiteralText(fromTag(path.getOptional(tag).orElse(NbtString.of("-")))));
 		}
 
-		private String fromTag(Tag tag) {
-			if (tag instanceof CompoundTag) {
-				return ((CompoundTag) tag).getSize() + "";
-			} else if (tag instanceof AbstractListTag) {
-				return ((AbstractListTag<?>) tag).size() + "";
+		private String fromTag(NbtElement tag) {
+			if (tag instanceof NbtCompound) {
+				return ((NbtCompound) tag).getSize() + "";
+			} else if (tag instanceof AbstractNbtList) {
+				return ((AbstractNbtList<?>) tag).size() + "";
 			} else
 				return "1";
 		}
@@ -473,7 +473,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return (condition.isConditionMet(item, tag, context) ? successFactory : failFactory).createTooltip(item,
 					tag, context);
 		}
@@ -505,7 +505,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			ArrayList<Text> res = new ArrayList<>();
 			for (TooltipFactory factory : multiple) {
 				res.addAll(factory.createTooltip(item, tag, context));
@@ -545,7 +545,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			List<List<Text>> tooltips = new ArrayList<>();
 
 			for (TooltipFactory factory : mix) {
@@ -623,7 +623,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			List<Text> rawIds = rawId.createTooltip(item, tag, context);
 			List<Text> durations = duration.createTooltip(item, tag, context);
 			List<Text> strengths = strength != null ? strength.createTooltip(item, tag, context)
@@ -698,7 +698,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return factory.createTooltip(item, tag, context).stream()
 					.map(text -> new LiteralText(text.asTruncatedString(length)).setStyle(text.getStyle()))
 					.collect(Collectors.toList());
@@ -735,7 +735,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			return factory.createTooltip(item, tag, context).stream().limit(length).collect(Collectors.toList());
 		}
 
@@ -762,13 +762,13 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			final String startText = "----------------";
 			final String endText = "----------------";
 
 			List<Text> result = new ArrayList<>();
 
-			CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+			NbtCompound blockEntityTag = tag.getCompound("BlockEntityTag");
 
 			int preferredWidth = MinecraftClient.getInstance().textRenderer.getWidth(endText);
 
@@ -810,7 +810,7 @@ public enum BuiltInFactory {
 		}
 
 		@Override
-		public List<Text> createTooltip(Item item, CompoundTag tag, TooltipContext context) {
+		public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context) {
 			List<Text> result = new ArrayList<>();
 
 			int hideFlags = tag.getInt("HideFlags");

@@ -26,7 +26,7 @@ import me.b0iizz.advancednbttooltip.misc.loader.Loader;
 import me.b0iizz.advancednbttooltip.misc.loader.TooltipConditionLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 /**
  * An interface used to restrict the visibility of a tooltip. A lambda or
@@ -56,10 +56,10 @@ public interface TooltipCondition {
 	 * Decides whether the tooltip should be applied or not.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link CompoundTag NBT-tag}.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
 	 * @return Whether the tooltip should be displayed.
 	 */
-	public boolean isConditionMet(Item item, CompoundTag tag, TooltipContext context);
+	public boolean isConditionMet(Item item, NbtCompound tag, TooltipContext context);
 
 }

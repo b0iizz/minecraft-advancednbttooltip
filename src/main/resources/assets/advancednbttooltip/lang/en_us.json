@@ -27,7 +27,7 @@
 	"text.autoconfig.advancednbttooltip.option.general.hideflagOverrides.overrideDyeTooltip": "Override Dye Hide-Flag",
 	"text.autoconfig.advancednbttooltip.option.general.hideflagOverrides.overrideDyeTooltip.@Tooltip": "Shows dye color regardless of the HideFlags property.",
 	"text.advancednbttooltip.tooltips.title": "Toggles",
-	"text.advancednbttooltip.toggle.suspicious_stew": "Show suspicious stew tooltip",
+	"text.advancednbttooltip.toggle.suspicious_stew": "Show Suspicious Stew tooltip",
 	"text.advancednbttooltip.toggle.suspicious_stew.tooltip": "Show associated potion effects of a suspicious stew item.",
 	"text.advancednbttooltip.toggle.compass": "Show Compass tooltip",
 	"text.advancednbttooltip.toggle.compass.tooltip": "Show the coordinates of the linked Lodestone",

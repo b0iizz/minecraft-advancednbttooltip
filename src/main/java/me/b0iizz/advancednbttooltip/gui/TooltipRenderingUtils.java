@@ -29,8 +29,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -59,7 +61,8 @@ final class TooltipRenderingUtils {
 		matrices.push();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		bufferBuilder.begin(7, VertexFormats.POSITION_COLOR);
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		Matrix4f modelMatrix = matrices.peek().getModel();
 
 		int alpha = 0xff;
@@ -101,10 +104,8 @@ final class TooltipRenderingUtils {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.shadeModel(7425);
 		bufferBuilder.end();
 		BufferRenderer.draw(bufferBuilder);
-		RenderSystem.shadeModel(7424);
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
 		matrices.pop();

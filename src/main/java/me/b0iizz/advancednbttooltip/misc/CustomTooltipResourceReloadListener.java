@@ -22,6 +22,8 @@
 */
 package me.b0iizz.advancednbttooltip.misc;
 
+import static me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.id;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,8 +36,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-
-import static me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.*;
 
 import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
@@ -80,7 +80,7 @@ public class CustomTooltipResourceReloadListener implements SimpleSynchronousRes
 	}
 
 	@Override
-	public void apply(ResourceManager manager) {
+	public void reload(ResourceManager manager) {
 		tooltips.clear();
 
 		manager.findResources("tooltip", path -> path.endsWith(".json")).forEach(id0 -> {

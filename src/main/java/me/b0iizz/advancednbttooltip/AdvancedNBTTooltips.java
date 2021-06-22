@@ -42,7 +42,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -152,7 +152,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 */
 	protected static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
-		CompoundTag tag = stack.getTag();
+		NbtCompound tag = stack.getTag();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
 				.forEachOrdered(t -> tooltip.addAll(t.getValue().makeTooltip(item, tag, context)));
 	}

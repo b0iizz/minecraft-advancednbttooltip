@@ -31,7 +31,7 @@ import me.b0iizz.advancednbttooltip.misc.loader.Loader;
 import me.b0iizz.advancednbttooltip.misc.loader.TooltipLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
 /**
@@ -83,21 +83,21 @@ public interface AbstractCustomTooltip {
 	 * Decides whether the tooltip should be applied or not.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link CompoundTag NBT-tag}.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
 	 * @return <b>true</b>, when the custom tooltip should be appended to the
 	 *         pre-existing tooltip. <b>false</b>, when not.
 	 */
-	public boolean isTooltipVisible(Item item, CompoundTag tag, TooltipContext context);
+	public boolean isTooltipVisible(Item item, NbtCompound tag, TooltipContext context);
 
 	/**
 	 * Creates the tooltip text for the Item.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link CompoundTag NBT-tag}.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
 	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
 	 */
-	List<Text> makeTooltip(Item item, CompoundTag tag, TooltipContext context);
+	List<Text> makeTooltip(Item item, NbtCompound tag, TooltipContext context);
 
 }
