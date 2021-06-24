@@ -21,3 +21,5 @@ To see the specifics and all parameters of the TooltipFactories and TooltipCondi
 
 [Learning Tooltips Pack](https://www.dropbox.com/s/jrmgt9birmzrppe/Learning-Tooltips.zip?dl=1 "Learning Tooltips Pack (Dropbox)")<br>
 [Standard Tooltips Pack](https://www.dropbox.com/s/hrfne60k77bpjh7/Standard-Tooltips.zip?dl=1 "Standard Tooltips Pack (Dropbox)")
+
+*Note: if you downloaded the resource packs before 1.17 you can still use them after, even though it says that it might be incompatible. It is compatible.*
