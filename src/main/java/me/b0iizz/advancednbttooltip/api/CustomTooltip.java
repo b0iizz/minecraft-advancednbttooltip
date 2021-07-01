@@ -20,24 +20,32 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.mixin;
+package me.b0iizz.advancednbttooltip.api;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+/**
+ * A tooltip
+ * 
+ * @author B0IIZZ
+ */
+public interface CustomTooltip extends TooltipCondition, TooltipFactory {
 
-import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import net.minecraft.item.ItemStack;
+	/**
+	 * Adds a {@link TooltipFactory factory} which will be shown with the tooltip.
+	 * 
+	 * @param text The factory to be added.
+	 * @return The original {@link CustomTooltip} object. Used for
+	 *         chaining.
+	 */
+	public CustomTooltip addText(TooltipFactory text);
 
-@SuppressWarnings("javadoc")
-@Mixin(ItemStack.class)
-public class ItemStackMixin {
+	/**
+	 * Adds a {@link TooltipCondition condition} which has to be met to show the
+	 * tooltip.
+	 * 
+	 * @param condition The condition to be added.
+	 * @return The original {@link CustomTooltip} object. Used for
+	 *         chaining.
+	 */
+	public CustomTooltip addCondition(TooltipCondition condition);
 
-	@ModifyVariable(at = @At(value = "INVOKE_ASSIGN", target = "net.minecraft.item.ItemStack.getHideFlags()I"), method = "getTooltip")
-	private int advancednbttooltip$rewriteHideFlags(int i) {
-		if (ConfigManager.overrideHideFlags()) {
-			return i & ConfigManager.getHideflagOverrideBitmask();
-		}
-		return i;
-	}
 }

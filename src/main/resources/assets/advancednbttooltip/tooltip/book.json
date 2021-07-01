@@ -8,7 +8,7 @@
 				{
 					"id": "translated",
 					"key": "text.advancednbttooltip.tooltip.book.pages",
-					"argument_provider": {
+					"arguments": {
 						"id": "nbt_size",
 						"tag": "pages"
 					}
@@ -23,7 +23,7 @@
 								"key": "text.advancednbttooltip.tooltip.book.resolved"
 							},
 							{
-								"id": "nbt",
+								"id": "nbt_value",
 								"tag": "resolved",
 								"colored": true
 							}
@@ -51,7 +51,7 @@
 								"color": "aqua",
 								"bold": true,
 								"text": {
-									"id": "nbt",
+									"id": "nbt_value",
 									"tag": "title"
 								}
 							}

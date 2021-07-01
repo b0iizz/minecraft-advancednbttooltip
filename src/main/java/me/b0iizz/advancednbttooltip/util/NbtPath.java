@@ -27,7 +27,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -38,19 +43,19 @@ import net.minecraft.nbt.NbtElement;
  * 
  * @author B0IIZZ
  */
-public final class NBTPath {
-
-	private static final String elementPattern = "([a-zA-Z0-9_]+)(\\[(\\d*)\\])?";
+public final class NbtPath {
 
 	/**
 	 * An empty path which is parent to all other paths
 	 */
-	public static final NBTPath ROOT = new NBTPath();
+	private static final NbtPath ROOT;
 
-	private final NBTPath parent;
-	private final String name;
+	private static final Cache<String, NbtPath> CACHE;
 
-	private final Function<NbtElement, List<NbtElement>> searchFunc;
+	static {
+		CACHE = CacheBuilder.newBuilder().initialCapacity(16).concurrencyLevel(1).maximumSize(128).expireAfterAccess(1, TimeUnit.MINUTES).build();
+		ROOT = new NbtPath();
+	}
 
 	/**
 	 * Constructs a new NBTPath using the specified path. Children are separated by
@@ -58,24 +63,32 @@ public final class NBTPath {
 	 * <code>'[<i>index</i>]'</code>
 	 * 
 	 * @param path a path separated by <code>'.'</code>
+	 * @return A {@link NbtPath} object.
 	 */
-	public NBTPath(String path) {
+	public static NbtPath of(String path) {
+		try {
+			return CACHE.get(path, () -> new NbtPath(path));
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private final NbtPath parent;
+	private final String name;
+
+	private static final String elementPattern = "([a-zA-Z0-9_]+)(\\[(\\d*)\\])?";
+	private final Function<NbtElement, List<NbtElement>> searchFunc;
+
+	/**
+	 * See {@link NbtPath#of NbtPath.of(String)}
+	 * 
+	 * @param path a path separated by <code>'.'</code>
+	 */
+	private NbtPath(String path) {
 		this(ROOT, path.split("\\."));
 	}
 
-	/**
-	 * Constructs a new NBTPath using the specified path. Children are separated by
-	 * <code>'.'</code> and list items are indexed using
-	 * <code>'[<i>index</i>]'</code>
-	 * 
-	 * @param parent the parent of the path
-	 * @param path   a path separated by <code>'.'</code>
-	 */
-	public NBTPath(NBTPath parent, String path) {
-		this(parent == null ? ROOT : parent, path.split("\\."));
-	}
-
-	private NBTPath() {
+	private NbtPath() {
 		this(null, new String[0]);
 	}
 
@@ -83,12 +96,12 @@ public final class NBTPath {
 	 * @param parent The parent
 	 * @param path   The path
 	 */
-	protected NBTPath(NBTPath parent, String[] path) {
+	private NbtPath(NbtPath parent, String[] path) {
 		path = Arrays.stream(path).filter(s -> !s.isEmpty()).toArray(String[]::new);
 		if (path.length < 2) {
 			this.parent = parent;
 		} else {
-			this.parent = new NBTPath(parent, Arrays.copyOf(path, path.length - 1));
+			this.parent = new NbtPath(parent, Arrays.copyOf(path, path.length - 1));
 		}
 		if (path == null || path.length == 0) {
 			this.name = "TAG_ROOT";
@@ -105,11 +118,13 @@ public final class NBTPath {
 
 		if (arrS.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable(((NbtCompound) tag).get(rest)).map(Collections::singletonList).orElseGet(Collections::emptyList);
+				return Optional.ofNullable(((NbtCompound) tag).get(rest)).map(Collections::singletonList)
+						.orElseGet(Collections::emptyList);
 			};
 		} else if (idxS.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable((List<NbtElement>) ((NbtCompound) tag).get(rest)).orElseGet(Collections::emptyList);
+				return Optional.ofNullable((List<NbtElement>) ((NbtCompound) tag).get(rest))
+						.orElseGet(Collections::emptyList);
 			};
 		} else {
 			int tmp = 0;
@@ -126,16 +141,6 @@ public final class NBTPath {
 	}
 
 	/**
-	 * Creates a child NBTPath using the specified name
-	 * 
-	 * @param name the name of the child
-	 * @return The child NBTPath of the current path
-	 */
-	public NBTPath child(String name) {
-		return new NBTPath(this, name);
-	}
-
-	/**
 	 * Checks whether the path exists in the given {@link NbtCompound}
 	 * 
 	 * @param root the root {@link NbtCompound} to be checked
@@ -143,38 +148,15 @@ public final class NBTPath {
 	 *         {@link NbtCompound} or else <code>false</code>
 	 */
 	public boolean exists(NbtCompound root) {
-		return unsafeSearch(root) != null;
-	}
-
-	/**
-	 * Gets an element with the current path for a given {@link NbtCompound}
-	 * 
-	 * @param root the root {@link NbtCompound} to be checked
-	 * @return a <code>{@link NbtElement}</code> when an element with the current path
-	 *         exists in the {@link NbtCompound} or else <code>null</code>
-	 */
-	public NbtElement get(NbtCompound root) {
-		return getOptional(root).get();
-	}
-
-	/**
-	 * Creates an optional for the current path in a given {@link NbtCompound}
-	 * 
-	 * @param root the root {@link NbtCompound} to be checked
-	 * @return An {@link Optional} containing the state of this path in the given
-	 *         {@link NbtCompound}
-	 */
-	public Optional<NbtElement> getOptional(NbtCompound root) {
-		List<NbtElement> all = getAll(root);
-		return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0));
+		return !unsafeSearch(root).isEmpty();
 	}
 
 	/**
 	 * Gets all the elements with the current path for a given {@link NbtCompound}
 	 * 
 	 * @param root the root {@link NbtCompound} to be checked
-	 * @return a <code>{@link NbtElement}</code> when an element with the current path
-	 *         exists in the {@link NbtCompound} or else <code>null</code>
+	 * @return a <code>{@link NbtElement}</code> when an element with the current
+	 *         path exists in the {@link NbtCompound} or else <code>null</code>
 	 */
 	public List<NbtElement> getAll(NbtCompound root) {
 		return unsafeSearch(root);
@@ -185,13 +167,21 @@ public final class NBTPath {
 	 * 
 	 * @return The parent of the current path or <code>ROOT</code>
 	 */
-	public NBTPath parent() {
+	public NbtPath parent() {
 		return this.parent;
 	}
 
+	/**
+	 * @param name the name of the child
+	 * @return The child NBTPath of the current path
+	 */
+	public NbtPath child(String name) {
+		return NbtPath.of(toString() + "." + name);
+	}
+	
 	@Override
 	public String toString() {
-		NBTPath elem = this;
+		NbtPath elem = this;
 		String res = elem.name;
 		while ((elem = elem.parent) != null) {
 			res = elem.name + "." + res;
@@ -215,5 +205,43 @@ public final class NBTPath {
 		} catch (Throwable t) {
 			return Collections.emptyList();
 		}
+	}
+
+	/**
+	 * Gets an element with the current path for a given {@link NbtCompound}
+	 * 
+	 * @param root the root {@link NbtCompound} to be checked
+	 * @return a <code>{@link NbtElement}</code> when an element with the current
+	 *         path exists in the {@link NbtCompound} or else <code>null</code>
+	 */
+	@Deprecated
+	public NbtElement get(NbtCompound root) {
+		return getOptional(root).get();
+	}
+
+	/**
+	 * Creates an optional for the current path in a given {@link NbtCompound}
+	 * 
+	 * @param root the root {@link NbtCompound} to be checked
+	 * @return An {@link Optional} containing the state of this path in the given
+	 *         {@link NbtCompound}
+	 */
+	@Deprecated
+	public Optional<NbtElement> getOptional(NbtCompound root) {
+		List<NbtElement> all = getAll(root);
+		return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0));
+	}
+
+	/**
+	 * Constructs a new NBTPath using the specified path. Children are separated by
+	 * <code>'.'</code> and list items are indexed using
+	 * <code>'[<i>index</i>]'</code>
+	 * 
+	 * @param parent the parent of the path
+	 * @param path   a path separated by <code>'.'</code>
+	 */
+	@Deprecated
+	protected NbtPath(NbtPath parent, String path) {
+		this(parent == null ? ROOT : parent, path.split("\\."));
 	}
 }

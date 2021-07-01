@@ -28,7 +28,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
-import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
@@ -132,7 +132,7 @@ public class TooltipsScreen extends Screen {
 			final Text tooltip;
 			final ButtonWidget toggleButton;
 
-			public Entry(TooltipListWidget parent, Identifier id, AbstractCustomTooltip tooltip) {
+			public Entry(TooltipListWidget parent, Identifier id, CustomTooltip tooltip) {
 				this.widget = parent;
 				this.displayName = createDisplayName(id);
 				this.tooltip = createTooltip(id);

@@ -12,17 +12,17 @@
 						"texts": [
 							"(",
 							{
-								"id": "nbt",
+								"id": "nbt_value",
 								"tag": "LodestonePos.X"
 							},
 							" ",
 							{
-								"id": "nbt",
+								"id": "nbt_value",
 								"tag": "LodestonePos.Y"
 							},
 							" ",
 							{
-								"id": "nbt",
+								"id": "nbt_value",
 								"tag": "LodestonePos.Z"
 							},
 							")"
@@ -43,7 +43,7 @@
 					"texts": [
 						"(",
 						{
-							"id": "nbt",
+							"id": "nbt_value",
 							"tag": "LodestoneDimension"
 						},
 						")"

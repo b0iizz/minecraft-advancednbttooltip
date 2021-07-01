@@ -44,12 +44,12 @@ public class TitleScreenMixin extends Screen {
 	}
 
 	@Inject(at = @At("RETURN"), method = "init")
-	public void invalidateUpdateChecker(CallbackInfo ci) {
+	private void advancednbttooltip$invalidateUpdateChecker(CallbackInfo ci) {
 		UpdateChecker.refreshUpdates();
 	}
 
 	@Inject(at = @At(value = "INVOKE", target = "net.minecraft.client.gui.screen.TitleScreen.drawStringWithShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V", ordinal = 0), method = "render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V")
-	public void drawMainMenuUpdateNotice(MatrixStack matrices, int mx, int my, float ticks, CallbackInfo ci) {
+	private void advancednbttooltip$drawMainMenuUpdateNotice(MatrixStack matrices, int mx, int my, float ticks, CallbackInfo ci) {
 		if (!UpdateChecker.isLatest() && ConfigManager.getMainMenuUpdateNoticeToggle())
 			this.textRenderer.drawWithShadow(matrices, UpdateChecker.getUpdateText(), 2, height - 20,
 					Formatting.RED.getColorValue());

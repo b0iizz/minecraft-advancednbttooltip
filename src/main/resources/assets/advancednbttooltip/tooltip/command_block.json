@@ -13,7 +13,7 @@
 					"id": "limit",
 					"length": 40,
 					"text": {
-						"id": "nbt",
+						"id": "nbt_value",
 						"tag": "BlockEntityTag.Command"
 					}
 				}

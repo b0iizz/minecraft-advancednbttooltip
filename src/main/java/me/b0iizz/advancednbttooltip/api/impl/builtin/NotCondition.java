@@ -20,52 +20,32 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.api;
+package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.function.BooleanSupplier;
-
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 
 /**
- * An interface used to restrict the visibility of a tooltip. A lambda function
- * is recommended.
+ * A condition which is fulfilled if the child condition is not.
  * 
  * @author B0IIZZ
  */
-@FunctionalInterface
-public interface TooltipCondition {
+@TooltipIdentifier("not")
+public class NotCondition implements TooltipCondition {
 
 	/**
-	 * Condition which is always false
+	 * The condition which has to not be fulfilled
 	 */
-	public static final TooltipCondition TRUE = TooltipCondition.of(() -> true);
+	@Required
+	public TooltipCondition condition;
 
-	/**
-	 * Condition which is always false
-	 */
-	public static final TooltipCondition FALSE = TooltipCondition.of(() -> false);
-
-	/**
-	 * Decides if the condition is enabled.
-	 * 
-	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
-	 * @param context The current {@link TooltipContext}.
-	 * @return Whether the tooltip should be displayed.
-	 */
-	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context);
-
-	/**
-	 * Creates a condition based on the {@link BooleanSupplier}. This is useful for
-	 * conditions not relying on the supplied parameters.
-	 * 
-	 * @param condition The condition used for {@link TooltipCondition#isEnabled}
-	 * @return a {@link TooltipCondition}
-	 */
-	public static TooltipCondition of(BooleanSupplier condition) {
-		return (i, t, c) -> condition.getAsBoolean();
+	@Override
+	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
+		return condition == null || !condition.isEnabled(item, tag, context);
 	}
 
 }

@@ -20,52 +20,43 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.api;
+package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.function.BooleanSupplier;
-
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 
 /**
- * An interface used to restrict the visibility of a tooltip. A lambda function
- * is recommended.
+ * A condition which is true when the item has a specific {@link NbtElement tag}
+ * at a {@link NbtPath}
  * 
  * @author B0IIZZ
  */
-@FunctionalInterface
-public interface TooltipCondition {
+@TooltipIdentifier("has_tag")
+public class HasTagCondition implements TooltipCondition {
 
 	/**
-	 * Condition which is always false
+	 * The {@link NbtPath} to search
 	 */
-	public static final TooltipCondition TRUE = TooltipCondition.of(() -> true);
+	@Required("tag")
+	public String path;
 
 	/**
-	 * Condition which is always false
+	 * The type of the element at the path.
 	 */
-	public static final TooltipCondition FALSE = TooltipCondition.of(() -> false);
+	@Optional
+	public int type = 99;
 
-	/**
-	 * Decides if the condition is enabled.
-	 * 
-	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
-	 * @param context The current {@link TooltipContext}.
-	 * @return Whether the tooltip should be displayed.
-	 */
-	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context);
-
-	/**
-	 * Creates a condition based on the {@link BooleanSupplier}. This is useful for
-	 * conditions not relying on the supplied parameters.
-	 * 
-	 * @param condition The condition used for {@link TooltipCondition#isEnabled}
-	 * @return a {@link TooltipCondition}
-	 */
-	public static TooltipCondition of(BooleanSupplier condition) {
-		return (i, t, c) -> condition.getAsBoolean();
+	@Override
+	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
+		return NbtPath.of(path).getAll(tag).stream()
+				.anyMatch((t) -> this.type == 99 ? true : t.getType() == this.type);
 	}
 
 }

@@ -22,21 +22,19 @@
 */
 package me.b0iizz.advancednbttooltip.api;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
-import me.b0iizz.advancednbttooltip.api.impl.CustomTooltip;
-import me.b0iizz.advancednbttooltip.misc.loader.Loader;
-import me.b0iizz.advancednbttooltip.misc.loader.TooltipFactoryLoader;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 /**
  * An interface used for providing the actual {@link CustomTooltip custom
- * tooltip} text for an {@link Item}. <br>
- * A lambda implementation is recommended.
+ * tooltip} text for an {@link Item}. A lambda implementation is recommended.
  * 
  * @author B0IIZZ
  */
@@ -44,42 +42,41 @@ import net.minecraft.text.Text;
 public interface TooltipFactory {
 
 	/**
-	 * The {@link Loader} of this interface
-	 */
-	public static final Loader<TooltipFactory> LOADER = TooltipFactoryLoader.INSTANCE;
-
-	/**
 	 * An empty {@link TooltipFactory}, which means that it always returns an empty
 	 * list of text
 	 */
-	public static final TooltipFactory EMPTY = (i, t, c) -> Arrays.asList();
+	public static final TooltipFactory EMPTY = TooltipFactory.of(Collections::emptyList);
 
 	/**
-	 * Creates the tooltip text for the Item when it should be displayed.
-	 * 
-	 * <br>
-	 * A lambda implementation is recommended.
+	 * Creates the tooltip text for the Item.
 	 * 
 	 * @param item    The {@link Item} the tooltip will be added to.
 	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
-	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
+	 * @return A {@link List} of {@link Text Texts} to be applied to the Item's
+	 *         tooltip.
 	 */
-	public List<Text> createTooltip(Item item, NbtCompound tag, TooltipContext context);
+	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context);
 
 	/**
-	 * Creates the tooltip text for the Item when it should not be displayed.
+	 * Creates a factory for the given {@link Supplier}. This is useful for
+	 * factories not relying on the supplied parameters.
 	 * 
-	 * <br>
-	 * Overwriting this method is generally not needed.
-	 * 
-	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
-	 * @param context The current {@link TooltipContext}.
-	 * @return A {@link List} of {@link Text} to be applied to the Item's tooltip.
+	 * @param supplier The factory used for {@link TooltipFactory#getTooltipText}
+	 * @return a {@link TooltipFactory}
 	 */
-	public default List<Text> createTooltipWhenDisabled(Item item, NbtCompound tag, TooltipContext context) {
-		return Arrays.asList();
+	public static TooltipFactory of(Supplier<List<Text>> supplier) {
+		return (i, t, c) -> supplier.get();
 	}
-
+	
+	/**
+	 * Creates a factory for the given {@link String}. This is useful for
+	 * factories not relying on the supplied parameters.
+	 * 
+	 * @param text The text used for {@link TooltipFactory#getTooltipText}
+	 * @return a {@link TooltipFactory}
+	 */
+	public static TooltipFactory of(String text) {
+		return of(() -> Collections.singletonList(new LiteralText(text)));
+	}
 }

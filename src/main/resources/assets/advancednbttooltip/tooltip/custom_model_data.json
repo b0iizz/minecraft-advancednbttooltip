@@ -10,7 +10,7 @@
 					"key": "text.advancednbttooltip.tooltip.custommodeldata"
 				},
 				{
-					"id": "nbt",
+					"id": "nbt_value",
 					"tag": "CustomModelData",
 					"colored": true
 				}

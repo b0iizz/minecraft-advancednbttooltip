@@ -20,25 +20,46 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.misc.loader;
+package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import com.google.gson.JsonElement;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 /**
+ * Returns the result of the given factory, but all characters after a limit are
+ * removed.
  * 
  * @author B0IIZZ
- *
- * @param <I> The class this loader can load
  */
-@FunctionalInterface
-public interface Loader<I> {
+@TooltipIdentifier("limit")
+public class LimitFactory implements TooltipFactory {
 
 	/**
-	 * Loads <code>I</code> from a {@link JsonElement}
-	 * 
-	 * @param object the json object that the loader will load from
-	 * @return an instance of <code>I</code> based on the json input
+	 * The factory to be limited in length.
 	 */
-	public I load(JsonElement object);
+	@Required
+	public TooltipFactory text;
+
+	/**
+	 * The maximum length of the factory
+	 */
+	@Required
+	public int length;
+
+	@Override
+	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
+		return text.getTooltipText(item, tag, context).stream()
+				.map(text -> new LiteralText(text.asTruncatedString(length)).setStyle(text.getStyle()))
+				.collect(Collectors.toList());
+	}
 
 }

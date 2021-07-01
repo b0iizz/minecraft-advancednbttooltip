@@ -1,41 +1,41 @@
 {
-  "schemaVersion": 1,
-  "id": "advancednbttooltip",
-  "version": "${version}",
-  "name": "Advanced NBT Tooltips",
-  "description": "Shows additional NBT information about items.",
-  "authors": [
-    "B0IIZZ"
-  ],
-  "contact": {
-	"email": "general.boiizz@gmail.com",
-	"homepage": "https://www.curseforge.com/minecraft/mc-mods/advanced-nbt-tooltips",
-	"sources": "https://github.com/b0iizz/minecraft-advancednbttooltip",
-	"issues": "https://github.com/b0iizz/minecraft-advancednbttooltip/issues/new"
-  },
-  "contributors": [
-	"GuNanOvO"
-  ], 
-  "license": "MIT",
-  "icon": "assets/advancednbttooltip/icon.png",
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "me.b0iizz.advancednbttooltip.AdvancedNBTTooltips"
-    ],
+	"schemaVersion": 1,
+	"id": "advancednbttooltip",
+	"version": "${version}",
+	"name": "Advanced NBT Tooltips",
+	"description": "Shows additional NBT information about items.",
+	"authors": [
+		"B0IIZZ"
+	],
+	"contact": {
+		"email": "general.boiizz@gmail.com",
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/advanced-nbt-tooltips",
+		"sources": "https://github.com/b0iizz/minecraft-advancednbttooltip",
+		"issues": "https://github.com/b0iizz/minecraft-advancednbttooltip/issues/new"
+	},
+	"contributors": [
+		"GuNanOvO"
+	], 
+	"license": "MIT",
+	"icon": "assets/advancednbttooltip/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"me.b0iizz.advancednbttooltip.AdvancedNBTTooltips"
+		],
 	"modmenu": [
-	  "me.b0iizz.advancednbttooltip.misc.ModMenuEntry"
+		"me.b0iizz.advancednbttooltip.misc.ModMenuEntry"
 	]
-  },
-  "mixins": [
-    "advancednbttooltip.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": ">=1.17"
-  },
-  "suggests": {
-    "modmenu": "*"
-  }
+	},
+	"mixins": [
+		"advancednbttooltip.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.7.4",
+		"fabric": "*",
+		"minecraft": ">=1.17"
+	},
+	"suggests": {
+		"modmenu": "*"
+	}
 }

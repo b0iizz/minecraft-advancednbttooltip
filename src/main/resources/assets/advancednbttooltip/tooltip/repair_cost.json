@@ -10,7 +10,7 @@
 					"key": "text.advancednbttooltip.tooltip.repaircost"
 				},
 				{
-					"id": "nbt",
+					"id": "nbt_value",
 					"tag": "RepairCost",
 					"colored": true
 				}

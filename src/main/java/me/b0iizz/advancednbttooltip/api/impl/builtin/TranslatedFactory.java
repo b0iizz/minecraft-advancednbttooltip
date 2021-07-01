@@ -20,52 +20,45 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 */
-package me.b0iizz.advancednbttooltip.api;
+package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.function.BooleanSupplier;
+import java.util.Collections;
+import java.util.List;
 
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 /**
- * An interface used to restrict the visibility of a tooltip. A lambda function
- * is recommended.
- * 
+ * A factory which creates a simple {@link TranslatableText}
  * @author B0IIZZ
  */
-@FunctionalInterface
-public interface TooltipCondition {
+@TooltipIdentifier("translated")
+public class TranslatedFactory implements TooltipFactory {
 
 	/**
-	 * Condition which is always false
+	 * The translation key
 	 */
-	public static final TooltipCondition TRUE = TooltipCondition.of(() -> true);
-
+	@Required
+	public String key;
+	
 	/**
-	 * Condition which is always false
+	 * A factory creating arguments for the translation
 	 */
-	public static final TooltipCondition FALSE = TooltipCondition.of(() -> false);
-
-	/**
-	 * Decides if the condition is enabled.
-	 * 
-	 * @param item    The {@link Item} the tooltip will be added to.
-	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
-	 * @param context The current {@link TooltipContext}.
-	 * @return Whether the tooltip should be displayed.
-	 */
-	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context);
-
-	/**
-	 * Creates a condition based on the {@link BooleanSupplier}. This is useful for
-	 * conditions not relying on the supplied parameters.
-	 * 
-	 * @param condition The condition used for {@link TooltipCondition#isEnabled}
-	 * @return a {@link TooltipCondition}
-	 */
-	public static TooltipCondition of(BooleanSupplier condition) {
-		return (i, t, c) -> condition.getAsBoolean();
+	@Optional
+	public TooltipFactory arguments;
+	
+	@Override
+	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
+		if(arguments == null)
+			return Collections.singletonList(new TranslatableText(key));
+		return Collections.singletonList(new TranslatableText(key, arguments.getTooltipText(item, tag, context).toArray()));
 	}
 
 }

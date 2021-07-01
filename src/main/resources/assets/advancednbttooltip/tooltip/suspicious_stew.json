@@ -5,11 +5,11 @@
 		"text": {
 			"id": "effect",
 			"rawId": {
-				"id": "nbt",
+				"id": "nbt_value",
 				"tag": "EffectId"
 			},
 			"duration": {
-				"id": "nbt",
+				"id": "nbt_value",
 				"tag": "EffectDuration"
 			}
 		}

@@ -3,9 +3,10 @@
 		"id": "formatted",
 		"color": "gray",
 		"text": {
-			"id": "nbt",
+			"id": "nbt_value",
 			"tag": "EntityTag",
-			"flags": 3,
+			"go_into_compounds": true,
+			"go_into_lists": true,
 			"colored": true
 		}
 	},

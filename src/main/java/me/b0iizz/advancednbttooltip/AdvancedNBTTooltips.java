@@ -30,10 +30,33 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import me.b0iizz.advancednbttooltip.api.AbstractCustomTooltip;
+import me.b0iizz.advancednbttooltip.api.CustomTooltip;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.AdvancedContextCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.AndCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.BuiltInHideflagsFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.BuiltInSignsFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.ConditionalFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.EffectFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.FormattedFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.HasTagCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.HudContextCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.IsItemCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitLinesFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.LiteralFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.MixFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.MultipleFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtSizeFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtValueFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NotCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.OrCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.TagMatchesCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.TranslatedFactory;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer;
-import me.b0iizz.advancednbttooltip.misc.CustomTooltipResourceReloadListener;
+import me.b0iizz.advancednbttooltip.misc.JsonTooltipResourceManager;
 import me.b0iizz.advancednbttooltip.misc.ModKeybinds;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -66,7 +89,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	/**
 	 * The list of all loaded tooltips
 	 */
-	protected static final Map<Identifier, AbstractCustomTooltip> TOOLTIPS = new HashMap<>();
+	protected static final Map<Identifier, CustomTooltip> TOOLTIPS = new HashMap<>();
 
 	/**
 	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
@@ -86,14 +109,15 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 * @param tooltip The tooltip
 	 * @return Whether the registration was successful
 	 */
-	public static boolean registerTooltip(Identifier id, AbstractCustomTooltip tooltip) {
+	@Deprecated(forRemoval = true)
+	public static boolean registerTooltip(Identifier id, CustomTooltip tooltip) {
 		return TOOLTIPS.putIfAbsent(id, tooltip) == null;
 	}
 	
 	/**
 	 * @return A Set containing all registered Tooltips
 	 */
-	public static Set<Map.Entry<Identifier, AbstractCustomTooltip>> getRegisteredTooltips() {
+	public static Set<Map.Entry<Identifier, CustomTooltip>> getRegisteredTooltips() {
 		return ImmutableSet.copyOf(TOOLTIPS.entrySet());
 	}
 	
@@ -105,15 +129,39 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		ConfigManager.registerConfig();
 		ConfigManager.loadConfig();
 
-		ItemTooltipCallback.EVENT.register(AdvancedNBTTooltips::getTooltip);
-
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
+		
+		JsonTooltips.getInstance().registerFactory(LiteralFactory.class);
+		JsonTooltips.getInstance().registerFactory(FormattedFactory.class);
+		JsonTooltips.getInstance().registerFactory(TranslatedFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtValueFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtSizeFactory.class);
+		JsonTooltips.getInstance().registerFactory(ConditionalFactory.class);
+		JsonTooltips.getInstance().registerFactory(MultipleFactory.class);
+		JsonTooltips.getInstance().registerFactory(MixFactory.class);
+		JsonTooltips.getInstance().registerFactory(EffectFactory.class);
+		JsonTooltips.getInstance().registerFactory(LimitFactory.class);
+		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInSignsFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
+		
+		JsonTooltips.getInstance().registerCondition(AndCondition.class);
+		JsonTooltips.getInstance().registerCondition(OrCondition.class);
+		JsonTooltips.getInstance().registerCondition(NotCondition.class);
+		JsonTooltips.getInstance().registerCondition(IsItemCondition.class);
+		JsonTooltips.getInstance().registerCondition(HasTagCondition.class);
+		JsonTooltips.getInstance().registerCondition(TagMatchesCondition.class);
+		JsonTooltips.getInstance().registerCondition(AdvancedContextCondition.class);
+		JsonTooltips.getInstance().registerCondition(HudContextCondition.class);
+		
+		ItemTooltipCallback.EVENT.register(AdvancedNBTTooltips::getTooltip);
 
 		HudTooltipRenderer.setup();
 
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
-				.registerReloadListener(new CustomTooltipResourceReloadListener(TOOLTIPS));
+				.registerReloadListener(new JsonTooltipResourceManager(TOOLTIPS));
 
 		UpdateChecker.refreshUpdates();
 	}
@@ -154,7 +202,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		Item item = stack.getItem();
 		NbtCompound tag = stack.getTag();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
-				.forEachOrdered(t -> tooltip.addAll(t.getValue().makeTooltip(item, tag, context)));
+				.forEachOrdered(t -> tooltip.addAll(t.getValue().getTooltipText(item, tag, context)));
 	}
 
 	/**
