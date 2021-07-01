@@ -11,7 +11,7 @@ Tooltips are automatically registered through resource packs in the folder "asse
 
 The root object requires a <b>"text"</b> and a <b>"condition"</b>.<br>
 ### TooltipFactories
-Everywhere where "text" or "texts" is required a *TooltipFactory* can be used (There are some cases where the parameter might be called differently but in that case the reference explicitly uses a TooltipFactory there). This is one of <b>"literal", "formatted", "translated", "nbt", "nbt_size", "conditional", "mix", "multiple", "effect", "limit" or "limit_lines"</b>.<br>
+Everywhere where "text" or "texts" is required a *TooltipFactory* can be used (There are some cases where the parameter might be called differently but in that case the reference explicitly uses a TooltipFactory there). This is one of <b>"literal", "formatted", "translated", "nbt", "nbt_value", "nbt_size", "conditional", "mix", "multiple", "effect", "limit" or "limit_lines"</b>.<br>
 ### TooltipConditions
 A *TooltipCondition* defines whether the tooltip will be shown at any moment. This is one of <b>"true", "false", "not", "and", "or", "is_item", "has_tag", "tag_matches", "is_advanced_context" or "is_hud_context"</b>.<br> 
 
@@ -22,4 +22,4 @@ To see the specifics and all parameters of the TooltipFactories and TooltipCondi
 [Learning Tooltips Pack](https://www.dropbox.com/s/jrmgt9birmzrppe/Learning-Tooltips.zip?dl=1 "Learning Tooltips Pack (Dropbox)")<br>
 [Standard Tooltips Pack](https://www.dropbox.com/s/hrfne60k77bpjh7/Standard-Tooltips.zip?dl=1 "Standard Tooltips Pack (Dropbox)")
 
-*Note: if you downloaded the resource packs before 1.17 you can still use them after, even though it says that it might be incompatible. It is compatible.*
+*Note: if you downloaded the resource packs before 1.17 you can still use them after when using version 1.6.0, even though it says that it might be incompatible. It is compatible until that version.*
