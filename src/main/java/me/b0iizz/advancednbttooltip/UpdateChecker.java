@@ -42,6 +42,7 @@ import net.minecraft.SharedConstants;
  * 
  * @author B0IIZZ
  */
+@Deprecated
 public final class UpdateChecker {
 
 	private static final Logger LOGGER = LogManager.getLogger();
