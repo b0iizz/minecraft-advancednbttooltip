@@ -25,9 +25,9 @@ package me.b0iizz.advancednbttooltip.api.impl.builtin;
 import java.util.Collections;
 import java.util.List;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -39,7 +39,7 @@ import net.minecraft.text.TranslatableText;
  * A factory which creates a simple {@link TranslatableText}
  * @author B0IIZZ
  */
-@TooltipIdentifier("translated")
+@TooltipCode("translated")
 public class TranslatedFactory implements TooltipFactory {
 
 	/**
@@ -51,7 +51,7 @@ public class TranslatedFactory implements TooltipFactory {
 	/**
 	 * A factory creating arguments for the translation
 	 */
-	@Optional
+	@Suggested
 	public TooltipFactory arguments;
 	
 	@Override

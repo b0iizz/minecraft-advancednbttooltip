@@ -56,7 +56,7 @@ public final class ModKeybinds {
 	 */
 	public static void updateKeyBindings(MinecraftClient client) {
 		if (openConfig.isPressed() && client.currentScreen == null) {
-			client.openScreen(new TooltipsScreen());
+			client.setScreen(new TooltipsScreen());
 		}
 	}
 

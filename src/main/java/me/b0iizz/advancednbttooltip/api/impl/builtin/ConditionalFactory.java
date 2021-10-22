@@ -25,7 +25,7 @@ package me.b0iizz.advancednbttooltip.api.impl.builtin;
 import java.util.List;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
@@ -39,7 +39,7 @@ import net.minecraft.text.Text;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("conditional")
+@TooltipCode("conditional")
 public class ConditionalFactory implements TooltipFactory {
 
 	/**

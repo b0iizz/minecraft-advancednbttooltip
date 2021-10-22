@@ -22,7 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipContext;
 import net.minecraft.client.item.TooltipContext;
@@ -34,7 +34,7 @@ import net.minecraft.nbt.NbtCompound;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("is_hud_context")
+@TooltipCode("is_hud_context")
 public class HudContextCondition implements TooltipCondition {
 
 	@Override

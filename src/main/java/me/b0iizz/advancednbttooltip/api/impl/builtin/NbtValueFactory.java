@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
@@ -48,7 +48,7 @@ import net.minecraft.util.Formatting;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("nbt_value")
+@TooltipCode("nbt_value")
 public class NbtValueFactory implements TooltipFactory {
 
 	/**
@@ -59,17 +59,17 @@ public class NbtValueFactory implements TooltipFactory {
 	/**
 	 * Whether {@link NbtCompound compounds} should be further inspected
 	 */
-	@Optional("go_into_compounds")
+	@Suggested("go_into_compounds")
 	public boolean traverseCompound = false;
 	/**
 	 * Whether {@link AbstractNbtList lists} should be further inspected
 	 */
-	@Optional("go_into_lists")
+	@Suggested("go_into_lists")
 	public boolean traverseList = false;
 	/**
 	 * Whether the result should color primitive values yellow.
 	 */
-	@Optional
+	@Suggested
 	public boolean colored = false;
 
 	@Override

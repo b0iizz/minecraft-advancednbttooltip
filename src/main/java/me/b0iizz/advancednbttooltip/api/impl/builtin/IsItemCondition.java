@@ -25,7 +25,7 @@ package me.b0iizz.advancednbttooltip.api.impl.builtin;
 import java.util.Arrays;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -39,7 +39,7 @@ import net.minecraft.util.registry.Registry;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("is_item")
+@TooltipCode("is_item")
 public class IsItemCondition implements TooltipCondition {
 
 	/**

@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -45,7 +45,7 @@ import net.minecraft.text.Text;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("mix")
+@TooltipCode("mix")
 public class MixFactory implements TooltipFactory {
 
 	/**
@@ -59,7 +59,7 @@ public class MixFactory implements TooltipFactory {
 	 * Whether each line of the texts should be appended separately or all appended
 	 * in one big line.
 	 */
-	@Optional
+	@Suggested
 	public boolean separate_lines = true;
 
 	@Override

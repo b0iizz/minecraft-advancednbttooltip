@@ -23,7 +23,7 @@
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -34,7 +34,7 @@ import net.minecraft.nbt.NbtCompound;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("not")
+@TooltipCode("not")
 public class NotCondition implements TooltipCondition {
 
 	/**

@@ -26,10 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -38,9 +39,10 @@ import net.minecraft.util.Formatting;
 
 /**
  * A factory which can create {@link Formatting} on other factories
+ * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("formatted")
+@TooltipCode("formatted")
 public class FormattedFactory implements TooltipFactory {
 
 	/**
@@ -48,42 +50,47 @@ public class FormattedFactory implements TooltipFactory {
 	 */
 	@Required
 	public TooltipFactory text = null;
-	
+
 	/**
-	 * Whether the the factory should be formatted bold.
+	 * Whether the factory should be formatted bold.
 	 */
-	@Optional
+	@Suggested
 	public boolean bold = false;
 	/**
-	 * Whether the the factory should be formatted italic.
+	 * Whether the factory should be formatted italic.
 	 */
-	@Optional
+	@Suggested
 	public boolean italic = false;
 	/**
-	 * Whether the the factory should be formatted strikethrough.
+	 * Whether the factory should be formatted strikethrough.
 	 */
-	@Optional
+	@Suggested
 	public boolean strikethrough = false;
 	/**
-	 * Whether the the factory should be formatted underline.
+	 * Whether the factory should be formatted underline.
 	 */
-	@Optional
+	@Suggested
 	public boolean underline = false;
 	/**
-	 * Whether the the factory should be formatted obfuscated.
+	 * Whether the factory should be formatted obfuscated.
 	 */
-	@Optional
+	@Suggested
 	public boolean obfuscated = false;
+	/**
+	 * Whether the factory should be formatted centered.
+	 */
+	@Suggested
+	public boolean centered = false;
 	/**
 	 * If and how the factory should be colored.
 	 */
-	@Optional("color")
+	@Suggested("color")
 	public String colorName = "";
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		ArrayList<Formatting> formattings = new ArrayList<>();
-		
+
 		if (!colorName.isEmpty() && Formatting.byName(colorName) != null && Formatting.byName(colorName).isColor())
 			formattings.add(Formatting.byName(colorName));
 		if (bold)
@@ -96,10 +103,24 @@ public class FormattedFactory implements TooltipFactory {
 			formattings.add(Formatting.UNDERLINE);
 		if (obfuscated)
 			formattings.add(Formatting.OBFUSCATED);
-		
+
 		final Formatting[] formatting = formattings.toArray(Formatting[]::new);
+		List<Text> result = text.getTooltipText(item, tag, context).stream()
+				.map(line -> line.shallowCopy().formatted(formatting)).collect(Collectors.toList());
 		
-		return text.getTooltipText(item, tag, context).stream().map(line -> line.shallowCopy().formatted(formatting)).collect(Collectors.toList());
+		if(centered) {
+			int width = result.stream().map(MinecraftClient.getInstance().textRenderer::getWidth)
+					.max(Integer::compare).orElse(0);
+			result = result.stream().map(line -> {
+				Text centeredLine = line;
+				while (MinecraftClient.getInstance().textRenderer.getWidth(centeredLine) <= width) {
+					centeredLine = Text.of(" ").shallowCopy().append(centeredLine).append(Text.of(" "));
+				}
+				return centeredLine;
+			}).toList();
+		}
+		
+		return result;
 	}
 
 }

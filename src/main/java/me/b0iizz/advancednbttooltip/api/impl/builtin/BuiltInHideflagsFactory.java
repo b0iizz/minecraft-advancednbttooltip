@@ -27,7 +27,7 @@ import java.util.List;
 
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,7 +40,7 @@ import net.minecraft.util.Formatting;
 /**
  * @author B0IIZZ
  */
-@TooltipIdentifier("builtin_hideflags")
+@TooltipCode("builtin_hideflags")
 public class BuiltInHideflagsFactory implements TooltipFactory {
 
 	@Override

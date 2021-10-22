@@ -28,7 +28,7 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
@@ -45,7 +45,7 @@ import net.minecraft.nbt.NbtString;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("tag_matches")
+@TooltipCode("tag_matches")
 public class TagMatchesCondition implements TooltipCondition {
 
 	/**

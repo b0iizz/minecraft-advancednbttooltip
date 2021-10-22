@@ -22,9 +22,9 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
@@ -38,7 +38,7 @@ import net.minecraft.nbt.NbtElement;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("has_tag")
+@TooltipCode("has_tag")
 public class HasTagCondition implements TooltipCondition {
 
 	/**
@@ -50,13 +50,13 @@ public class HasTagCondition implements TooltipCondition {
 	/**
 	 * The type of the element at the path.
 	 */
-	@Optional
-	public int type = 99;
+	@Suggested
+	public int type = -1;
 
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		return NbtPath.of(path).getAll(tag).stream()
-				.anyMatch((t) -> this.type == 99 ? true : t.getType() == this.type);
+				.anyMatch((t) -> this.type == -1 ? true : t.getType() == this.type);
 	}
 
 }

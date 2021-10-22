@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Optional;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.effect.StatusEffect;
@@ -49,7 +49,7 @@ import net.minecraft.text.TranslatableText;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("effect")
+@TooltipCode("effect")
 public class EffectFactory implements TooltipFactory {
 
 	/**
@@ -67,7 +67,7 @@ public class EffectFactory implements TooltipFactory {
 	/**
 	 * The strength of the effect
 	 */
-	@Optional
+	@Suggested
 	public TooltipFactory strength = null;
 	
 	@Override

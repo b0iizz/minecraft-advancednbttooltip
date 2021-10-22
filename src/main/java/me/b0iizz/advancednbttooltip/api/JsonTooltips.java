@@ -45,7 +45,7 @@ public interface JsonTooltips {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public static @interface TooltipIdentifier {
+	public static @interface TooltipCode {
 		/**
 		 * @return The id of the {@link TooltipCondition} or {@link TooltipFactory} in
 		 *         the .json
@@ -76,7 +76,7 @@ public interface JsonTooltips {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public static @interface Optional {
+	public static @interface Suggested {
 		/**
 		 * @return The name of the field in the .json
 		 */
