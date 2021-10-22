@@ -73,13 +73,13 @@ public class TooltipsScreen extends Screen {
 		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20,
 				new TranslatableText("menu.returnToGame"), widget -> {
 					save();
-					this.client.openScreen(null);
+					this.client.setScreen(null);
 					this.client.mouse.lockCursor();
 				}));
 		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20,
 				new TranslatableText("text.autoconfig.advancednbttooltip.title"), widget -> {
 					save();
-					this.client.openScreen(ConfigManager.getConfigScreen(this).get());
+					this.client.setScreen(ConfigManager.getConfigScreen(this).get());
 				}));
 		this.tooltipList = this
 				.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
@@ -190,7 +190,7 @@ public class TooltipsScreen extends Screen {
 			}
 
 			@Override
-			public List<? extends Selectable> method_37025() {
+			public List<? extends Selectable> selectableChildren() {
 				return Collections.singletonList(toggleButton);
 			}
 

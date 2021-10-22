@@ -35,7 +35,6 @@ import me.b0iizz.advancednbttooltip.api.JsonTooltips;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.AdvancedContextCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.AndCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.BuiltInHideflagsFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.BuiltInSignsFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.ConditionalFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.EffectFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.FormattedFactory;
@@ -47,8 +46,9 @@ import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitLinesFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.LiteralFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.MixFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.MultipleFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtRetargetFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtSizeFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtTextFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtValueFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.NotCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.OrCondition;
@@ -136,15 +136,15 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerFactory(FormattedFactory.class);
 		JsonTooltips.getInstance().registerFactory(TranslatedFactory.class);
 		JsonTooltips.getInstance().registerFactory(NbtValueFactory.class);
-		JsonTooltips.getInstance().registerFactory(NbtFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtRetargetFactory.class);
 		JsonTooltips.getInstance().registerFactory(NbtSizeFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtTextFactory.class);
 		JsonTooltips.getInstance().registerFactory(ConditionalFactory.class);
 		JsonTooltips.getInstance().registerFactory(MultipleFactory.class);
 		JsonTooltips.getInstance().registerFactory(MixFactory.class);
 		JsonTooltips.getInstance().registerFactory(EffectFactory.class);
 		JsonTooltips.getInstance().registerFactory(LimitFactory.class);
 		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
-		JsonTooltips.getInstance().registerFactory(BuiltInSignsFactory.class);
 		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
 		
 		JsonTooltips.getInstance().registerCondition(AndCondition.class);
@@ -163,7 +163,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
 				.registerReloadListener(new JsonTooltipResourceManager(TOOLTIPS));
 
-		UpdateChecker.refreshUpdates();
+//		UpdateChecker.refreshUpdates();
 	}
 
 	/**
@@ -200,7 +200,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 */
 	protected static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
-		NbtCompound tag = stack.getTag();
+		NbtCompound tag = stack.getNbt();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
 				.forEachOrdered(t -> tooltip.addAll(t.getValue().getTooltipText(item, tag, context)));
 	}
