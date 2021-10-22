@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.google.common.cache.Cache;
@@ -53,7 +52,7 @@ public final class NbtPath {
 	private static final Cache<String, NbtPath> CACHE;
 
 	static {
-		CACHE = CacheBuilder.newBuilder().initialCapacity(16).concurrencyLevel(1).maximumSize(128).expireAfterAccess(1, TimeUnit.MINUTES).build();
+		CACHE = CacheBuilder.newBuilder().initialCapacity(16).concurrencyLevel(1).maximumSize(128).build();
 		ROOT = new NbtPath();
 	}
 
@@ -112,30 +111,30 @@ public final class NbtPath {
 		if (!this.name.matches(elementPattern))
 			System.err.printf("Format error in path %s%n", this.name);
 
-		String rest = this.name.replaceAll(elementPattern, "$1");
-		String arrS = this.name.replaceAll(elementPattern, "$2");
-		String idxS = this.name.replaceAll(elementPattern, "$3");
+		String identifier = this.name.replaceAll(elementPattern, "$1");
+		String arrayIdentifer = this.name.replaceAll(elementPattern, "$2");
+		String arrayIndex = this.name.replaceAll(elementPattern, "$3");
 
-		if (arrS.isEmpty()) {
+		if (arrayIdentifer.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable(((NbtCompound) tag).get(rest)).map(Collections::singletonList)
+				return Optional.ofNullable(((NbtCompound) tag).get(identifier)).map(Collections::singletonList)
 						.orElseGet(Collections::emptyList);
 			};
-		} else if (idxS.isEmpty()) {
+		} else if (arrayIndex.isEmpty()) {
 			this.searchFunc = (tag) -> {
-				return Optional.ofNullable((List<NbtElement>) ((NbtCompound) tag).get(rest))
+				return Optional.ofNullable((List<NbtElement>) ((NbtCompound) tag).get(identifier))
 						.orElseGet(Collections::emptyList);
 			};
 		} else {
 			int tmp = 0;
 			try {
-				tmp = Integer.parseInt(idxS);
+				tmp = Integer.parseInt(arrayIndex);
 			} catch (Throwable t) {
-				System.err.printf("Error parsing index %s of %s%n", idxS, this.name);
+				System.err.printf("Error parsing index %s of %s%n", arrayIndex, this.name);
 			}
 			final int idx = tmp;
 			this.searchFunc = (tag) -> {
-				return Collections.singletonList(((List<NbtElement>) ((NbtCompound) tag).get(rest)).get(idx));
+				return Collections.singletonList(((List<NbtElement>) ((NbtCompound) tag).get(identifier)).get(idx));
 			};
 		}
 	}
