@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipIdentifier;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -42,8 +42,8 @@ import net.minecraft.text.Text;
  * 
  * @author B0IIZZ
  */
-@TooltipIdentifier("nbt")
-public class NbtFactory implements TooltipFactory {
+@TooltipCode("nbt_retarget")
+public class NbtRetargetFactory implements TooltipFactory {
 
 	/**
 	 * The {@link NbtPath} to search

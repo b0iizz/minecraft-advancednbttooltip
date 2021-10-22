@@ -1,6 +1,67 @@
 {
 	"text": {
-		"id": "builtin_signs"
+		"id": "formatted",
+		"centered": true,
+		"text": [
+			{
+				"id": "formatted",
+				"color": "gray",
+				"text": "----------------"
+			},
+			{
+				"id": "conditional",
+				"condition": {
+					"id": "has_tag",
+					"tag": "BlockEntityTag.Text1"
+				},
+				"success": {
+					"id": "nbt_text",
+					"tag": "BlockEntityTag.Text1"
+				},
+				"fail": ""
+			},
+			{
+				"id": "conditional",
+				"condition": {
+					"id": "has_tag",
+					"tag": "BlockEntityTag.Text2"
+				},
+				"success": {
+					"id": "nbt_text",
+					"tag": "BlockEntityTag.Text2"
+				},
+				"fail": ""
+			},
+			{
+				"id": "conditional",
+				"condition": {
+					"id": "has_tag",
+					"tag": "BlockEntityTag.Text3"
+				},
+				"success": {
+					"id": "nbt_text",
+					"tag": "BlockEntityTag.Text3"
+				},
+				"fail": ""
+			},
+			{
+				"id": "conditional",
+				"condition": {
+					"id": "has_tag",
+					"tag": "BlockEntityTag.Text4"
+				},
+				"success": {
+					"id": "nbt_text",
+					"tag": "BlockEntityTag.Text4"
+				},
+				"fail": ""
+			},
+			{
+				"id": "formatted",
+				"color": "gray",
+				"text": "----------------"
+			}
+		]
 	},
 	"condition": {
 		"id": "or",
