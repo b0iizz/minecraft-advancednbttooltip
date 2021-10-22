@@ -36,6 +36,14 @@
 		"minecraft": ">=1.17"
 	},
 	"suggests": {
-		"modmenu": "*"
-	}
+		"modmenu": "*",
+		"modupdater": "*"
+	},
+	"custom": {
+        "modupdater": {
+			"strict": false,
+            "strategy": "curseforge",
+            "projectID": 393788
+        }
+    }
 }

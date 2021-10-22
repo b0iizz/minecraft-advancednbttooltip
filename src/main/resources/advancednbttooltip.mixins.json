@@ -6,8 +6,7 @@
   "mixins": [
   ],
   "client": [
-	"ItemStackMixin",
-	"TitleScreenMixin"
+	"ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
