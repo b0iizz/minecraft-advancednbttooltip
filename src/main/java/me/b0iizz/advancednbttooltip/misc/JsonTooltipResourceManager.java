@@ -28,12 +28,17 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips;
@@ -60,9 +65,8 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 
 	private static final Logger RES_LOGGER = LogManager.getLogger("AdvancedNbtTooltip Resource Loader");
 
-
 	final Map<Identifier, CustomTooltip> tooltips;
-	
+
 	/**
 	 * @param tooltips The map containing all registered Tooltips
 	 * 
@@ -89,32 +93,42 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 			try (Resource resource = manager.getResource(id0)) {
 				try (InputStream is = resource.getInputStream()) {
 					try (Reader reader = new BufferedReader(new InputStreamReader(is))) {
-						CustomTooltip tooltip = JsonTooltips.getInstance().getGson().fromJson(reader, CustomTooltip.class);
+						CustomTooltip tooltip = JsonTooltips.getInstance().getGson().fromJson(reader,
+								CustomTooltip.class);
 						tooltips.put(id, tooltip);
 					}
 				}
 			} catch (Throwable t) {
-				processTooltipError(id, id0, t);
+				StringBuilder messageBuilder = new StringBuilder();
+				processTooltipErrorMessageRecursive(messageBuilder, t);
+				RES_LOGGER.warn("Exception loading tooltip {} from {}: \n{}", id, id0, messageBuilder.toString());
 				return;
 			}
 			RES_LOGGER.debug("Finished loading Tooltip {} from {} ", id, id0);
 		});
 
 		tooltips.forEach((id, tooltip) -> tooltip.addCondition(TooltipCondition.of(() -> ConfigManager.isEnabled(id))));
-
 	}
 
-	private void processTooltipError(Identifier id, Identifier resource, Throwable error) {
-		String message = "";
-		String indent = "\t\t+->";
-		Throwable cause = error;
-		while(cause instanceof JsonSyntaxException) {
-			message += indent + cause.getMessage() + '\n';
-			indent = '\t' + indent;
-			cause = cause.getCause();
+	private void processTooltipErrorMessageRecursive(StringBuilder message, Throwable error) {
+		if (error instanceof JsonParseException) {
+			String indent = "   ";
+			message.append(">" + error.getMessage());
+			List<Throwable> childErrors = Stream
+					.concat(Stream.of(error.getCause()), Arrays.stream(error.getSuppressed())).filter(Objects::nonNull)
+					.toList();
+			if (!childErrors.isEmpty())
+				message.append("\n");
+			childErrors.forEach(childError -> {
+				StringBuilder builder = new StringBuilder();
+				processTooltipErrorMessageRecursive(builder, childError);
+				builder.toString().lines().map(str -> indent + str + "\n").forEach(message::append);
+			});
+		} else {
+			message.append("- Exception thrown: " + Stream.iterate(error, Throwable::getCause).takeWhile(Objects::nonNull)
+					.map(t -> t.getClass().getCanonicalName() + " " + t.getMessage())
+					.collect(Collectors.joining(" => ")));
 		}
-		message = message.replaceAll("\\R$", "");
-		RES_LOGGER.warn("Couldn't parse tooltip {} from {} \n {}", id, resource, message, cause);
+
 	}
-	
 }

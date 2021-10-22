@@ -23,25 +23,28 @@
 package me.b0iizz.advancednbttooltip.api.impl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.LiteralFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.MultipleFactory;
 
 /**
@@ -61,160 +64,183 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 	private final Map<String, Class<? extends TooltipCondition>> tooltipConditions = new HashMap<>();
 
 	private final Gson gson = new GsonBuilder()
-			.registerTypeAdapter(TooltipFactory.class, wrap(this::deserializeFactory))
-			.registerTypeAdapter(TooltipCondition.class, wrap(this::deserializeCondition))
-			.registerTypeAdapter(CustomTooltip.class, wrap(this::deserializeCustomTooltip)).create();
+			.registerTypeAdapter(TooltipFactory.class, (JsonDeserializer<?>) this::deserializeFactory)
+			.registerTypeAdapter(TooltipCondition.class, (JsonDeserializer<?>) this::deserializeCondition)
+			.registerTypeAdapter(CustomTooltip.class, (JsonDeserializer<?>) this::deserializeCustomTooltip).create();
 
 	@Override
 	public void registerFactory(Class<? extends TooltipFactory> factoryClass) {
-		if (!factoryClass.isAnnotationPresent(TooltipIdentifier.class)) {
-			System.err.println(
-					"Tried registering factory %s without @TooltipIdentitifer".formatted(factoryClass.getSimpleName()));
+		if (!factoryClass.isAnnotationPresent(TooltipCode.class)) {
+			System.err.println("Tried registering factory %s without @%s".formatted(factoryClass.getSimpleName(),
+					TooltipCode.class.getSimpleName()));
 			return;
 		}
-		tooltipFactories.putIfAbsent(factoryClass.getAnnotation(TooltipIdentifier.class).value(), factoryClass);
+		tooltipFactories.putIfAbsent(factoryClass.getAnnotation(TooltipCode.class).value(), factoryClass);
 	}
 
 	@Override
 	public void registerCondition(Class<? extends TooltipCondition> conditionClass) {
-		if (!conditionClass.isAnnotationPresent(TooltipIdentifier.class)) {
-			System.err.println("Tried registering condition %s without @TooltipIdentitifer"
-					.formatted(conditionClass.getSimpleName()));
+		if (!conditionClass.isAnnotationPresent(TooltipCode.class)) {
+			System.err.println("Tried registering condition %s without @%s".formatted(conditionClass.getSimpleName(),
+					TooltipCode.class.getSimpleName()));
 			return;
 		}
-		tooltipConditions.putIfAbsent(conditionClass.getAnnotation(TooltipIdentifier.class).value(), conditionClass);
+		tooltipConditions.putIfAbsent(conditionClass.getAnnotation(TooltipCode.class).value(), conditionClass);
 	}
 
 	@Override
 	public Gson getGson() {
 		return gson;
 	}
-	
-	private JsonTooltipsImpl() {}
 
-	private TooltipFactory deserializeFactory(JsonElement element) {
+	private JsonTooltipsImpl() {
+	}
+
+	private TooltipFactory deserializeFactory(JsonElement element, Type type, JsonDeserializationContext ctx) {
+		Objects.requireNonNull(element);
 		if (element.isJsonNull())
 			return TooltipFactory.EMPTY;
 		if (element.isJsonPrimitive())
-			return new LiteralFactory(element.getAsString());
-		if (element.isJsonArray())
-			return new MultipleFactory(StreamSupport.stream(element.getAsJsonArray().spliterator(), false)
-					.map(this::deserializeFactory).toArray(TooltipFactory[]::new));
-
-		String id;
-		try {
-			id = element.getAsJsonObject().get("id").getAsString();
-		} catch (Exception e) {
-			throw new JsonSyntaxException("Error parsing id for %s".formatted(element.toString()), e);
+			return TooltipFactory.of(element.getAsString());
+		if (element.isJsonArray()) {
+			JsonObject toParse = new JsonObject();
+			toParse.add("texts", element);
+			return parseClass(toParse, MultipleFactory.class, ctx);
 		}
+
+		String id = getId(element);
 
 		if (id.equals("empty"))
 			return TooltipFactory.EMPTY;
 
-		return parseClass(element, java.util.Optional.ofNullable(tooltipFactories.get(id))
-				.orElseThrow(() -> new JsonSyntaxException("Invalid TooltipFactory id \"%s\"".formatted(id))));
+		return parseClass(element, Optional.ofNullable(tooltipFactories.get(id))
+				.orElseThrow(() -> new JsonSyntaxException("Unknown text-factory id \"%s\"".formatted(id))), ctx);
 
 	}
 
-	private TooltipCondition deserializeCondition(JsonElement element) {
+	private TooltipCondition deserializeCondition(JsonElement element, Type type, JsonDeserializationContext ctx) {
 		if (element.isJsonNull())
 			return TooltipCondition.FALSE;
 		if (element.isJsonPrimitive())
 			return element.getAsBoolean() ? TooltipCondition.TRUE : TooltipCondition.FALSE;
 
-		String id;
-		try {
-			id = element.getAsJsonObject().get("id").getAsString();
-		} catch (Exception e) {
-			throw new JsonSyntaxException("Error parsing id for %s".formatted(element.toString()), e);
-		}
+		String id = getId(element);
 
 		if (id.equals("true"))
 			return TooltipCondition.TRUE;
 		if (id.equals("false"))
 			return TooltipCondition.FALSE;
-		
-		return parseClass(element, java.util.Optional.ofNullable(tooltipConditions.get(id))
-				.orElseThrow(() -> new JsonSyntaxException("Invalid TooltipCondition id \"%s\"".formatted(id))));
+
+		return parseClass(element, Optional.ofNullable(tooltipConditions.get(id))
+				.orElseThrow(() -> new JsonSyntaxException("Unknown condition id \"%s\"".formatted(id))), ctx);
 	}
 
-	private CustomTooltip deserializeCustomTooltip(JsonElement element) {
+	private String getId(JsonElement element) {
+		try {
+			return element.getAsJsonObject().get("id").getAsString();
+		} catch (Exception e) {
+			throw new JsonSyntaxException("Exception parsing field id", e);
+		}
+	}
+
+	private CustomTooltip deserializeCustomTooltip(JsonElement element, Type type, JsonDeserializationContext ctx) {
 		CustomTooltip result = new CustomTooltipImpl();
 		if (element.isJsonNull() || element.isJsonArray() || element.isJsonPrimitive())
 			return result;
 
+		JsonSyntaxException toThrow = null;
+
 		try {
-			result.addText(gson.fromJson(element.getAsJsonObject().get("text"), TooltipFactory.class));
-		} catch (Exception e) {
-			throw new JsonSyntaxException("Error parsing text!", e);
+			result.addText(ctx.deserialize(element.getAsJsonObject().get("text"), TooltipFactory.class));
+		} catch (RuntimeException toWrap) {
+			toThrow = new JsonSyntaxException("Exception deserializing CustomTooltip", toWrap);
 		}
 
 		try {
-			result.addCondition(gson.fromJson(element.getAsJsonObject().get("condition"), TooltipCondition.class));
-		} catch (Exception e) {
-			throw new JsonSyntaxException("Error parsing condition!", e);
+			result.addCondition(ctx.deserialize(element.getAsJsonObject().get("condition"), TooltipCondition.class));
+		} catch (RuntimeException toWrap) {
+			if (toThrow == null)
+				toThrow = new JsonSyntaxException("Exception deserializing CustomTooltip", toWrap);
+			else
+				toThrow.addSuppressed(toWrap);
 		}
+
+		if (toThrow != null)
+			throw toThrow;
 
 		return result;
 	}
 
-	private <T> T parseClass(JsonElement element, Class<T> clazz) {
-		Objects.requireNonNull(clazz);
+	private <T> T parseClass(JsonElement element, Class<T> clazz, JsonDeserializationContext ctx) {
+		Objects.requireNonNull(element, "element");
+		Objects.requireNonNull(clazz, "clazz");
+
 		if (!element.isJsonObject())
-			throw new JsonSyntaxException("Element %s is not of required type object!".formatted(element));
+			throw new JsonSyntaxException("Element %s is not a json object!".formatted(element));
+		T result;
 		try {
-			T result = clazz.getConstructor().newInstance();
+			result = clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException e) {
+			throw new JsonSyntaxException("Exception instantiating %s".formatted(clazz.getSimpleName()), e);
+		}
 
-			List<Field> required = Arrays.stream(clazz.getFields())
-					.filter(field -> field.isAnnotationPresent(Required.class)).toList();
-			for (Field field : required) {
-				String name = field.getAnnotation(Required.class).value();
-				if (name.isEmpty())
-					name = field.getName();
+		JsonSyntaxException toThrow = null;
 
-				Object value = gson.fromJson(element.getAsJsonObject().get(name), field.getGenericType());
-
-				if (value == null)
-					throw new JsonSyntaxException("Missing field \"%s\" in %s!".formatted(name, element.toString()));
-
-				field.setAccessible(true);
-				try {
-					field.set(result, value);
-				} catch (Exception e) {
-					throw new RuntimeException("Error setting Field %s".formatted(name), e);
-				}
+		List<Field> fields = Arrays.stream(clazz.getFields()).filter(
+				field -> field.isAnnotationPresent(Required.class) || field.isAnnotationPresent(Suggested.class))
+				.toList();
+		for (Field field : fields) {
+			String name = getNameForField(field);
+			try {
+				Object value = parseField(name, field.getGenericType(), element, ctx,
+						field.isAnnotationPresent(Required.class));
+				if (value != null)
+					trySetField(field, result, value);
+			} catch (RuntimeException e) {
+				if (toThrow == null)
+					toThrow = new JsonSyntaxException("Exception parsing %s".formatted(clazz.getSimpleName()), e);
+				else
+					toThrow.addSuppressed(e);
 			}
-			;
+		}
 
-			List<Field> optional = Arrays.stream(clazz.getFields())
-					.filter(field -> field.isAnnotationPresent(Optional.class)).toList();
-			for (Field field : optional) {
-				String name = field.getAnnotation(Optional.class).value();
-				if (name.isEmpty())
-					name = field.getName();
+		if (toThrow != null)
+			throw toThrow;
+		return result;
+	}
 
-				Object value = gson.fromJson(element.getAsJsonObject().get(name), field.getGenericType());
+	private Object parseField(String name, Type fieldType, JsonElement element, JsonDeserializationContext ctx,
+			boolean required) {
+		Object value = null;
+		try {
+			value = ctx.deserialize(element.getAsJsonObject().get(name), fieldType);
+		} catch (JsonParseException exception) {
+			throw new JsonSyntaxException("Exception deserializing field \"%s\"".formatted(name), exception);
+		}
+		if (value == null && required)
+			throw new JsonSyntaxException("Missing field \"%s\"".formatted(name));
+		return value;
+	}
 
-				if (value == null)
-					continue;
-
-				field.setAccessible(true);
-				try {
-					field.set(result, value);
-				} catch (Exception e) {
-					throw new RuntimeException("Error setting Field %s".formatted(name), e);
-				}
-			}
-			;
-
-			return result;
-		} catch (Exception e) {
-			throw new JsonSyntaxException("Exception parsing " + clazz.getSimpleName(), e);
+	private void trySetField(Field field, Object targetObject, Object value) {
+		field.setAccessible(true);
+		try {
+			field.set(targetObject, value);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Exception setting field %s".formatted(getNameForField(field)), e);
 		}
 	}
 
-	private static <T> JsonDeserializer<T> wrap(Function<JsonElement, T> toWrap) {
-		return (json, type, ctx) -> toWrap.apply(json);
+	private String getNameForField(Field field) {
+		String name = "";
+		if (field.getAnnotation(Suggested.class) != null)
+			name = field.getAnnotation(Suggested.class).value();
+		else if (field.getAnnotation(Required.class) != null)
+			name = field.getAnnotation(Required.class).value();
+		if (name.isEmpty())
+			name = field.getName();
+		return name;
 	}
 
 }
