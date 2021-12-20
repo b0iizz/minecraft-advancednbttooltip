@@ -63,7 +63,7 @@ final class TooltipRenderingUtils {
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		Matrix4f modelMatrix = matrices.peek().getModel();
+		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
 
 		int alpha = 0xff;
 		int backgroundAlpha = 0xe0;
@@ -116,7 +116,7 @@ final class TooltipRenderingUtils {
 		matrices.push();
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider
 				.immediate(Tessellator.getInstance().getBuffer());
-		Matrix4f modelMatrix = matrices.peek().getModel();
+		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
 		matrices.translate(0.0D, 0.0D, (double) z);
 
 		int lineX = startX;
