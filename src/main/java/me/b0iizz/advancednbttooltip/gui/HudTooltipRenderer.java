@@ -175,7 +175,7 @@ public class HudTooltipRenderer {
 			reach = maxReach;
 		}
 
-		if (this.client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
+		if (this.client.crosshairTarget != null && this.client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
 			reach = this.client.crosshairTarget.getPos().distanceTo(raycastStart);
 		}
 
