@@ -110,7 +110,7 @@ public class EffectFactory implements TooltipFactory {
 						new Object[] { line, StatusEffectUtil.durationToString(inst, 1) });
 			}
 
-			result.add(line.formatted(eff.getType().getFormatting()));
+			result.add(line.formatted(eff.getCategory().getFormatting()));
 		}
 		return result;
 	}
