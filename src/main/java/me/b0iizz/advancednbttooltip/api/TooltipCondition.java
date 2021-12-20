@@ -38,7 +38,7 @@ import net.minecraft.nbt.NbtCompound;
 public interface TooltipCondition {
 
 	/**
-	 * Condition which is always false
+	 * Condition which is always true
 	 */
 	public static final TooltipCondition TRUE = TooltipCondition.of(() -> true);
 
