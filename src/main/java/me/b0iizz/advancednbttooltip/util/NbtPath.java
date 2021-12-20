@@ -52,7 +52,7 @@ public final class NbtPath {
 	private static final Cache<String, NbtPath> CACHE;
 
 	static {
-		CACHE = CacheBuilder.newBuilder().initialCapacity(16).concurrencyLevel(1).maximumSize(128).build();
+		CACHE = CacheBuilder.newBuilder().initialCapacity(16).concurrencyLevel(1).maximumSize(256).build();
 		ROOT = new NbtPath();
 	}
 
@@ -102,6 +102,7 @@ public final class NbtPath {
 		} else {
 			this.parent = new NbtPath(parent, Arrays.copyOf(path, path.length - 1));
 		}
+		
 		if (path == null || path.length == 0) {
 			this.name = "TAG_ROOT";
 		} else {
@@ -137,6 +138,8 @@ public final class NbtPath {
 				return Collections.singletonList(((List<NbtElement>) ((NbtCompound) tag).get(identifier)).get(idx));
 			};
 		}
+		
+		CACHE.put(this.toString(), this);
 	}
 
 	/**
@@ -182,7 +185,7 @@ public final class NbtPath {
 	public String toString() {
 		NbtPath elem = this;
 		String res = elem.name;
-		while ((elem = elem.parent) != null) {
+		while ((elem = elem.parent) != null && elem.parent != null) {
 			res = elem.name + "." + res;
 		}
 		return res;
