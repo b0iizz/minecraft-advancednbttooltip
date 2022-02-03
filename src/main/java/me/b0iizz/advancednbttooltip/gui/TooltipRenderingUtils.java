@@ -27,6 +27,7 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
@@ -37,22 +38,21 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.util.math.Matrix4f;
 
 final class TooltipRenderingUtils {
 
 	public static void drawItem(ItemStack stack, ItemRenderer itemRenderer, TextRenderer textRenderer,
-			MatrixStack matrices, List<? extends OrderedText> lines, int x, int y, int width, int height, int z,
+			MatrixStack matrices, List<TooltipComponent> components, int x, int y, int width, int height, int z,
 			int color) {
 		matrices.push();
 		drawBox(matrices, x, y, 24, 24, -100, color);
 
 		itemRenderer.renderInGui(stack, x + 4, y + 4);
 
-		if (!lines.isEmpty()) {
+		if (!components.isEmpty()) {
 			drawBox(matrices, x + 23, y, width - 23, height, z, color);
-			drawLines(textRenderer, matrices, x + 28, y + 4, z, lines);
+			drawComponents(textRenderer, itemRenderer, matrices, x + 28, y + 4, z, components);
 		}
 		matrices.pop();
 	}
@@ -111,44 +111,49 @@ final class TooltipRenderingUtils {
 		matrices.pop();
 	}
 
-	public static void drawLines(TextRenderer textRenderer, MatrixStack matrices, int startX, int startY, int z,
-			List<? extends OrderedText> lines) {
+	public static void drawComponents(TextRenderer textRenderer, ItemRenderer itemRenderer, MatrixStack matrices,
+			int startX, int startY, int z, List<TooltipComponent> components) {
 		matrices.push();
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider
 				.immediate(Tessellator.getInstance().getBuffer());
 		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
-		matrices.translate(0.0D, 0.0D, (double) z);
-
+		matrices.translate(0, 0, (double) z);
+		
 		int lineX = startX;
 		int lineY = startY;
 
-		for (int s = 0; s < lines.size(); ++s) {
-			OrderedText line = (OrderedText) lines.get(s);
-			if (line != null) {
-				textRenderer.draw((OrderedText) line, (float) lineX, (float) lineY, 0xffffffff, true, modelMatrix,
-						immediate, false, 0, 0xf000f0);
-			}
-
+		float prevZ = itemRenderer.zOffset;
+		itemRenderer.zOffset = z;
+		
+		for (int s = 0; s < components.size(); ++s) {
+			components.get(s).drawText(textRenderer, lineX, lineY, modelMatrix, immediate);
 			if (s == 0)
 				lineY += 2;
-
-			lineY += 10;
+			lineY += components.get(s).getHeight();
 		}
-		matrices.pop();
+
 		immediate.draw();
+		matrices.pop();
+
+		lineY = startY;
+
+		for (int s = 0; s < components.size(); ++s) {
+			components.get(s).drawItems(textRenderer, lineX, lineY, matrices, itemRenderer, 400);
+			if (s == 0)
+				lineY += 2;
+			lineY += components.get(s).getHeight();
+		}
+		
+		itemRenderer.zOffset = prevZ;
 	}
 
-	public static int getWidth(TextRenderer textRenderer, List<? extends OrderedText> lines) {
-		int width = lines.stream().mapToInt(text -> (textRenderer.getWidth(text) + 8)).reduce(Math::max).orElse(0);
+	public static int getWidth(TextRenderer textRenderer, List<TooltipComponent> components) {
+		int width = components.stream().mapToInt(c -> c.getWidth(textRenderer) + 8).reduce(Math::max).orElse(0);
 		return width + 23;
 	}
 
-	public static int getHeight(TextRenderer textRenderer, List<? extends OrderedText> lines) {
-		int height = 20;
-		if (lines.size() > 1) {
-			height += (lines.size() - 1) * 10;
-		}
-		return Math.max(height, 24);
+	public static int getHeight(TextRenderer textRenderer, List<TooltipComponent> components) {
+		return Math.max(components.stream().mapToInt(TooltipComponent::getHeight).sum(), 16) + 8;
 	}
 
 	private static int getPrimaryColor(int r, int g, int b) {

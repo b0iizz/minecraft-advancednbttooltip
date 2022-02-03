@@ -24,16 +24,17 @@ package me.b0iizz.advancednbttooltip.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
-
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -43,7 +44,6 @@ import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.EntityHitResult;
@@ -131,22 +131,27 @@ public class HudTooltipRenderer {
 
 	private void drawItemInfo(MatrixStack matrices, ItemStack stack) {
 		if (stack != null && stack != ItemStack.EMPTY) {
-			List<Text> tooltip = stack.getTooltip(this.client.player,
+			List<Text> texts = stack.getTooltip(this.client.player,
 					HudTooltipContext.valueOf(this.client.options.advancedItemTooltips));
 
 			int lineLimit = ConfigManager.getHudTooltipLineLimt();
-			if (tooltip.size() > lineLimit && lineLimit > 0) {
-				tooltip = tooltip.stream().limit(lineLimit).collect(Collectors.toCollection(ArrayList::new));
-				tooltip.add(new LiteralText("..."));
+			if (texts.size() > lineLimit && lineLimit > 0) {
+				texts = texts.stream().limit(lineLimit).collect(Collectors.toCollection(ArrayList::new));
+				texts.add(new LiteralText("..."));
 			}
 
-			List<OrderedText> lines = Lists.transform(tooltip, Text::asOrderedText);
+			List<TooltipComponent> components = texts.stream().map(Text::asOrderedText).map(TooltipComponent::of)
+					.collect(Collectors.toCollection(ArrayList::new));
+
+			Optional<TooltipData> data;
+			if ((data = stack.getTooltipData()).isPresent())
+				components.add(1, TooltipComponent.of(data.get()));
 
 			int width = this.client.getWindow().getScaledWidth();
 			int height = this.client.getWindow().getScaledHeight();
 
-			int expectedWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, lines);
-			int expectedHeight = TooltipRenderingUtils.getHeight(this.client.textRenderer, lines);
+			int expectedWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, components);
+			int expectedHeight = TooltipRenderingUtils.getHeight(this.client.textRenderer, components);
 
 			HudTooltipPosition position = ConfigManager.getHudTooltipPosition();
 
@@ -154,7 +159,7 @@ public class HudTooltipRenderer {
 			int y = position.getY().get(expectedHeight, height, 10);
 
 			TooltipRenderingUtils.drawItem(stack, this.client.getItemRenderer(), this.client.textRenderer, matrices,
-					lines, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
+					components, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
 					ConfigManager.getHudTooltipColor());
 		}
 	}
