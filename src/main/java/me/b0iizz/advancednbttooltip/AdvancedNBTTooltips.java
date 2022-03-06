@@ -100,18 +100,6 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	public static Identifier id(String name) {
 		return new Identifier(modid, name);
 	}
-
-	
-	/**
-	 * Registers a new Tooltip
-	 * @param id The id of the tooltip
-	 * @param tooltip The tooltip
-	 * @return Whether the registration was successful
-	 */
-	@Deprecated(forRemoval = true)
-	public static boolean registerTooltip(Identifier id, CustomTooltip tooltip) {
-		return TOOLTIPS.putIfAbsent(id, tooltip) == null;
-	}
 	
 	/**
 	 * @return A Set containing all registered Tooltips
