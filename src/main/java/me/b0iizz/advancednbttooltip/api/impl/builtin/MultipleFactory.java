@@ -28,6 +28,7 @@ import java.util.List;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -62,6 +63,11 @@ public class MultipleFactory implements TooltipFactory {
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return Arrays.stream(texts).flatMap(text -> text.getTooltipText(item, tag, context).stream()).toList();
+	}
+	
+	@Override
+	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
+		return Arrays.stream(texts).flatMap(text -> text.getTooltip(item, tag, context).stream()).toList();
 	}
 
 }

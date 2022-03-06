@@ -29,6 +29,7 @@ import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -61,6 +62,14 @@ public class NbtRetargetFactory implements TooltipFactory {
 		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
 			return NbtPath.of(path.asString()).getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND)
 				.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltipText(item, t, context).stream());
+		}).toList();
+	}
+	
+	@Override
+	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
+		return path.getTooltipText(item, tag, context).stream().flatMap(path -> {
+			return NbtPath.of(path.asString()).getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND)
+				.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltip(item, t, context).stream());
 		}).toList();
 	}
 

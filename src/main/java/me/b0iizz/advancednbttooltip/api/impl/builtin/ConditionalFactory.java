@@ -28,6 +28,7 @@ import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -64,5 +65,10 @@ public class ConditionalFactory implements TooltipFactory {
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return (condition != null && condition.isEnabled(item, tag, context) ? success : fail).getTooltipText(item, tag, context);
 	}
-
+	
+	@Override
+	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
+		return (condition != null && condition.isEnabled(item, tag, context) ? success : fail).getTooltip(item, tag, context);
+	}
+	
 }
