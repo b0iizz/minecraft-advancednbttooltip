@@ -25,12 +25,13 @@ public class NbtTextFactory implements TooltipFactory {
 	 * The {@link NbtPath} to search
 	 */
 	@Required("tag")
-	public String path;
+	public TooltipFactory path;
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream().map(NbtElement::asString).map(Text.Serializer::fromJson)
-				.<Text>map(t -> t).toList();
+		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
+			return NbtPath.of(path.asString()).getAll(tag).stream().map(NbtElement::asString).map(Text.Serializer::fromJson);
+		}).toList();
 	}
 
 }

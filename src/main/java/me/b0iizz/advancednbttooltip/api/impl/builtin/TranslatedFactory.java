@@ -46,7 +46,7 @@ public class TranslatedFactory implements TooltipFactory {
 	 * The translation key
 	 */
 	@Required
-	public String key;
+	public TooltipFactory key;
 	
 	/**
 	 * A factory creating arguments for the translation
@@ -56,9 +56,11 @@ public class TranslatedFactory implements TooltipFactory {
 	
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		if(arguments == null)
-			return Collections.singletonList(new TranslatableText(key));
-		return Collections.singletonList(new TranslatableText(key, arguments.getTooltipText(item, tag, context).toArray()));
+		return key.getTooltipText(item, tag, context).stream().<Text>flatMap(text -> {
+			if(arguments == null)
+				return Collections.singletonList(new TranslatableText(text.asString())).stream();
+			return Collections.singletonList(new TranslatableText(text.asString(), arguments.getTooltipText(item, tag, context).toArray())).stream();
+		}).toList();
 	}
 
 }

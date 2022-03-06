@@ -23,7 +23,6 @@
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
@@ -49,7 +48,7 @@ public class NbtRetargetFactory implements TooltipFactory {
 	 * The {@link NbtPath} to search
 	 */
 	@Required("tag")
-	public String path;
+	public TooltipFactory path;
 
 	/**
 	 * The {@link TooltipFactory} to use
@@ -59,9 +58,10 @@ public class NbtRetargetFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND)
-				.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltipText(item, t, context).stream())
-				.collect(Collectors.toList());
+		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
+			return NbtPath.of(path.asString()).getAll(tag).stream().filter(t -> t.getType() == NbtType.COMPOUND)
+				.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltipText(item, t, context).stream());
+		}).toList();
 	}
 
 }

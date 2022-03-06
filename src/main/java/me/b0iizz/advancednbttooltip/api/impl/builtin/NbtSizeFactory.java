@@ -23,7 +23,6 @@
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
@@ -51,11 +50,13 @@ public class NbtSizeFactory implements TooltipFactory {
 	 * The {@link NbtPath} to search
 	 */
 	@Required("tag")
-	public String path;
+	public TooltipFactory path;
 	
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream().map(this::fromTag).map(LiteralText::new).collect(Collectors.toList());
+		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
+			return NbtPath.of(path.asString()).getAll(tag).stream().map(this::fromTag).map(LiteralText::new);
+		}).toList();
 	}
 
 	private String fromTag(NbtElement tag) {

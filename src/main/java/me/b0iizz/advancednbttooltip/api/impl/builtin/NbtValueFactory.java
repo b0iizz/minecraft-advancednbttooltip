@@ -55,7 +55,7 @@ public class NbtValueFactory implements TooltipFactory {
 	 * The {@link NbtPath} to search
 	 */
 	@Required("tag")
-	public String path;
+	public TooltipFactory path;
 	/**
 	 * Whether {@link NbtCompound compounds} should be further inspected
 	 */
@@ -74,8 +74,9 @@ public class NbtValueFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream().map(this::fromTag).flatMap(List::stream)
-				.collect(Collectors.toList());
+		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
+			return NbtPath.of(path.asString()).getAll(tag).stream().map(this::fromTag).flatMap(List::stream);
+		}).toList();
 	}
 
 	private List<Text> fromTag(NbtElement tag) {

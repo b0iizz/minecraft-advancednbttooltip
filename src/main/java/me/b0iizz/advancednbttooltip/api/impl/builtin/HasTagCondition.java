@@ -22,10 +22,11 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -45,7 +46,7 @@ public class HasTagCondition implements TooltipCondition {
 	 * The {@link NbtPath} to search
 	 */
 	@Required("tag")
-	public String path;
+	public TooltipFactory path;
 
 	/**
 	 * The type of the element at the path.
@@ -55,7 +56,8 @@ public class HasTagCondition implements TooltipCondition {
 
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream()
+		return path.getTooltipText(item, tag, context).stream()
+				.flatMap(path -> NbtPath.of(path.asString()).getAll(tag).stream())
 				.anyMatch((t) -> this.type == -1 ? true : t.getType() == this.type);
 	}
 
