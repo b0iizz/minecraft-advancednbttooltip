@@ -60,14 +60,13 @@ import me.b0iizz.advancednbttooltip.misc.JsonTooltipResourceManager;
 import me.b0iizz.advancednbttooltip.misc.ModKeybinds;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -155,15 +154,11 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerCondition(TagMatchesCondition.class);
 		JsonTooltips.getInstance().registerCondition(AdvancedContextCondition.class);
 		JsonTooltips.getInstance().registerCondition(HudContextCondition.class);
-		
-		ItemTooltipCallback.EVENT.register(AdvancedNBTTooltips::getTooltip);
 
 		HudTooltipRenderer.setup();
 
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
 				.registerReloadListener(new JsonTooltipResourceManager(TOOLTIPS));
-
-//		UpdateChecker.refreshUpdates();
 	}
 
 	/**
@@ -173,16 +168,16 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 * @param ctx   The context of the tooltip
 	 * @param lines The lines in the tooltip
 	 */
-	protected static void getTooltip(ItemStack stack, TooltipContext ctx, List<Text> lines) {
+	public static void getTooltip(ItemStack stack, TooltipContext ctx, List<TooltipComponent> lines) {
 		if (ConfigManager.getTooltipToggle()) {
-			ArrayList<Text> text = new ArrayList<>();
+			ArrayList<TooltipComponent> text = new ArrayList<>();
 			appendCustomTooltip(stack.copy(), text, ctx);
 
 			if (!lines.isEmpty() && !text.isEmpty())
-				text.add(0, new LiteralText(""));
+				text.add(0, TooltipComponent.of(Text.of("").asOrderedText()));
 
 			if (ConfigManager.getTooltipPosition() == TooltipPosition.TOP && !text.isEmpty() && lines.size() > 1)
-				text.add(new LiteralText(" "));
+				text.add(TooltipComponent.of(Text.of(" ").asOrderedText()));
 
 			lines.addAll(ConfigManager.getTooltipPosition().position(lines), text);
 		}
@@ -198,11 +193,11 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 *                generated.
 	 *
 	 */
-	protected static void appendCustomTooltip(ItemStack stack, List<Text> tooltip, TooltipContext context) {
+	protected static void appendCustomTooltip(ItemStack stack, List<TooltipComponent> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
 		NbtCompound tag = stack.getNbt();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
-				.forEachOrdered(t -> tooltip.addAll(t.getValue().getTooltipText(item, tag, context)));
+				.forEachOrdered(t -> tooltip.addAll(t.getValue().getTooltip(item, tag, context)));
 	}
 
 	/**

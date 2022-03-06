@@ -29,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -43,7 +44,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
+
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.EntityHitResult;
@@ -131,17 +132,19 @@ public class HudTooltipRenderer {
 
 	private void drawItemInfo(MatrixStack matrices, ItemStack stack) {
 		if (stack != null && stack != ItemStack.EMPTY) {
-			List<Text> texts = stack.getTooltip(this.client.player,
-					HudTooltipContext.valueOf(this.client.options.advancedItemTooltips));
-
-			int lineLimit = ConfigManager.getHudTooltipLineLimt();
-			if (texts.size() > lineLimit && lineLimit > 0) {
-				texts = texts.stream().limit(lineLimit).collect(Collectors.toCollection(ArrayList::new));
-				texts.add(new LiteralText("..."));
-			}
-
-			List<TooltipComponent> components = texts.stream().map(Text::asOrderedText).map(TooltipComponent::of)
+			TooltipContext ctx = HudTooltipContext.valueOf(this.client.options.advancedItemTooltips);
+			List<TooltipComponent> components = stack.getTooltip(this.client.player, ctx).stream()
+					.map(Text::asOrderedText).map(TooltipComponent::of)
 					.collect(Collectors.toCollection(ArrayList::new));
+			stack.getTooltipData().map(TooltipComponent::of).ifPresent(components::add);
+
+			AdvancedNBTTooltips.getTooltip(stack, ctx, components);
+
+			int componentLimit = ConfigManager.getHudTooltipLineLimt();
+			if (components.size() > componentLimit && componentLimit > 0) {
+				components = components.stream().limit(componentLimit).collect(Collectors.toCollection(ArrayList::new));
+				components.add(TooltipComponent.of(Text.of("...").asOrderedText()));
+			}
 
 			Optional<TooltipData> data;
 			if ((data = stack.getTooltipData()).isPresent())
