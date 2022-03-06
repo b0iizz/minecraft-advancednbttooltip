@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -58,6 +59,19 @@ public interface TooltipFactory {
 	 */
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context);
 
+	/**
+	 * Creates the tooltip components for the Item. This is a generalization for {@link #getTooltipText(Item, NbtCompound, TooltipContext)}.
+	 * 
+	 * @param item    The {@link Item} the tooltip will be added to.
+	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
+	 * @param context The current {@link TooltipContext}.
+	 * @return A {@link List} of {@link Text Texts} to be applied to the Item's
+	 *         tooltip.
+	 */
+	public default List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
+		return this.getTooltipText(item, tag, context).stream().map(Text::asOrderedText).map(TooltipComponent::of).toList();
+	}
+	
 	/**
 	 * Creates a factory for the given {@link Supplier}. This is useful for
 	 * factories not relying on the supplied parameters.
