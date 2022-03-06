@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.minecraft.item.ItemStack;
 
-@SuppressWarnings("javadoc")
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 

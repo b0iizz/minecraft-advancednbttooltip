@@ -230,7 +230,6 @@ public class HudTooltipRenderer {
 		return result;
 	}
 
-	@SuppressWarnings("javadoc")
 	public static enum HudTooltipContext implements TooltipContext {
 		NORMAL, ADVANCED;
 
@@ -250,7 +249,6 @@ public class HudTooltipRenderer {
 	 * 
 	 * @author B0IIZZ
 	 */
-	@SuppressWarnings("javadoc")
 	public static enum HudTooltipPosition {
 		TOP_LEFT(Anchor.START, Anchor.START), TOP(Anchor.MIDDLE, Anchor.START), TOP_RIGHT(Anchor.END, Anchor.START),
 		CENTER(Anchor.MIDDLE, Anchor.MIDDLE_START), BOTTOM_LEFT(Anchor.START, Anchor.END),
@@ -312,7 +310,6 @@ public class HudTooltipRenderer {
 	 * 
 	 * @author B0IIZZ
 	 */
-	@SuppressWarnings("javadoc")
 	public static enum HudTooltipZIndex {
 		TOP(400), BOTTOM(-100);
 

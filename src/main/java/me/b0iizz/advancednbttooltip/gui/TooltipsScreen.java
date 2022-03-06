@@ -86,10 +86,11 @@ public class TooltipsScreen extends Screen {
 	}
 
 	@Override
-	public void onClose() {
-		super.onClose();
+	public void close() {
+		super.close();
 		save();
 	}
+	
 
 	private void save() {
 		ConfigManager.writeToggles();

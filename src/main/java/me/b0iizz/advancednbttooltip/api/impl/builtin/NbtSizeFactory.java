@@ -33,7 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.AbstractNbtList;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtNull;
+import net.minecraft.nbt.NbtEnd;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
@@ -65,6 +65,6 @@ public class NbtSizeFactory implements TooltipFactory {
 		} else if (tag instanceof AbstractNbtList) {
 			return ((AbstractNbtList<?>) tag).size() + "";
 		} else
-			return tag instanceof NbtNull ? "0" : "1";
+			return tag instanceof NbtEnd ? "0" : "1";
 	}
 }

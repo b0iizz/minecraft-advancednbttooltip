@@ -210,7 +210,6 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 * 
 	 * @author B0IIZZ
 	 */
-	@SuppressWarnings("javadoc")
 	public static enum TooltipPosition {
 		TOP(1), BOTTOM(-1);
 
