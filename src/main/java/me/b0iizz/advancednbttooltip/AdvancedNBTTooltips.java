@@ -41,6 +41,7 @@ import me.b0iizz.advancednbttooltip.api.impl.builtin.FormattedFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.HasTagCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.HudContextCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.IsItemCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.ItemRendererFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitLinesFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.LiteralFactory;
@@ -133,6 +134,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerFactory(LimitFactory.class);
 		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
 		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
+		JsonTooltips.getInstance().registerFactory(ItemRendererFactory.class);
 		
 		JsonTooltips.getInstance().registerCondition(AndCondition.class);
 		JsonTooltips.getInstance().registerCondition(OrCondition.class);
