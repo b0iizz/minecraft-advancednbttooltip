@@ -53,6 +53,7 @@ import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtTextFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtValueFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.NotCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.OrCondition;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.SectionVisibleCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.TagMatchesCondition;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.TranslatedFactory;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
@@ -144,6 +145,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerCondition(TagMatchesCondition.class);
 		JsonTooltips.getInstance().registerCondition(AdvancedContextCondition.class);
 		JsonTooltips.getInstance().registerCondition(HudContextCondition.class);
+		JsonTooltips.getInstance().registerCondition(SectionVisibleCondition.class);
 
 		HudTooltipRenderer.setup();
 
