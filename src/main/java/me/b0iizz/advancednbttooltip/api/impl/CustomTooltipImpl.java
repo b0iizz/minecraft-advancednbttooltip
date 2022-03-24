@@ -29,6 +29,7 @@ import java.util.List;
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -60,6 +61,14 @@ final class CustomTooltipImpl implements CustomTooltip {
 				.toList();
 	}
 
+	@Override
+	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
+		if(!isEnabled(item, tag, context))
+			return Collections.emptyList();
+		return factories.stream().sequential().flatMap(factory -> factory.getTooltip(item, tag, context).stream())
+				.toList();
+	}
+	
 	@Override
 	public CustomTooltip addText(TooltipFactory text) {
 		if(text != null)
