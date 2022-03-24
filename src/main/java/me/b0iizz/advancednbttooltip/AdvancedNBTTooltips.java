@@ -185,7 +185,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 */
 	protected static void appendCustomTooltip(ItemStack stack, List<TooltipComponent> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
-		NbtCompound tag = stack.getNbt();
+		NbtCompound tag = stack.hasNbt() ? stack.getNbt() : new NbtCompound();
 		TOOLTIPS.entrySet().stream().sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
 				.forEachOrdered(t -> tooltip.addAll(t.getValue().getTooltip(item, tag, context)));
 	}
