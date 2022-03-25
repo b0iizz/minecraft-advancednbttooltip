@@ -277,4 +277,11 @@ public class ConfigManager {
 	public static HudTooltipZIndex getHudTooltipZIndex() {
 		return config.hud.hudTooltipZ;
 	}
+
+	/**
+	 * @return true when the maximum enchantment level should be appended
+	 */
+	public static boolean isShowMaxEnchantmentLevel() {
+		return config.misc.showMaxEnchantmentLevel;
+	}
 }

@@ -53,6 +53,10 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 	@ConfigEntry.Gui.TransitiveObject
 	HudConfig hud = new HudConfig();
 
+	@ConfigEntry.Category("nbt_misc")
+	@ConfigEntry.Gui.TransitiveObject
+	MiscConfig misc = new MiscConfig();
+
 	/**
 	 * The Category of the config containing all general options
 	 *
@@ -198,6 +202,22 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		@ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
 		@ConfigEntry.Gui.Tooltip
 		HudTooltipZIndex hudTooltipZ = HudTooltipZIndex.TOP;
+
+	}
+
+	/**
+	 * The Category of the config containing all general options
+	 *
+	 * @author Rooftop Joe
+	 */
+	@Config(name = "nbt_misc")
+	public static class MiscConfig implements ConfigData {
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean showMaxEnchantmentLevel = true;	
 
 	}
 }
