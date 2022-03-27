@@ -79,6 +79,9 @@
 	"text.advancednbttooltip.hideflag.can_place": "placeability on blocks",
 	"text.advancednbttooltip.hideflag.additional": "additional tooltips",
 	"text.advancednbttooltip.hideflag.dye": "dyed color",
+	"text.autoconfig.advancednbttooltip.category.nbt_misc": "Miscellaneous",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel": "Show maximum ennchantment level",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel.@Tooltip": "Adds the maximum enchantment level next to each enchantment.",
 	"category.advancednbttooltip.keys": "Advanced NBT Tooltips",
 	"key.advancednbttooltip.openConfig": "Open Advanced NBT Tooltips Config"
 }
