@@ -31,6 +31,8 @@
 	"text.advancednbttooltip.toggle.suspicious_stew.tooltip": "Show associated potion effects of a suspicious stew item.",
 	"text.advancednbttooltip.toggle.compass": "Show Compass tooltip",
 	"text.advancednbttooltip.toggle.compass.tooltip": "Show the coordinates of the linked Lodestone",
+	"text.advancednbttooltip.toggle.filled_map": "Show Explorer Map tooltip",
+	"text.advancednbttooltip.toggle.filled_map.tooltip": "Show the coordinates indicated by Explorer Maps.",
 	"text.advancednbttooltip.toggle.book": "Show Book+ tooltip",
 	"text.advancednbttooltip.toggle.book.tooltip": "Show additional information about books.",
 	"text.advancednbttooltip.toggle.custom_model_data": "Show CustomModelData tooltip",

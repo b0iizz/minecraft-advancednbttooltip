@@ -1,0 +1,37 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "mix",
+			"texts": [
+				"(",
+				{
+					"id": "nbt_value",
+					"tag": "Decorations[0].x"
+				},
+				" ",
+				{
+					"id": "nbt_value",
+					"tag": "Decorations[0].z"
+				},
+				")"
+			]
+		}
+	},
+	"condition": {
+		"id": "and",
+		"conditions": [
+			{
+				"id": "is_item",
+				"items": [
+					"minecraft:filled_map"
+				]
+			},
+			{
+				"id": "has_tag",
+				"tag": "Decorations"
+			}
+		]
+	}
+}
