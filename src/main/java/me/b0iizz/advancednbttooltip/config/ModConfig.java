@@ -217,7 +217,13 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean showMaxEnchantmentLevel = true;	
+		boolean showMaxEnchantmentLevel = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean showAxolotlVariant = true;
 
 	}
 }
