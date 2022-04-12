@@ -49,8 +49,9 @@ import net.minecraft.text.Style;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-	private static final int[] AXOLOTL_COLORS = new int[] { 0xFFC0CB, 0x835C3B, 0xFFFF00, 0xCCFFFF, 0x728FCE };
 	private static final int TAG_INT = 3;
+	private static final int GRAY_COLOR = 0xA0A0A0; // I don't think this is precisely the right shade?
+	private static final int[] AXOLOTL_COLORS = new int[] { 0xFFC0CB, 0x835C3B, 0xFFFF00, 0xCCFFFF, 0x728FCE };
 
 	@Shadow
 	public abstract Item getItem();
@@ -83,7 +84,9 @@ public abstract class ItemStackMixin {
 				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.label");
 				TranslatableText value = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.value", variant.getName());
 
-				label.setStyle(Style.EMPTY.withColor(0xA0A0A0)); // I don't think this is precisely the right shade?
+				label.setStyle(Style.EMPTY.withColor(GRAY_COLOR));
+				
+				// Make sure we don't go out of bounds if mods add more axolotl types.
 				if (id < AXOLOTL_COLORS.length) {
 					value.setStyle(Style.EMPTY.withColor(AXOLOTL_COLORS[id]));
 				}
