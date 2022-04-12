@@ -1,0 +1,38 @@
+{
+	"text": {
+		"id": "formatted",
+		"color": "gray",
+		"text": {
+			"id": "conditional",
+			"condition": {
+				"id": "tag_matches",
+				"tag": "BlockStateTag.honey_level",
+				"value": 0
+			},
+			"success": {
+				"id": "empty"
+			},
+			"fail": {
+				"id": "mix",
+				"texts": [
+					{
+						"id": "translated",
+						"key": "text.advancednbttooltip.tooltip.honey"
+					},
+					{
+						"id": "formatted",
+						"color": "yellow",
+						"text": {
+							"id": "nbt_value",
+							"tag": "BlockStateTag.honey_level"
+						}
+					}
+				]
+			}
+		}
+	},
+	"condition": {
+		"id": "has_tag",
+		"tag": "BlockStateTag.honey_level"
+	}
+}

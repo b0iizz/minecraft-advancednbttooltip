@@ -284,4 +284,11 @@ public class ConfigManager {
 	public static boolean isShowMaxEnchantmentLevel() {
 		return config.misc.showMaxEnchantmentLevel;
 	}
+
+	/**
+	 * @return true if we should show the variant for axolotl buckets
+	 */
+	public static boolean isShowAxolotlVariant() {
+		return config.misc.showAxolotlVariant;
+	}
 }
