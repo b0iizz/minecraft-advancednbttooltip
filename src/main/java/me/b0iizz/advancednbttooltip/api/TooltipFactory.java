@@ -65,7 +65,7 @@ public interface TooltipFactory {
 	 * @param item    The {@link Item} the tooltip will be added to.
 	 * @param tag     The Item's {@link NbtCompound NBT-tag}.
 	 * @param context The current {@link TooltipContext}.
-	 * @return A {@link List} of {@link Text Texts} to be applied to the Item's
+	 * @return A {@link List} of {@link TooltipComponent TooltipComponents} to be applied to the Item's
 	 *         tooltip.
 	 */
 	public default List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
