@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.gui.component.ItemTooltipComponent;
@@ -23,6 +24,12 @@ public class ItemRendererFactory implements TooltipFactory {
 	@Required
 	public TooltipFactory items;
 
+	@Suggested
+	public int width = 0;
+	
+	@Suggested
+	public float scale = 1.0f;
+	
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return Collections.emptyList();
@@ -34,7 +41,7 @@ public class ItemRendererFactory implements TooltipFactory {
 				.map(Identifier::new).map(Registry.ITEM::get).filter(Objects::nonNull).distinct().map(ItemStack::new).toList();
 //		DefaultedList<ItemStack> dlist = DefaultedList.copyOf(ItemStack.EMPTY, list.toArray(ItemStack[]::new));
 //		return Collections.singletonList(new BundleTooltipComponent(new BundleTooltipData(dlist, 65)));
-		return Collections.singletonList(new ItemTooltipComponent(list.toArray(ItemStack[]::new), 0));
+		return Collections.singletonList(new ItemTooltipComponent(list.toArray(ItemStack[]::new), width, scale));
 	}
 
 }
