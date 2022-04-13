@@ -30,6 +30,7 @@ import com.google.gson.JsonElement;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -38,10 +39,11 @@ import net.minecraft.nbt.AbstractNbtNumber;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.Text;
 
 /**
- * A condition which is true when the item has the specified {@link NbtElement Tag}
- * at the specified {@link NbtPath}
+ * A condition which is true when the item has the specified {@link NbtElement
+ * Tag} at the specified {@link NbtPath}
  * 
  * @author B0IIZZ
  */
@@ -52,19 +54,20 @@ public class TagMatchesCondition implements TooltipCondition {
 	 * The {@link NbtPath} to be searched
 	 */
 	@Required("tag")
-	public String path;
-	
+	public TooltipFactory path;
+
 	/**
 	 * The expected value.
 	 */
 	@Required
 	public JsonElement value;
-	
+
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
-		return NbtPath.of(path).getAll(tag).stream().anyMatch(e -> isEqualTo(e, value));
+		return path.getTooltipText(item, tag, context).stream().map(Text::asString).map(NbtPath::of)
+				.flatMap(p -> p.getAll(tag).stream()).anyMatch(e -> isEqualTo(e, value));
 	}
-	
+
 	private boolean isEqualTo(NbtElement tag, JsonElement value) {
 		if (tag == null && (value == null || value.isJsonNull()))
 			return true;
@@ -79,21 +82,21 @@ public class TagMatchesCondition implements TooltipCondition {
 				return false;
 			}
 		}
-		if(tag instanceof NbtString && value.isJsonPrimitive()) {
+		if (tag instanceof NbtString && value.isJsonPrimitive()) {
 			return tag.asString().equals(value.getAsString());
 		}
-		if(tag instanceof AbstractNbtList && value.isJsonArray()) {
-			for(JsonElement json : value.getAsJsonArray())
-				if(!((AbstractNbtList<?>) tag).stream().anyMatch(nbt -> isEqualTo(nbt, json))) 
+		if (tag instanceof AbstractNbtList && value.isJsonArray()) {
+			for (JsonElement json : value.getAsJsonArray())
+				if (!((AbstractNbtList<?>) tag).stream().anyMatch(nbt -> isEqualTo(nbt, json)))
 					return false;
 			return true;
 		}
-		if(tag instanceof NbtCompound && value.isJsonObject()) {
+		if (tag instanceof NbtCompound && value.isJsonObject()) {
 			NbtCompound compound = (NbtCompound) tag;
-			for(Entry<String, JsonElement> json : value.getAsJsonObject().entrySet()) {
-				if(!compound.contains(json.getKey())) 
+			for (Entry<String, JsonElement> json : value.getAsJsonObject().entrySet()) {
+				if (!compound.contains(json.getKey()))
 					return false;
-				if(!isEqualTo(compound.get(json.getKey()), json.getValue())) 
+				if (!isEqualTo(compound.get(json.getKey()), json.getValue()))
 					return false;
 			}
 			return true;
