@@ -69,7 +69,10 @@
 	"text.advancednbttooltip.tooltip.book.title": "Big Wetters OWO: ",
 	"text.advancednbttooltip.tooltip.custommodeldata": "CuwstomModewData: ",
 	"text.advancednbttooltip.tooltip.repaircost": "COST $ (UWU): ",
+	"text.advancednbttooltip.tooltip.axolotl.label": "Wawiant ->",
+	"text.advancednbttooltip.tooltip.axolotl.value": "%s /ᐠ｡ꞈ｡ᐟ\",
 	"text.advancednbttooltip.tooltip.bees": "B: ",
+	"text.advancednbttooltip.tooltip.honey": "Ew shticky: ",
 	"text.advancednbttooltip.tooltip.command_blocks": "Comnd: ",
 	"text.advancednbttooltip.tooltip.hideflag": "cant c u: ",
 	"text.advancednbttooltip.hideflag.enchantments": "sh1ny",
@@ -79,6 +82,11 @@
 	"text.advancednbttooltip.hideflag.can_place": "pwaise dis on bluks",
 	"text.advancednbttooltip.hideflag.additional": "glowowie watew & mowo",
 	"text.advancednbttooltip.hideflag.dye": "RAINBOW",
+	"text.autoconfig.advancednbttooltip.category.nbt_misc": "（￣。。￣）",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel": "Show sh1ny OVER 9000!!!",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel.@Tooltip": "GIVETH ME THY MAXIMUM SH1NY! OWO",
+	"text.autoconfig.advancednbttooltip.option.misc.showAxolotlVariant": "Show smol watew doggie stuff",
+	"text.autoconfig.advancednbttooltip.option.misc.showAxolotlVariant.@Tooltip": "OWO whaats i dis buwucket?",
 	"category.advancednbttooltip.keys": "Adwanced NbweTee Toowotips",
 	"key.advancednbttooltip.openConfig": "Take thwe wed pwill (Opshuns)"
 }

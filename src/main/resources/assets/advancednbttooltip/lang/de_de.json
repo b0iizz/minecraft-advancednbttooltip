@@ -69,7 +69,10 @@
 	"text.advancednbttooltip.tooltip.book.title": "Titel: ",
 	"text.advancednbttooltip.tooltip.custommodeldata": "CustomModelData: ",
 	"text.advancednbttooltip.tooltip.repaircost": "RepairCost: ",
+	"text.advancednbttooltip.tooltip.axolotl.label": "Variante: ",
+	"text.advancednbttooltip.tooltip.axolotl.value": "%s",
 	"text.advancednbttooltip.tooltip.bees": "Bienen: ",
+	"text.advancednbttooltip.tooltip.honey": "Honigmenge: ",
 	"text.advancednbttooltip.tooltip.command_blocks": "Befehl: ",
 	"text.advancednbttooltip.tooltip.hideflag": "Versteckt: ",
 	"text.advancednbttooltip.hideflag.enchantments": "Verzaberungen",
@@ -79,6 +82,11 @@
 	"text.advancednbttooltip.hideflag.can_place": "Plazierbarkeit an Blöcken",
 	"text.advancednbttooltip.hideflag.additional": "Zusätzliche Informationen",
 	"text.advancednbttooltip.hideflag.dye": "Verfärbung",
+	"text.autoconfig.advancednbttooltip.category.nbt_misc": "Miscellaneous",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel": "Zeige maximale Verzauberungsstufe",
+	"text.autoconfig.advancednbttooltip.option.misc.showMaxEnchantmentLevel.@Tooltip": "Zeigt die maximale Stufe neben jeder Verzauberung.",
+	"text.autoconfig.advancednbttooltip.option.misc.showAxolotlVariant": "Zeige Axolotl Variante",
+	"text.autoconfig.advancednbttooltip.option.misc.showAxolotlVariant.@Tooltip": "Zeigt die Axolotl Variante bei jedem Axolotl-Eimer an.",
 	"category.advancednbttooltip.keys": "Advanced NBT Tooltips",
 	"key.advancednbttooltip.openConfig": "Öffne Advanced NBT Tooltips Menü"
 }
