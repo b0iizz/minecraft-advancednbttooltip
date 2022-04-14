@@ -8,7 +8,7 @@ To use this mod you must first [install fabric](https://fabricmc.net/wiki/instal
 and then [add the mod](https://fabricmc.net/wiki/tutorial:adding_mods).
 
 Optionally, you may want to install [Mod Menu](https://www.curseforge.com/minecraft/mc-mods/modmenu). This will enable you to access the mod's configuration menu.
-Press "M" to bring up a menu with toggles for each tooltip from which you can also access the mod's configuration menu.
+Press "B" to bring up a menu with toggles for each tooltip from which you can also access the mod's configuration menu.
 
 ## Custom JSON Tooltips (since 1.5.0)</h1>
 
