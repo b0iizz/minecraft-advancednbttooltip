@@ -75,6 +75,8 @@ public abstract class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT)
 	private void onGetTooltip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci, List<Text> list) {
 
+		if (!ConfigManager.getTooltipToggle()) return;
+
 		if (ConfigManager.isShowAxolotlVariant() && this.getItem() == Items.AXOLOTL_BUCKET) {
 
 			NbtCompound tag = this.getNbt();
