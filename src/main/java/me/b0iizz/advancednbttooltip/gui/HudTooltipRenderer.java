@@ -66,7 +66,7 @@ public class HudTooltipRenderer {
 	}
 
 	/**
-	 * @param matrices     the current MatrixStack
+	 * @param matrices  the current MatrixStack
 	 * @param tickDelta the number of unprocessed ticks
 	 */
 	public void draw(MatrixStack matrices, float tickDelta) {
@@ -74,40 +74,56 @@ public class HudTooltipRenderer {
 	}
 
 	private void drawItemInfo(MatrixStack matrices, ItemStack stack) {
-		if (stack != null && stack != ItemStack.EMPTY) {
-			TooltipContext ctx = HudTooltipContext.valueOf(this.client.options.advancedItemTooltips);
-			List<TooltipComponent> components = stack.getTooltip(this.client.player, ctx).stream()
-					.map(Text::asOrderedText).map(TooltipComponent::of)
-					.collect(Collectors.toCollection(ArrayList::new));
-			stack.getTooltipData().map(TooltipComponent::of).ifPresent(components::add);
+		if (stack == null || stack == ItemStack.EMPTY)
+			return;
+		TooltipContext ctx = HudTooltipContext.valueOf(this.client.options.advancedItemTooltips);
+		List<TooltipComponent> components = stack.getTooltip(this.client.player, ctx).stream().map(Text::asOrderedText)
+				.map(TooltipComponent::of).collect(Collectors.toCollection(ArrayList::new));
+		stack.getTooltipData().map(TooltipComponent::of).ifPresent(components::add);
 
-			AdvancedNBTTooltips.getTooltip(stack, ctx, components);
+		AdvancedNBTTooltips.getTooltip(stack, ctx, components);
 
-			int componentLimit = ConfigManager.getHudTooltipLineLimt();
-			if (components.size() > componentLimit && componentLimit > 0) {
-				components = components.stream().limit(componentLimit).collect(Collectors.toCollection(ArrayList::new));
-				components.add(TooltipComponent.of(Text.of("...").asOrderedText()));
-			}
-
-			Optional<TooltipData> data;
-			if ((data = stack.getTooltipData()).isPresent())
-				components.add(1, TooltipComponent.of(data.get()));
-
-			int width = this.client.getWindow().getScaledWidth();
-			int height = this.client.getWindow().getScaledHeight();
-
-			int expectedWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, components);
-			int expectedHeight = TooltipRenderingUtils.getHeight(this.client.textRenderer, components);
-
-			HudTooltipPosition position = ConfigManager.getHudTooltipPosition();
-
-			int x = position.getX().get(expectedWidth, width, 10);
-			int y = position.getY().get(expectedHeight, height, 10);
-
-			TooltipRenderingUtils.drawItem(stack, this.client.getItemRenderer(), this.client.textRenderer, matrices,
-					components, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
-					ConfigManager.getHudTooltipColor());
+		int componentLimit = ConfigManager.getHudTooltipLineLimt();
+		if (components.size() > componentLimit && componentLimit > 0) {
+			components = components.stream().limit(componentLimit).collect(Collectors.toCollection(ArrayList::new));
+			components.add(TooltipComponent.of(Text.of("...").asOrderedText()));
 		}
+
+		Optional<TooltipData> data;
+		if ((data = stack.getTooltipData()).isPresent())
+			components.add(1, TooltipComponent.of(data.get()));
+
+		int width = this.client.getWindow().getScaledWidth();
+		int height = this.client.getWindow().getScaledHeight();
+
+		int tooltipWidth = TooltipRenderingUtils.getWidth(this.client.textRenderer, components);
+		int tooltipHeight = TooltipRenderingUtils.getHeight(this.client.textRenderer, components);
+
+		tooltipHeight = Math.max(tooltipHeight, 16) + 8;
+
+		HudTooltipPosition position = ConfigManager.getHudTooltipPosition();
+
+		int x = position.getX().get(tooltipWidth + 23, width, 10);
+		int y = position.getY().get(tooltipHeight, height, 10);
+
+//		TooltipRenderingUtils.drawItem(stack, this.client.getItemRenderer(), this.client.textRenderer, matrices,
+//				components, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
+//				ConfigManager.getHudTooltipColor());
+		
+		int z = ConfigManager.getHudTooltipZIndex().getZ();
+		int color = ConfigManager.getHudTooltipColor();
+
+		matrices.push();
+		TooltipRenderingUtils.drawBox(matrices, x, y, 24, 24, -100, color);
+
+		this.client.getItemRenderer().renderInGui(stack, x + 4, y + 4);
+
+		if (!components.isEmpty()) {
+			TooltipRenderingUtils.drawBox(matrices, x + 23, y, tooltipWidth, tooltipHeight, z, color);
+			TooltipRenderingUtils.drawComponents(this.client.textRenderer, this.client.getItemRenderer(), matrices,
+					x + 28, y + 4, z, components);
+		}
+		matrices.pop();
 	}
 
 	public static enum HudTooltipContext implements TooltipContext {

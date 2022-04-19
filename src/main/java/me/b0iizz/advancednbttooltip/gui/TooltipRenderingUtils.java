@@ -37,25 +37,9 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Matrix4f;
 
-final class TooltipRenderingUtils {
-
-	public static void drawItem(ItemStack stack, ItemRenderer itemRenderer, TextRenderer textRenderer,
-			MatrixStack matrices, List<TooltipComponent> components, int x, int y, int width, int height, int z,
-			int color) {
-		matrices.push();
-		drawBox(matrices, x, y, 24, 24, -100, color);
-
-		itemRenderer.renderInGui(stack, x + 4, y + 4);
-
-		if (!components.isEmpty()) {
-			drawBox(matrices, x + 23, y, width - 23, height, z, color);
-			drawComponents(textRenderer, itemRenderer, matrices, x + 28, y + 4, z, components);
-		}
-		matrices.pop();
-	}
+public final class TooltipRenderingUtils {
 
 	public static void drawBox(MatrixStack matrices, int x, int y, int width, int height, int z, int accentColor) {
 		matrices.push();
@@ -148,12 +132,11 @@ final class TooltipRenderingUtils {
 	}
 
 	public static int getWidth(TextRenderer textRenderer, List<TooltipComponent> components) {
-		int width = components.stream().mapToInt(c -> c.getWidth(textRenderer) + 8).reduce(Math::max).orElse(0);
-		return width + 23;
+		return components.stream().mapToInt(c -> c.getWidth(textRenderer) + 8).reduce(Math::max).orElse(0);
 	}
 
 	public static int getHeight(TextRenderer textRenderer, List<TooltipComponent> components) {
-		return Math.max(components.stream().mapToInt(TooltipComponent::getHeight).sum(), 16) + 8;
+		return components.stream().mapToInt(TooltipComponent::getHeight).sum();
 	}
 
 	private static int getPrimaryColor(int r, int g, int b) {
