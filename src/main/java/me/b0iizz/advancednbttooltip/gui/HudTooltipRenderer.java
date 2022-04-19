@@ -24,16 +24,13 @@ package me.b0iizz.advancednbttooltip.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -43,7 +40,7 @@ import net.minecraft.text.Text;
  * 
  * @author B0IIZZ
  */
-public class HudTooltipRenderer {
+public class HudTooltipRenderer implements CustomTooltipRenderer {
 
 	public static void setup() {
 		HudTooltipRenderer tooltipHudRenderer = new HudTooltipRenderer(MinecraftClient.getInstance());
@@ -70,28 +67,18 @@ public class HudTooltipRenderer {
 	 * @param tickDelta the number of unprocessed ticks
 	 */
 	public void draw(MatrixStack matrices, float tickDelta) {
-		this.picker.getItem(tickDelta).ifPresent(stack -> drawItemInfo(matrices, stack));
+		this.picker.getItem(tickDelta).ifPresent(stack -> renderTooltip(matrices, stack, 0, 0,
+				HudTooltipContext.valueOf(this.client.options.advancedItemTooltips), null, this.client.player));
 	}
 
-	private void drawItemInfo(MatrixStack matrices, ItemStack stack) {
-		if (stack == null || stack == ItemStack.EMPTY)
-			return;
-		TooltipContext ctx = HudTooltipContext.valueOf(this.client.options.advancedItemTooltips);
-		List<TooltipComponent> components = stack.getTooltip(this.client.player, ctx).stream().map(Text::asOrderedText)
-				.map(TooltipComponent::of).collect(Collectors.toCollection(ArrayList::new));
-		stack.getTooltipData().map(TooltipComponent::of).ifPresent(components::add);
-
-		AdvancedNBTTooltips.getTooltip(stack, ctx, components);
-
+	@Override
+	public void renderComponents(MatrixStack matrices, ItemStack stack, List<TooltipComponent> components, int x,
+			int y) {
 		int componentLimit = ConfigManager.getHudTooltipLineLimt();
 		if (components.size() > componentLimit && componentLimit > 0) {
 			components = components.stream().limit(componentLimit).collect(Collectors.toCollection(ArrayList::new));
 			components.add(TooltipComponent.of(Text.of("...").asOrderedText()));
 		}
-
-		Optional<TooltipData> data;
-		if ((data = stack.getTooltipData()).isPresent())
-			components.add(1, TooltipComponent.of(data.get()));
 
 		int width = this.client.getWindow().getScaledWidth();
 		int height = this.client.getWindow().getScaledHeight();
@@ -103,13 +90,9 @@ public class HudTooltipRenderer {
 
 		HudTooltipPosition position = ConfigManager.getHudTooltipPosition();
 
-		int x = position.getX().get(tooltipWidth + 23, width, 10);
-		int y = position.getY().get(tooltipHeight, height, 10);
+		x = position.getX().get(tooltipWidth + 23, width, 10);
+		y = position.getY().get(tooltipHeight, height, 10);
 
-//		TooltipRenderingUtils.drawItem(stack, this.client.getItemRenderer(), this.client.textRenderer, matrices,
-//				components, x, y, expectedWidth, expectedHeight, ConfigManager.getHudTooltipZIndex().getZ(),
-//				ConfigManager.getHudTooltipColor());
-		
 		int z = ConfigManager.getHudTooltipZIndex().getZ();
 		int color = ConfigManager.getHudTooltipColor();
 
