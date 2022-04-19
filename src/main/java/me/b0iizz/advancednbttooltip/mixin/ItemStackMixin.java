@@ -44,7 +44,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.passive.AxolotlEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -72,6 +75,8 @@ public abstract class ItemStackMixin {
 	@Inject(method = "getTooltip", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT)
 	private void onGetTooltip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci, List<Text> list) {
 
+		if (!ConfigManager.getTooltipToggle()) return;
+
 		if (ConfigManager.isShowAxolotlVariant() && this.getItem() == Items.AXOLOTL_BUCKET) {
 
 			NbtCompound tag = this.getNbt();
@@ -92,7 +97,21 @@ public abstract class ItemStackMixin {
 				}
 
 				list.add(Math.min(1, list.size()), label.append(value));
-				list.add(1, new TranslatableText(""));
+				list.add(1, new LiteralText(""));
+			}
+		}
+
+		if (ConfigManager.isShowLightLevel()) {
+
+			Identifier id = Registry.ITEM.getKey(this.getItem()).get().getValue();
+			int luminance = Registry.BLOCK.get(id).getDefaultState().getLuminance();
+
+			if (luminance > 0) {
+
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.lightlevel");
+
+				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(GRAY_COLOR)));
+				list.add(1, new LiteralText(""));
 			}
 		}
 	}

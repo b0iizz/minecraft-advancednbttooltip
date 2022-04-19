@@ -291,4 +291,11 @@ public class ConfigManager {
 	public static boolean isShowAxolotlVariant() {
 		return config.misc.showAxolotlVariant;
 	}
+
+	/**
+	 * @return true if we should show the light level for light sources
+	 */
+	public static boolean isShowLightLevel() {
+		return config.misc.showLightLevel;
+	}
 }

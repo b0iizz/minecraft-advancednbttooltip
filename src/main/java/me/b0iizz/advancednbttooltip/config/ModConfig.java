@@ -225,5 +225,11 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		@ConfigEntry.Gui.Tooltip
 		boolean showAxolotlVariant = true;
 
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean showLightLevel = true;
+
 	}
 }
