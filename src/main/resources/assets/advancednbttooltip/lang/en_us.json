@@ -77,6 +77,7 @@
 	"text.advancednbttooltip.tooltip.axolotl.value": "%s",
 	"text.advancednbttooltip.tooltip.bees": "Bees: ",
 	"text.advancednbttooltip.tooltip.honey": "Honey level: ",
+	"text.advancednbttooltip.tooltip.lightlevel": "Light level: ",
 	"text.advancednbttooltip.tooltip.command_blocks": "Command: ",
 	"text.advancednbttooltip.tooltip.hideflag": "Hidden: ",
 	"text.advancednbttooltip.hideflag.enchantments": "enchantments",
