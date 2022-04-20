@@ -43,17 +43,18 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.passive.AxolotlEntity;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Formatting;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
 	private static final int TAG_INT = 3;
-	private static final int GRAY_COLOR = 0xA0A0A0; // I don't think this is precisely the right shade?
 	private static final int[] AXOLOTL_COLORS = new int[] { 0xFFC0CB, 0x835C3B, 0xFFFF00, 0xCCFFFF, 0x728FCE };
 
 	@Shadow
@@ -89,7 +90,7 @@ public abstract class ItemStackMixin {
 				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.label");
 				TranslatableText value = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.value", variant.getName());
 
-				label.setStyle(Style.EMPTY.withColor(GRAY_COLOR));
+				label.setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY)));
 				
 				// Make sure we don't go out of bounds if mods add more axolotl types.
 				if (id < AXOLOTL_COLORS.length) {
@@ -110,7 +111,7 @@ public abstract class ItemStackMixin {
 
 				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.lightlevel");
 
-				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(GRAY_COLOR)));
+				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 				list.add(1, new LiteralText(""));
 			}
 		}
