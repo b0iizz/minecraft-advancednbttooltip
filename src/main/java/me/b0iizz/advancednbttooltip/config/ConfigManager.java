@@ -314,6 +314,13 @@ public class ConfigManager {
 	}
 
 	/**
+	 * @return true if we should show the fuel time
+	 */
+	public static boolean isShowFuelTime() {
+		return config.misc.showFuelTime;
+	}
+
+	/**
 	 * @return true if we should show the composting chance of compostable items
 	 */
 	public static boolean isShowCompostingChance() {

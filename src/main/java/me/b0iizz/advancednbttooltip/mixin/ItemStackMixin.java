@@ -23,6 +23,7 @@
 package me.b0iizz.advancednbttooltip.mixin;
 
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,6 +52,8 @@ import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Formatting;
+import net.minecraft.tag.ItemTags;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.ComposterBlock;
 
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -60,6 +63,7 @@ import net.minecraft.enchantment.Enchantments;
 public abstract class ItemStackMixin {
 
 	private static final int TAG_INT = 3;
+	private static Map<Item, Integer> FuelTimeMap = null;
 	private static final int[] AXOLOTL_COLORS = new int[] { 0xFFC0CB, 0x835C3B, 0xFFFF00, 0xCCFFFF, 0x728FCE };
 
 	@Shadow
@@ -142,6 +146,22 @@ public abstract class ItemStackMixin {
 				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.lightlevel");
 
 				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+				list.add(1, new LiteralText(""));
+			}
+		}
+
+		if (ConfigManager.isShowFuelTime()) {
+
+			if (FuelTimeMap == null)
+				FuelTimeMap = AbstractFurnaceBlockEntity.createFuelTimeMap();
+
+			int time = FuelTimeMap.getOrDefault(item, 0);
+
+			if (time > 0) {
+
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.fueltime");
+
+				list.add(1, label.append(String.valueOf(time)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 				list.add(1, new LiteralText(""));
 			}
 		}
