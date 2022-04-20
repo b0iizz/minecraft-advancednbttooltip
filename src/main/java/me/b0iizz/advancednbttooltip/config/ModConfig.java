@@ -243,5 +243,11 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		@ConfigEntry.Gui.Tooltip
 		boolean showLightLevel = true;
 
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean showCompostingChance = true;
+
 	}
 }

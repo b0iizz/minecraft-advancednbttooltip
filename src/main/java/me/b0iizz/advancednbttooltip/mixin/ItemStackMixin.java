@@ -51,6 +51,7 @@ import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Formatting;
+import net.minecraft.block.ComposterBlock;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -142,6 +143,19 @@ public abstract class ItemStackMixin {
 
 				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 				list.add(1, new LiteralText(""));
+			}
+		}
+
+		if (ConfigManager.isShowCompostingChance()) {
+
+			float chance = ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.getFloat(item);
+
+			if (chance > 0) {
+
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.compostingchance");
+
+				list.add(1, label.append(String.valueOf(chance * 100) + "%").setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+				list.add(1, new LiteralText("")); 
 			}
 		}
 	}

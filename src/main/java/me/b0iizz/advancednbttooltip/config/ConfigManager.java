@@ -312,4 +312,11 @@ public class ConfigManager {
 	public static boolean isShowLightLevel() {
 		return config.misc.showLightLevel;
 	}
+
+	/**
+	 * @return true if we should show the composting chance of compostable items
+	 */
+	public static boolean isShowCompostingChance() {
+		return config.misc.showCompostingChance;
+	}
 }

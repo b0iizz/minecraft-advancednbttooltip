@@ -77,8 +77,9 @@
 	"text.advancednbttooltip.tooltip.enchantability": "Enchantability: ",
 	"text.advancednbttooltip.tooltip.axolotl": "Variant: ",
 	"text.advancednbttooltip.tooltip.bees": "Bees: ",
-	"text.advancednbttooltip.tooltip.honey": "Honey level: ",
-	"text.advancednbttooltip.tooltip.lightlevel": "Light level: ",
+	"text.advancednbttooltip.tooltip.honey": "Honey Level: ",
+	"text.advancednbttooltip.tooltip.lightlevel": "Light Level: ",
+	"text.advancednbttooltip.tooltip.compostingchance": "Composting Chance: ",
 	"text.advancednbttooltip.tooltip.command_blocks": "Command: ",
 	"text.advancednbttooltip.tooltip.hideflag": "Hidden: ",
 	"text.advancednbttooltip.hideflag.enchantments": "enchantments",
@@ -99,6 +100,8 @@
 	"text.autoconfig.advancednbttooltip.option.misc.showLightLevel.@Tooltip": "Adds a line specifying a light source's light level.",
 	"text.autoconfig.advancednbttooltip.option.misc.showMiningSpeed": "Show mining speed",
 	"text.autoconfig.advancednbttooltip.option.misc.showMiningSpeed.@Tooltip": "Adds a line specifying the mining speed for tools as compared to breaking by hand.",
+	"text.autoconfig.advancednbttooltip.option.misc.showCompostingChance": "Show composting chance",
+	"text.autoconfig.advancednbttooltip.option.misc.showCompostingChance.@Tooltip": "Show the composting chance of compostable items.",
 	"category.advancednbttooltip.keys": "Advanced NBT Tooltips",
 	"key.advancednbttooltip.openConfig": "Open Advanced NBT Tooltips Config"
 }
