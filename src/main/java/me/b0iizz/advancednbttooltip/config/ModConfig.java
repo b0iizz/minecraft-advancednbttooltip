@@ -229,6 +229,12 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
+		boolean showEnchantability = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
 		boolean showAxolotlVariant = true;
 
 		/**

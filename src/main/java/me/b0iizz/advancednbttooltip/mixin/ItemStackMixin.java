@@ -94,9 +94,17 @@ public abstract class ItemStackMixin {
 				(((ItemStack)(Object)this).hasNbt() ? 1 : 0);
 
 			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.miningspeed");
-			LiteralText value = new LiteralText(" " + String.valueOf(Math.pow(level, 2) + multiplier) + "x ");
+			LiteralText value = new LiteralText(" " + String.valueOf(Math.pow(level, 2) + multiplier));
 
 			list.add(Math.max(0, list.size() - offset), value.append(label).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.DARK_GREEN))));
+		}
+
+		if (ConfigManager.isShowEnchantability() && ((ItemStack)(Object)this).isEnchantable()) {
+
+			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.enchantability");
+
+			list.add(1, label.append(String.valueOf(item.getEnchantability())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+			list.add(1, new LiteralText(""));
 		}
 
 		if (ConfigManager.isShowAxolotlVariant() && item == Items.AXOLOTL_BUCKET) {
