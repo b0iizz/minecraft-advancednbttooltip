@@ -108,8 +108,8 @@ public abstract class ItemStackMixin {
 				int id = tag.getInt(AxolotlEntity.VARIANT_KEY);
 
 				AxolotlEntity.Variant variant = AxolotlEntity.Variant.VARIANTS[id];
-				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.label");
-				TranslatableText value = new TranslatableText("text.advancednbttooltip.tooltip.axolotl.value", variant.getName());
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.axolotl");
+				LiteralText value = new LiteralText(variant.getName());
 
 				label.setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY)));
 				
