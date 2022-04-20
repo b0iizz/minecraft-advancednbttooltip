@@ -37,6 +37,7 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
+import net.minecraft.item.ToolItem;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.client.item.TooltipContext;
@@ -50,6 +51,9 @@ import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Formatting;
+
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -78,7 +82,24 @@ public abstract class ItemStackMixin {
 
 		if (!ConfigManager.getTooltipToggle()) return;
 
-		if (ConfigManager.isShowAxolotlVariant() && this.getItem() == Items.AXOLOTL_BUCKET) {
+		Item item = this.getItem();
+
+		if (ConfigManager.isShowMiningSpeed() && item instanceof ToolItem) {
+
+			int level = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, (ItemStack)(Object)this);
+			float multiplier = ((ToolItem)item).getMaterial().getMiningSpeedMultiplier();
+			// TODO: Adding more stuff to this tooltip will result in the mining speed being displayed in the wrong place.
+			int offset = 1 +
+				(((ItemStack)(Object)this).isDamaged() ? 1 : 0) +
+				(((ItemStack)(Object)this).hasNbt() ? 1 : 0);
+
+			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.miningspeed");
+			LiteralText value = new LiteralText(" " + String.valueOf(Math.pow(level, 2) + multiplier) + "x ");
+
+			list.add(Math.max(0, list.size() - offset), value.append(label).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.DARK_GREEN))));
+		}
+
+		if (ConfigManager.isShowAxolotlVariant() && item == Items.AXOLOTL_BUCKET) {
 
 			NbtCompound tag = this.getNbt();
 
@@ -104,7 +125,7 @@ public abstract class ItemStackMixin {
 
 		if (ConfigManager.isShowLightLevel()) {
 
-			Identifier id = Registry.ITEM.getKey(this.getItem()).get().getValue();
+			Identifier id = Registry.ITEM.getKey(item).get().getValue();
 			int luminance = Registry.BLOCK.get(id).getDefaultState().getLuminance();
 
 			if (luminance > 0) {

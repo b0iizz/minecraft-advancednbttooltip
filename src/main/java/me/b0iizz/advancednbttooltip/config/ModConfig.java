@@ -217,6 +217,12 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
+		boolean showMiningSpeed = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
 		boolean showMaxEnchantmentLevel = true;
 
 		/**

@@ -288,6 +288,13 @@ public class ConfigManager {
 	/**
 	 * @return true if we should show the variant for axolotl buckets
 	 */
+	public static boolean isShowMiningSpeed() {
+		return config.misc.showMiningSpeed;
+	}
+
+	/**
+	 * @return true if we should show the variant for axolotl buckets
+	 */
 	public static boolean isShowAxolotlVariant() {
 		return config.misc.showAxolotlVariant;
 	}
