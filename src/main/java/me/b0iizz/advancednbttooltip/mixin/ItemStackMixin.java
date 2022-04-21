@@ -89,28 +89,28 @@ public abstract class ItemStackMixin {
 		if (!ConfigManager.getTooltipToggle()) return;
 
 		Item item = this.getItem();
+		int line = Math.min(1, list.size());
+		int size = list.size();
 
 		if (ConfigManager.isShowMiningSpeed() && item instanceof ToolItem) {
 
 			int level = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, (ItemStack)(Object)this);
 			float multiplier = ((ToolItem)item).getMaterial().getMiningSpeedMultiplier();
-			// TODO: Adding more stuff to this tooltip will result in the mining speed being displayed in the wrong place.
-			int offset = 1 +
-				(((ItemStack)(Object)this).isDamaged() ? 1 : 0) +
-				(((ItemStack)(Object)this).hasNbt() ? 1 : 0);
+			int offset = context.isAdvanced() ? 1 + (((ItemStack)(Object)this).isDamaged() ? 1 : 0) + (((ItemStack)(Object)this).hasNbt() ? 1 : 0) : 0;
 
 			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.miningspeed");
 			LiteralText value = new LiteralText(" " + String.valueOf(Math.pow(level, 2) + multiplier));
 
+			// TODO: Adding more stuff to this tooltip will result in the mining speed being displayed in the wrong place.
 			list.add(Math.max(0, list.size() - offset), value.append(label).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.DARK_GREEN))));
+			size++;
 		}
 
 		if (ConfigManager.isShowEnchantability() && ((ItemStack)(Object)this).isEnchantable()) {
 
 			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.enchantability");
 
-			list.add(1, label.append(String.valueOf(item.getEnchantability())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
-			list.add(1, new LiteralText(""));
+			list.add(line, label.append(String.valueOf(item.getEnchantability())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 		}
 
 		if (ConfigManager.isShowAxolotlVariant() && item == Items.AXOLOTL_BUCKET) {
@@ -132,22 +132,19 @@ public abstract class ItemStackMixin {
 					value.setStyle(Style.EMPTY.withColor(AXOLOTL_COLORS[id]));
 				}
 
-				list.add(Math.min(1, list.size()), label.append(value));
-				list.add(1, new LiteralText(""));
+				list.add(line, label.append(value));
 			}
 		}
 
-		if (ConfigManager.isShowLightLevel()) {
+		if (ConfigManager.isShowCompostingChance()) {
 
-			Identifier id = Registry.ITEM.getKey(item).get().getValue();
-			int luminance = Registry.BLOCK.get(id).getDefaultState().getLuminance();
+			float chance = ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.getFloat(item);
 
-			if (luminance > 0) {
+			if (chance > 0) {
 
-				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.lightlevel");
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.compostingchance");
 
-				list.add(1, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
-				list.add(1, new LiteralText(""));
+				list.add(line, label.append(String.valueOf(chance * 100) + "%").setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 			}
 		}
 
@@ -162,21 +159,20 @@ public abstract class ItemStackMixin {
 
 				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.fueltime");
 
-				list.add(1, label.append(String.valueOf(time)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
-				list.add(1, new LiteralText(""));
+				list.add(line, label.append(String.valueOf(time)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 			}
 		}
 
-		if (ConfigManager.isShowCompostingChance()) {
+		if (ConfigManager.isShowLightLevel()) {
 
-			float chance = ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.getFloat(item);
+			Identifier id = Registry.ITEM.getKey(item).get().getValue();
+			int luminance = Registry.BLOCK.get(id).getDefaultState().getLuminance();
 
-			if (chance > 0) {
+			if (luminance > 0) {
 
-				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.compostingchance");
+				TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.lightlevel");
 
-				list.add(1, label.append(String.valueOf(chance * 100) + "%").setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
-				list.add(1, new LiteralText("")); 
+				list.add(line, label.append(String.valueOf(luminance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 			}
 		}
 
@@ -184,8 +180,11 @@ public abstract class ItemStackMixin {
 
 			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.disc");
 
-			list.add(2, label.append(String.valueOf(((MusicDiscItem)item).getComparatorOutput())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
-			list.add(2, new LiteralText(""));
+			line++;
+			list.add(line, label.append(String.valueOf(((MusicDiscItem)item).getComparatorOutput())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 		}
+		
+		if (size != list.size())
+			list.add(line, new LiteralText(""));
 	}
 }
