@@ -247,6 +247,12 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
+		boolean showFoodStats = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
 		boolean showFuelTime = true;
 
 		/**

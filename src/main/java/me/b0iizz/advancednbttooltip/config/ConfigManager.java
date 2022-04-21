@@ -314,6 +314,13 @@ public class ConfigManager {
 	}
 
 	/**
+	 * @return true if we should show food stats
+	 */
+	public static boolean isShowFoodStats() {
+		return config.misc.showFoodStats;
+	}
+
+	/**
 	 * @return true if we should show the fuel time
 	 */
 	public static boolean isShowFuelTime() {

@@ -40,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ToolItem;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Items;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.nbt.NbtCompound;
@@ -178,6 +179,24 @@ public abstract class ItemStackMixin {
 
 				list.add(line, label.append(String.valueOf(time)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 			}
+		}
+
+		if (ConfigManager.isShowFoodStats() && ((ItemStack)(Object)this).isFood()) {
+
+			FoodComponent component = item.getFoodComponent();
+			int hunger = component.getHunger();
+			float saturation = 2 * hunger * component.getSaturationModifier();
+			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.foodstats");
+			TranslatableText labelHunger = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.hunger");
+			TranslatableText labelSaturation = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.saturation");
+			LiteralText valueHunger = new LiteralText(" " + String.valueOf(hunger));
+			LiteralText valueSaturation = new LiteralText(" " + String.valueOf(saturation));
+			int offset = context.isAdvanced() ? 1 + (((ItemStack)(Object)this).isDamaged() ? 1 : 0) + (((ItemStack)(Object)this).hasNbt() ? 1 : 0) : 0;
+
+			line = Math.max(0, list.size() - offset);
+			list.add(line, label.setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+			list.add(line + 1, valueHunger.append(labelHunger).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.DARK_GREEN))));
+			list.add(line + 2, valueSaturation.append(labelSaturation).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.DARK_GREEN))));
 		}
 
 		if (ConfigManager.isShowLightLevel()) {
