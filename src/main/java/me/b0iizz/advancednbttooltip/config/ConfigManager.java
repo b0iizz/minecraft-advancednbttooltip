@@ -335,6 +335,13 @@ public class ConfigManager {
 	}
 
 	/**
+	 * @return true if we should show the hardness of block items
+	 */
+	public static boolean isShowBlockHardness() {
+		return config.misc.showBlockHardness;
+	}
+
+	/**
 	 * @return true if we should show the comparator output for music discs
 	 */
 	public static boolean isShowMusicDisc() {

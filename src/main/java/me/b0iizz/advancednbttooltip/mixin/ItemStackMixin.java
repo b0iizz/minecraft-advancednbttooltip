@@ -145,6 +145,14 @@ public abstract class ItemStackMixin {
 			list.add(line, label.append(String.valueOf(blastResistance)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));			
 		}
 
+		if (ConfigManager.isShowBlockHardness() && item instanceof BlockItem) {
+
+			float hardness = ((BlockItem)item).getBlock().getHardness();
+			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.hardness");
+
+			list.add(line, label.append(String.valueOf(hardness)).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));			
+		}
+
 		if (ConfigManager.isShowCompostingChance()) {
 
 			float chance = ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.getFloat(item);
