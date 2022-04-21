@@ -176,12 +176,11 @@ public abstract class ItemStackMixin {
 			}
 		}
 
-		if (true && item instanceof MusicDiscItem) {
+		if (ConfigManager.isShowMusicDisc() && item instanceof MusicDiscItem) {
 
 			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.disc");
 
-			line++;
-			list.add(line, label.append(String.valueOf(((MusicDiscItem)item).getComparatorOutput())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+			list.add(++line, label.append(String.valueOf(((MusicDiscItem)item).getComparatorOutput())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 		}
 		
 		if (size != list.size())
