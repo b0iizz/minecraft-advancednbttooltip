@@ -259,6 +259,12 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
+		boolean showBlastResistance = true;
+
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
 		boolean showMusicDisc = true;
 
 	}

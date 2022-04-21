@@ -328,6 +328,13 @@ public class ConfigManager {
 	}
 
 	/**
+	 * @return true if we should show the blast resistance of block items
+	 */
+	public static boolean isShowBlastResistance() {
+		return config.misc.showBlastResistance;
+	}
+
+	/**
 	 * @return true if we should show the comparator output for music discs
 	 */
 	public static boolean isShowMusicDisc() {
