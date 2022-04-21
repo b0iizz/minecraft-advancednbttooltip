@@ -255,5 +255,11 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		@ConfigEntry.Gui.Tooltip
 		boolean showCompostingChance = true;
 
+		/**
+		 * See In-game description.
+		 */
+		@ConfigEntry.Gui.Tooltip
+		boolean showMusicDisc = true;
+
 	}
 }

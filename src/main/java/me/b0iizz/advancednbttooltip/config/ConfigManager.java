@@ -326,4 +326,11 @@ public class ConfigManager {
 	public static boolean isShowCompostingChance() {
 		return config.misc.showCompostingChance;
 	}
+
+	/**
+	 * @return true if we should show the comparator output for music discs
+	 */
+	public static boolean isShowMusicDisc() {
+		return config.misc.showMusicDisc;
+	}
 }

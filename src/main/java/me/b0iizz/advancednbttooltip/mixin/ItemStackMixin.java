@@ -40,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ToolItem;
 import net.minecraft.item.Items;
+import net.minecraft.item.MusicDiscItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -177,6 +178,14 @@ public abstract class ItemStackMixin {
 				list.add(1, label.append(String.valueOf(chance * 100) + "%").setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
 				list.add(1, new LiteralText("")); 
 			}
+		}
+
+		if (true && item instanceof MusicDiscItem) {
+
+			TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.disc");
+
+			list.add(2, label.append(String.valueOf(((MusicDiscItem)item).getComparatorOutput())).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GRAY))));
+			list.add(2, new LiteralText(""));
 		}
 	}
 }
