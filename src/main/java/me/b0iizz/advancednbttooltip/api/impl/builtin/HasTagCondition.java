@@ -35,15 +35,15 @@ import net.minecraft.nbt.NbtElement;
 
 /**
  * A condition which is true when the item has a specific {@link NbtElement tag}
- * at a {@link NbtPath}
- * 
+ * at a {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath}
+ *
  * @author B0IIZZ
  */
 @TooltipCode("has_tag")
 public class HasTagCondition implements TooltipCondition {
 
 	/**
-	 * The {@link NbtPath} to search
+	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath} to search
 	 */
 	@Required("tag")
 	public TooltipFactory path;
@@ -57,8 +57,8 @@ public class HasTagCondition implements TooltipCondition {
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPath.of(path.asString()).getAll(tag).stream())
-				.anyMatch((t) -> this.type == -1 ? true : t.getType() == this.type);
+				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream())
+				.anyMatch((t) -> this.type == -1 || t.getType() == this.type);
 	}
 
 }

@@ -37,26 +37,28 @@ import net.minecraft.nbt.NbtEnd;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
 /**
  * A factory which creates simple {@link LiteralText} containing the size of all
- * elements at a specified {@link NbtPath}
- * 
+ * elements at a specified {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath}
+ *
  * @author B0IIZZ
  */
 @TooltipCode("nbt_size")
 public class NbtSizeFactory implements TooltipFactory {
 
 	/**
-	 * The {@link NbtPath} to search
+	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath} to search
 	 */
 	@Required("tag")
 	public TooltipFactory path;
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
-			return NbtPath.of(path.asString()).getAll(tag).stream().map(this::fromTag).map(LiteralText::new);
-		}).toList();
+		return path.getTooltipText(item, tag, context).stream()
+				.<Text>flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream().map(this::fromTag)
+						.map(LiteralText::new)).toList();
 	}
 
 	private String fromTag(NbtElement tag) {

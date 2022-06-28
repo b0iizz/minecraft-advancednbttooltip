@@ -42,17 +42,21 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * A factory which creates a simple {@link LiteralText} containing the value of
- * a specified {@link NbtPath}
- * 
+ * a specified {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath}
+ *
  * @author B0IIZZ
  */
 @TooltipCode("nbt_value")
 public class NbtValueFactory implements TooltipFactory {
 
 	/**
-	 * The {@link NbtPath} to search
+	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath} to search
 	 */
 	@Required("tag")
 	public TooltipFactory path;
@@ -74,9 +78,9 @@ public class NbtValueFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return path.getTooltipText(item, tag, context).stream().<Text>flatMap(path -> {
-			return NbtPath.of(path.asString()).getAll(tag).stream().map(this::fromTag).flatMap(List::stream);
-		}).toList();
+		return path.getTooltipText(item, tag, context).stream()
+				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream().map(this::fromTag)
+						.flatMap(List::stream)).toList();
 	}
 
 	private List<Text> fromTag(NbtElement tag) {

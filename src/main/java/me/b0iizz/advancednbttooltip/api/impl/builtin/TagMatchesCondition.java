@@ -43,15 +43,15 @@ import net.minecraft.text.Text;
 
 /**
  * A condition which is true when the item has the specified {@link NbtElement
- * Tag} at the specified {@link NbtPath}
- * 
+ * Tag} at the specified {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath}
+ *
  * @author B0IIZZ
  */
 @TooltipCode("tag_matches")
 public class TagMatchesCondition implements TooltipCondition {
 
 	/**
-	 * The {@link NbtPath} to be searched
+	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath} to be searched
 	 */
 	@Required("tag")
 	public TooltipFactory path;
@@ -64,8 +64,9 @@ public class TagMatchesCondition implements TooltipCondition {
 
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
-		return path.getTooltipText(item, tag, context).stream().map(Text::asString).map(NbtPath::of)
-				.flatMap(p -> p.getAll(tag).stream()).anyMatch(e -> isEqualTo(e, value));
+		return path.getTooltipText(item, tag, context).stream()
+				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream())
+				.anyMatch(e -> isEqualTo(e, value));
 	}
 
 	private boolean isEqualTo(NbtElement tag, JsonElement value) {
