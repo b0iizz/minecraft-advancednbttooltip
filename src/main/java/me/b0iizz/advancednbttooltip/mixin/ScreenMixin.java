@@ -36,6 +36,6 @@ public abstract class ScreenMixin implements CustomTooltipRenderer {
 
 	@Shadow
 	protected abstract void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, int x,
-													 int y);
+														int y);
 
 }

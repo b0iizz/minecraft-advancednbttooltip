@@ -41,6 +41,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -116,7 +117,7 @@ public class TooltipsScreen extends Screen {
 			super(minecraftClient, width, height, top, bottom, itemHeight);
 			this.screen = screen;
 			AdvancedNBTTooltips.getRegisteredTooltips().stream()
-					.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
+					.sorted(Comparator.comparing(a -> a.getKey().toString()))
 					.map(e -> new Entry(this, e.getKey(), e.getValue())).forEachOrdered(this::addEntry);
 			this.setRenderBackground(false);
 			this.setRenderHorizontalShadows(false);
@@ -136,9 +137,7 @@ public class TooltipsScreen extends Screen {
 				this.widget = parent;
 				this.displayName = createDisplayName(id);
 				this.tooltip = createTooltip(id);
-				this.toggleButton = new ButtonWidget(0, 0, 35, 20, getText(ConfigManager.isEnabled(id)), button -> {
-					button.setMessage(getText(ConfigManager.toggle(id)));
-				});
+				this.toggleButton = new ButtonWidget(0, 0, 35, 20, getText(ConfigManager.isEnabled(id)), button -> button.setMessage(getText(ConfigManager.toggle(id))));
 			}
 
 			private Text createDisplayName(Identifier id) {

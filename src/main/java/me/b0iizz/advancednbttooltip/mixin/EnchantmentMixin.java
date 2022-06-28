@@ -43,7 +43,7 @@ public abstract class EnchantmentMixin {
 	@Shadow
 	public abstract int getMaxLevel();
 
-	@Inject(method = "Lnet/minecraft/enchantment/Enchantment;getName(I)Lnet/minecraft/text/Text;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "getName(I)Lnet/minecraft/text/Text;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void advancednbttooltip$appendMaxEnchantmentLevel(int level, CallbackInfoReturnable<Text> info, MutableText enchantmentName) {
 		if (ConfigManager.isShowMaxEnchantmentLevel() && (this.getMaxLevel() > 1)) {
 			enchantmentName.append("/").append(new TranslatableText("enchantment.level." + this.getMaxLevel()));

@@ -44,6 +44,7 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 	/**
 	 * Only for internal use.
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
 	public static final JsonTooltips INSTANCE = new JsonTooltipsImpl();
 
@@ -58,8 +59,8 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 	@Override
 	public void registerFactory(Class<? extends TooltipFactory> factoryClass) {
 		if (!factoryClass.isAnnotationPresent(TooltipCode.class)) {
-			System.err.println("Tried registering factory %s without @%s".formatted(factoryClass.getSimpleName(),
-					TooltipCode.class.getSimpleName()));
+			System.err.printf("Tried registering factory %s without @%s%n", factoryClass.getSimpleName(),
+					TooltipCode.class.getSimpleName());
 			return;
 		}
 		tooltipFactories.putIfAbsent(factoryClass.getAnnotation(TooltipCode.class).value(), factoryClass);
@@ -68,8 +69,8 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 	@Override
 	public void registerCondition(Class<? extends TooltipCondition> conditionClass) {
 		if (!conditionClass.isAnnotationPresent(TooltipCode.class)) {
-			System.err.println("Tried registering condition %s without @%s".formatted(conditionClass.getSimpleName(),
-					TooltipCode.class.getSimpleName()));
+			System.err.printf("Tried registering condition %s without @%s%n", conditionClass.getSimpleName(),
+					TooltipCode.class.getSimpleName());
 			return;
 		}
 		tooltipConditions.putIfAbsent(conditionClass.getAnnotation(TooltipCode.class).value(), conditionClass);
@@ -199,7 +200,7 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 
 	private Object parseField(String name, Type fieldType, JsonElement element, JsonDeserializationContext ctx,
 							  boolean required) {
-		Object value = null;
+		Object value;
 		try {
 			value = ctx.deserialize(element.getAsJsonObject().get(name), fieldType);
 		} catch (JsonParseException exception) {

@@ -27,6 +27,7 @@ package me.b0iizz.advancednbttooltip.api;
  *
  * @author B0IIZZ
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface CustomTooltip extends TooltipCondition, TooltipFactory {
 
 	/**

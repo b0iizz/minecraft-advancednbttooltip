@@ -161,21 +161,15 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 				int maxS = maxSize - 2 * offset;
 				int prefX = 0;
 				switch (this) {
-					case START:
-						prefX = 0;
-						break;
-					case MIDDLE:
-						prefX = maxS / 2 - sizeObj / 2;
-						break;
-					case MIDDLE_START:
+					case START -> prefX = 0;
+					case MIDDLE -> prefX = maxS / 2 - sizeObj / 2;
+					case MIDDLE_START -> {
 						prefX = maxS / 2 + offset;
 						if (prefX + offset + sizeObj > maxSize) {
 							prefX = maxSize - 2 * offset - sizeObj;
 						}
-						break;
-					case END:
-						prefX = maxS - sizeObj;
-						break;
+					}
+					case END -> prefX = maxS - sizeObj;
 				}
 				return prefX + offset;
 			}

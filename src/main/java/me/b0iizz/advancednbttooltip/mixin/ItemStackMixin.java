@@ -62,6 +62,8 @@ public abstract class ItemStackMixin {
 	@Nullable
 	public abstract NbtCompound getNbt();
 
+
+	@SuppressWarnings("InvalidInjectorMethodSignature")
 	@ModifyVariable(at = @At(value = "INVOKE_ASSIGN", target = "net.minecraft.item.ItemStack.getHideFlags()I"), method = "getTooltip")
 	private int advancednbttooltip$rewriteHideFlags(int i) {
 		if (ConfigManager.overrideHideFlags()) {
@@ -195,6 +197,7 @@ public abstract class ItemStackMixin {
 
 		if (ConfigManager.isShowLightLevel()) {
 
+			//noinspection OptionalGetWithoutIsPresent
 			Identifier id = Registry.ITEM.getKey(item).get().getValue();
 			int luminance = Registry.BLOCK.get(id).getDefaultState().getLuminance();
 

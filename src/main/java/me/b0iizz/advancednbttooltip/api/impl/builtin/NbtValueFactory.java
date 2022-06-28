@@ -36,7 +36,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,21 +80,19 @@ public class NbtValueFactory implements TooltipFactory {
 	private List<Text> fromTag(NbtElement tag) {
 		if (tag instanceof NbtCompound) {
 			if (!traverseCompound)
-				return Arrays
-						.asList(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+				return List.of(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 			return ((NbtCompound) tag).getKeys().stream().flatMap(key -> Stream.concat(
 					Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
 					fromTag(((NbtCompound) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
 		} else if (tag instanceof AbstractNbtList) {
 			if (!traverseList)
-				return Arrays
-						.asList(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+				return List.of(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+			//noinspection unchecked
 			return ((AbstractNbtList<NbtElement>) tag).stream()
 					.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText("")))).map(this::indent)
 					.collect(Collectors.toList());
 		} else
-			return Arrays
-					.asList(new LiteralText(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+			return List.of(new LiteralText(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 	}
 
 	private MutableText indent(Text text) {

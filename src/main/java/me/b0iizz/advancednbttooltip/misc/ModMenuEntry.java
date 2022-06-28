@@ -41,9 +41,7 @@ public class ModMenuEntry implements ModMenuApi {
 	 */
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return parent -> {
-			return ConfigManager.getConfigScreen(parent).get();
-		};
+		return parent -> ConfigManager.getConfigScreen(parent).get();
 
 	}
 }

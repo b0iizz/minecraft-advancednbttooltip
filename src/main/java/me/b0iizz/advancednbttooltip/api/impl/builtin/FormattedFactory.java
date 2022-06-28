@@ -91,6 +91,7 @@ public class FormattedFactory implements TooltipFactory {
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		ArrayList<Formatting> formattings = new ArrayList<>();
 
+		//noinspection ConstantConditions
 		if (!colorName.isEmpty() && Formatting.byName(colorName) != null && Formatting.byName(colorName).isColor())
 			formattings.add(Formatting.byName(colorName));
 		if (bold)

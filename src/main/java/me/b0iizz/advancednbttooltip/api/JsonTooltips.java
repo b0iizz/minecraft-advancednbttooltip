@@ -105,7 +105,7 @@ public interface JsonTooltips {
 	/**
 	 * @return The instance of the implementation of {@link JsonTooltips}
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "SameReturnValue"})
 	static JsonTooltips getInstance() {
 		return JsonTooltipsImpl.INSTANCE;
 	}

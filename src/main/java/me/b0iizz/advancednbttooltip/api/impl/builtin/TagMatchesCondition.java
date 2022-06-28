@@ -81,12 +81,11 @@ public class TagMatchesCondition implements TooltipCondition {
 		}
 		if (tag instanceof AbstractNbtList && value.isJsonArray()) {
 			for (JsonElement json : value.getAsJsonArray())
-				if (!((AbstractNbtList<?>) tag).stream().anyMatch(nbt -> isEqualTo(nbt, json)))
+				if (((AbstractNbtList<?>) tag).stream().noneMatch(nbt -> isEqualTo(nbt, json)))
 					return false;
 			return true;
 		}
-		if (tag instanceof NbtCompound && value.isJsonObject()) {
-			NbtCompound compound = (NbtCompound) tag;
+		if (tag instanceof NbtCompound compound && value.isJsonObject()) {
 			for (Entry<String, JsonElement> json : value.getAsJsonObject().entrySet()) {
 				if (!compound.contains(json.getKey()))
 					return false;

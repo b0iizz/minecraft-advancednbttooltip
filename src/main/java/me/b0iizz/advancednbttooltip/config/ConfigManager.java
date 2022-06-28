@@ -39,6 +39,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -123,7 +124,7 @@ public class ConfigManager {
 		try (OutputStream os = new FileOutputStream(tFile)) {
 			try (Writer w = new OutputStreamWriter(os)) {
 				gson.toJson(toggles.entrySet().stream()
-								.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
+								.sorted(Comparator.comparing(a -> a.getKey().toString()))
 								.collect(JsonObject::new, (obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
 										(obj, obj2) -> obj2.entrySet().forEach(e -> obj.add(e.getKey(), e.getValue()))),
 						gson.newJsonWriter(w));

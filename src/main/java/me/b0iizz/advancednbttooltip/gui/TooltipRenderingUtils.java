@@ -47,7 +47,7 @@ public final class TooltipRenderingUtils {
 
 		int r = (accentColor >> 16) & 0xff;
 		int g = (accentColor >> 8) & 0xff;
-		int b = (accentColor >> 0) & 0xff;
+		int b = (accentColor) & 0xff;
 
 		int primary = alpha << 24 | getPrimaryColor(r, g, b);
 		int secondary = alpha << 24 | getSecondaryColor(r, g, b);
@@ -96,14 +96,13 @@ public final class TooltipRenderingUtils {
 		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
 		matrices.translate(0, 0, z);
 
-		int lineX = startX;
 		int lineY = startY;
 
 		float prevZ = itemRenderer.zOffset;
 		itemRenderer.zOffset = z;
 
 		for (int s = 0; s < components.size(); ++s) {
-			components.get(s).drawText(textRenderer, lineX, lineY, modelMatrix, immediate);
+			components.get(s).drawText(textRenderer, startX, lineY, modelMatrix, immediate);
 			if (s == 0)
 				lineY += 2;
 			lineY += components.get(s).getHeight();
@@ -115,7 +114,7 @@ public final class TooltipRenderingUtils {
 		lineY = startY;
 
 		for (int s = 0; s < components.size(); ++s) {
-			components.get(s).drawItems(textRenderer, lineX, lineY, matrices, itemRenderer, 400);
+			components.get(s).drawItems(textRenderer, startX, lineY, matrices, itemRenderer, 400);
 			if (s == 0)
 				lineY += 2;
 			lineY += components.get(s).getHeight();

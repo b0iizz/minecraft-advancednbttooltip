@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class HudTooltipPicker {
 
 	private static final List<Pair<Predicate<Entity>, BiFunction<Entity, Vec3d, ItemStack>>> entityHandlers = new ArrayList<>();
@@ -78,6 +79,8 @@ public final class HudTooltipPicker {
 
 	private EntityHitResult raycast(float tickDelta) {
 		Entity cameraEntity = this.client.getCameraEntity();
+		if (cameraEntity == null)
+			return null;
 		Vec3d raycastStart = cameraEntity.getCameraPosVec(tickDelta);
 		double maxReach = this.client.interactionManager.getReachDistance();
 		double reach = maxReach;
@@ -97,11 +100,9 @@ public final class HudTooltipPicker {
 				cameraDirection.z * reach);
 		Box raycastCollider = cameraEntity.getBoundingBox().stretch(cameraDirection.multiply(reach)).expand(1.0D, 1.0D,
 				1.0D);
-		EntityHitResult entityHitResult = ProjectileUtil.raycast(cameraEntity, raycastStart, raycastEnd,
-				raycastCollider, (entityx) -> {
-					return entityHandlers.stream().anyMatch(handler -> handler.getLeft().test(entityx));
-				}, reachSq);
-		return entityHitResult;
+		return ProjectileUtil.raycast(cameraEntity, raycastStart, raycastEnd,
+				raycastCollider, (entityx) -> entityHandlers.stream()
+						.anyMatch(handler -> handler.getLeft().test(entityx)), reachSq);
 	}
 
 	private ItemStack getItemFromEntity(Entity e, Vec3d hitPos) {

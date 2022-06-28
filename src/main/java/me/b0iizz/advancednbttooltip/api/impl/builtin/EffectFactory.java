@@ -32,7 +32,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -40,7 +39,6 @@ import net.minecraft.text.TranslatableText;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -75,7 +73,7 @@ public class EffectFactory implements TooltipFactory {
 		List<Text> rawIds = rawId.getTooltipText(item, tag, context);
 		List<Text> durations = duration.getTooltipText(item, tag, context);
 		List<Text> strengths = strength != null ? strength.getTooltipText(item, tag, context)
-				: Stream.generate(() -> new LiteralText("0")).limit(rawIds.size()).collect(Collectors.toList());
+				: Stream.generate(() -> Text.of("0")).limit(rawIds.size()).toList();
 
 		int numEffects = Math.max(rawIds.size(),
 				Math.max(durations.size(), strength == null ? 0 : strengths.size()));
@@ -83,8 +81,8 @@ public class EffectFactory implements TooltipFactory {
 		List<Text> result = new ArrayList<>();
 
 		for (int i = 0; i < numEffects; i++) {
-			byte rawId = 0;
-			int duration = 0, strength = 0;
+			byte rawId;
+			int duration, strength;
 			try {
 				rawId = new BigDecimal(rawIds.get(i).asString().trim().replaceAll("[A-Za-z]$", "")).byteValue();
 				duration = new BigDecimal(durations.get(i).asString().trim().replaceAll("[A-Za-z]$", ""))
@@ -110,6 +108,7 @@ public class EffectFactory implements TooltipFactory {
 						line, StatusEffectUtil.durationToString(inst, 1));
 			}
 
+			//noinspection ConstantConditions
 			result.add(line.formatted(eff.getCategory().getFormatting()));
 		}
 		return result;

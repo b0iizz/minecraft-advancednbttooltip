@@ -109,7 +109,7 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 	private void processTooltipErrorMessageRecursive(StringBuilder message, Throwable error) {
 		if (error instanceof JsonParseException) {
 			String indent = "   ";
-			message.append(">" + error.getMessage());
+			message.append(">").append(error.getMessage());
 			List<Throwable> childErrors = Stream
 					.concat(Stream.of(error.getCause()), Arrays.stream(error.getSuppressed())).filter(Objects::nonNull)
 					.toList();
@@ -121,8 +121,7 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 				builder.toString().lines().map(str -> indent + str + "\n").forEach(message::append);
 			});
 		} else {
-			message.append("- Exception thrown: " + Stream.iterate(error, Throwable::getCause)
-					.takeWhile(Objects::nonNull)
+			message.append("- Exception thrown: ").append(Stream.iterate(error, Objects::nonNull, Throwable::getCause)
 					.map(t -> t.getClass().getCanonicalName() + " " + t.getMessage())
 					.collect(Collectors.joining(" => ")));
 		}
