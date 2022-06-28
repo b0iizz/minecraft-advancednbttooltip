@@ -34,12 +34,12 @@ import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 /**
  * The class representation of this mod's config. Based on this class,
  * AutoConfig generates a <i>.json</i> config file as well as an option screen.
- * 
+ *
  * <br>
  * <br>
  * <b>Implements:</b> <br>
  * {@link ConfigData}
- * 
+ *
  * @author B0IIZZ
  */
 @Config(name = AdvancedNBTTooltips.modid)

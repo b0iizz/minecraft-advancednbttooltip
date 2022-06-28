@@ -22,11 +22,8 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.Collections;
-import java.util.List;
-
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
@@ -35,8 +32,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A factory which creates a simple {@link TranslatableText}
+ *
  * @author B0IIZZ
  */
 @TooltipCode("translated")
@@ -47,19 +48,20 @@ public class TranslatedFactory implements TooltipFactory {
 	 */
 	@Required
 	public TooltipFactory key;
-	
+
 	/**
 	 * A factory creating arguments for the translation
 	 */
 	@Suggested
 	public TooltipFactory arguments;
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return key.getTooltipText(item, tag, context).stream().<Text>flatMap(text -> {
-			if(arguments == null)
+			if (arguments == null)
 				return Collections.singletonList(new TranslatableText(text.asString())).stream();
-			return Collections.singletonList(new TranslatableText(text.asString(), arguments.getTooltipText(item, tag, context).toArray())).stream();
+			return Collections.singletonList(new TranslatableText(text.asString(), arguments.getTooltipText(item, tag, context)
+					.toArray())).stream();
 		}).toList();
 	}
 

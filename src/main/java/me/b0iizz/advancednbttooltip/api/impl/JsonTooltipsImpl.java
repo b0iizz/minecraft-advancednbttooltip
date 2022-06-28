@@ -22,34 +22,21 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-
+import com.google.gson.*;
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import me.b0iizz.advancednbttooltip.api.impl.builtin.MultipleFactory;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.*;
+
 /**
  * The implementation of {@link JsonTooltips}
- * 
+ *
  * @author B0IIZZ
  */
 public final class JsonTooltipsImpl implements JsonTooltips {
@@ -181,14 +168,14 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 		try {
 			result = clazz.getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException e) {
+				 | NoSuchMethodException e) {
 			throw new JsonSyntaxException("Exception instantiating %s".formatted(clazz.getSimpleName()), e);
 		}
 
 		JsonSyntaxException toThrow = null;
 
 		List<Field> fields = Arrays.stream(clazz.getFields()).filter(
-				field -> field.isAnnotationPresent(Required.class) || field.isAnnotationPresent(Suggested.class))
+						field -> field.isAnnotationPresent(Required.class) || field.isAnnotationPresent(Suggested.class))
 				.toList();
 		for (Field field : fields) {
 			String name = getNameForField(field);
@@ -211,7 +198,7 @@ public final class JsonTooltipsImpl implements JsonTooltips {
 	}
 
 	private Object parseField(String name, Type fieldType, JsonElement element, JsonDeserializationContext ctx,
-			boolean required) {
+							  boolean required) {
 		Object value = null;
 		try {
 			value = ctx.deserialize(element.getAsJsonObject().get(name), fieldType);

@@ -22,9 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -34,10 +31,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Returns the result of the given factory, but all characters after a limit are
  * removed.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("limit")

@@ -22,8 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -33,10 +31,12 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
 /**
  * Returns the result of the given factory, but all lines after a limit are
  * removed.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("limit_lines")
@@ -58,7 +58,7 @@ public class LimitLinesFactory implements TooltipFactory {
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return text.getTooltipText(item, tag, context).stream().limit(length).toList();
 	}
-	
+
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		return text.getTooltip(item, tag, context).stream().limit(length).toList();

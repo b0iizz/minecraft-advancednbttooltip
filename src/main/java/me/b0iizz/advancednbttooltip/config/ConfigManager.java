@@ -22,26 +22,10 @@
 */
 package me.b0iizz.advancednbttooltip.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.TooltipPosition;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer.HudTooltipPosition;
@@ -53,9 +37,15 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.Identifier;
 
+import java.io.*;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 /**
  * Handles communication between the mod's config and the rest of the mod.
- * 
+ *
  * @author B0IIZZ
  */
 public class ConfigManager {
@@ -66,7 +56,7 @@ public class ConfigManager {
 
 	private static ModConfig config;
 
-	private static Map<Identifier, Boolean> toggles = new HashMap<>();
+	private static final Map<Identifier, Boolean> toggles = new HashMap<>();
 
 	/**
 	 * Registers the config for AutoConfig at the start of the game. Should not be
@@ -133,9 +123,9 @@ public class ConfigManager {
 		try (OutputStream os = new FileOutputStream(tFile)) {
 			try (Writer w = new OutputStreamWriter(os)) {
 				gson.toJson(toggles.entrySet().stream()
-						.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
-						.collect(JsonObject::new, (obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
-								(obj, obj2) -> obj2.entrySet().forEach(e -> obj.add(e.getKey(), e.getValue()))),
+								.sorted((a, b) -> a.getKey().toString().compareTo(b.getKey().toString()))
+								.collect(JsonObject::new, (obj, e) -> obj.addProperty(e.getKey().toString(), e.getValue()),
+										(obj, obj2) -> obj2.entrySet().forEach(e -> obj.add(e.getKey(), e.getValue()))),
 						gson.newJsonWriter(w));
 			}
 		} catch (Throwable t) {
@@ -154,7 +144,7 @@ public class ConfigManager {
 
 	/**
 	 * Toggles a tooltip with the specified id
-	 * 
+	 *
 	 * @param id the id of the tooltip
 	 * @return the new state of the tooltip
 	 */
@@ -174,7 +164,7 @@ public class ConfigManager {
 
 	/**
 	 * @return The state of the toggle controlling whether a notice should be added
-	 *         to the title screen when a new update is out.
+	 * to the title screen when a new update is out.
 	 */
 	public static boolean getMainMenuUpdateNoticeToggle() {
 		return config.general.mainMenuUpdateNotice;
@@ -189,8 +179,8 @@ public class ConfigManager {
 
 	/**
 	 * @return <b>true</b>, when the result of {@link #getHideflagOverrideBitmask()}
-	 *         should be bitwise AND-ed with the HideFlags property. <br>
-	 *         <b>false</b>, when not.
+	 * should be bitwise AND-ed with the HideFlags property. <br>
+	 * <b>false</b>, when not.
 	 */
 	public static boolean overrideHideFlags() {
 		return config.general.overrideHideFlags;

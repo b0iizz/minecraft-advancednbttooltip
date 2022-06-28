@@ -31,7 +31,7 @@ import net.minecraft.nbt.NbtCompound;
 
 /**
  * A condition which is true when one child condition is true
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("or")

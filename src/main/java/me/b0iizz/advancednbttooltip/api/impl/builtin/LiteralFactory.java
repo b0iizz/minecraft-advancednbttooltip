@@ -22,9 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.Collections;
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -34,9 +31,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
- *	A factory which creates a simple {@link LiteralText}
- *  @author B0IIZZ
+ * A factory which creates a simple {@link LiteralText}
+ *
+ * @author B0IIZZ
  */
 @TooltipCode("literal")
 public class LiteralFactory implements TooltipFactory {
@@ -46,7 +47,7 @@ public class LiteralFactory implements TooltipFactory {
 	 */
 	@Required
 	public String text;
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return Collections.singletonList(new LiteralText(text));

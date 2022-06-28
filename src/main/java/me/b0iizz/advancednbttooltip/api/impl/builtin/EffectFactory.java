@@ -22,14 +22,8 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips.Suggested;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
@@ -43,10 +37,16 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Creates per line a minecraft effect formatting according to id, duration and
  * strength.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("effect")
@@ -57,19 +57,19 @@ public class EffectFactory implements TooltipFactory {
 	 */
 	@Required
 	public TooltipFactory rawId;
-	
+
 	/**
 	 * The duration of the effect
 	 */
 	@Required
 	public TooltipFactory duration;
-	
+
 	/**
 	 * The strength of the effect
 	 */
 	@Suggested
 	public TooltipFactory strength = null;
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		List<Text> rawIds = rawId.getTooltipText(item, tag, context);
@@ -103,11 +103,11 @@ public class EffectFactory implements TooltipFactory {
 
 			if (inst.getAmplifier() > 0) {
 				line = new TranslatableText("potion.withAmplifier",
-						new Object[] { line, new TranslatableText("potion.potency." + inst.getAmplifier()) });
+						line, new TranslatableText("potion.potency." + inst.getAmplifier()));
 			}
 			if (inst.getDuration() > 20) {
 				line = new TranslatableText("potion.withDuration",
-						new Object[] { line, StatusEffectUtil.durationToString(inst, 1) });
+						line, StatusEffectUtil.durationToString(inst, 1));
 			}
 
 			result.add(line.formatted(eff.getCategory().getFormatting()));

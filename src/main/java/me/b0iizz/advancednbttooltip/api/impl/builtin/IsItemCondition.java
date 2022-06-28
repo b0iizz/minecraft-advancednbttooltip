@@ -36,7 +36,7 @@ import net.minecraft.util.registry.Registry;
 /**
  * A condition which is fulfilled when the item is contained in the specified
  * list of items.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("is_item")

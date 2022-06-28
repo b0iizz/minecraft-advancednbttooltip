@@ -22,18 +22,17 @@
 */
 package me.b0iizz.advancednbttooltip.misc;
 
-import org.lwjgl.glfw.GLFW;
-
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.gui.TooltipsScreen;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * A class containing everything important to Keybindings
- * 
+ *
  * @author B0IIZZ
  */
 public final class ModKeybinds {
@@ -51,7 +50,7 @@ public final class ModKeybinds {
 
 	/**
 	 * Updates all KeyBindings
-	 * 
+	 *
 	 * @param client The Minecraft Client
 	 */
 	public static void updateKeyBindings(MinecraftClient client) {

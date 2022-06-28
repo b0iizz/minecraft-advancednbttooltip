@@ -31,7 +31,7 @@ import net.minecraft.nbt.NbtCompound;
 
 /**
  * A condition which is fulfilled if the child condition is not.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("not")

@@ -24,28 +24,28 @@ package me.b0iizz.advancednbttooltip.api;
 
 /**
  * A tooltip
- * 
+ *
  * @author B0IIZZ
  */
 public interface CustomTooltip extends TooltipCondition, TooltipFactory {
 
 	/**
 	 * Adds a {@link TooltipFactory factory} which will be shown with the tooltip.
-	 * 
+	 *
 	 * @param text The factory to be added.
 	 * @return The original {@link CustomTooltip} object. Used for
-	 *         chaining.
+	 * chaining.
 	 */
-	public CustomTooltip addText(TooltipFactory text);
+	CustomTooltip addText(TooltipFactory text);
 
 	/**
 	 * Adds a {@link TooltipCondition condition} which has to be met to show the
 	 * tooltip.
-	 * 
+	 *
 	 * @param condition The condition to be added.
 	 * @return The original {@link CustomTooltip} object. Used for
-	 *         chaining.
+	 * chaining.
 	 */
-	public CustomTooltip addCondition(TooltipCondition condition);
+	CustomTooltip addCondition(TooltipCondition condition);
 
 }

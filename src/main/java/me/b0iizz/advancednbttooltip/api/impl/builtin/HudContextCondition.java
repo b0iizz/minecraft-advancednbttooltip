@@ -31,7 +31,7 @@ import net.minecraft.nbt.NbtCompound;
 
 /**
  * A condition which is true when a HUD {@link TooltipContext} is supplied
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("is_hud_context")

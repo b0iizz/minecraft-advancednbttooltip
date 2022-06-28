@@ -22,24 +22,18 @@
 */
 package me.b0iizz.advancednbttooltip.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+
 /**
- * 
  * A class that represents a path inside of a {@link NbtCompound}
- * 
+ *
  * @author B0IIZZ
  */
 public final class NbtPath {
@@ -60,7 +54,7 @@ public final class NbtPath {
 	 * Constructs a new NBTPath using the specified path. Children are separated by
 	 * <code>'.'</code> and list items are indexed using
 	 * <code>'[<i>index</i>]'</code>
-	 * 
+	 *
 	 * @param path a path separated by <code>'.'</code>
 	 * @return A {@link NbtPath} object.
 	 */
@@ -80,7 +74,7 @@ public final class NbtPath {
 
 	/**
 	 * See {@link NbtPath#of NbtPath.of(String)}
-	 * 
+	 *
 	 * @param path a path separated by <code>'.'</code>
 	 */
 	private NbtPath(String path) {
@@ -102,7 +96,7 @@ public final class NbtPath {
 		} else {
 			this.parent = new NbtPath(parent, Arrays.copyOf(path, path.length - 1));
 		}
-		
+
 		if (path == null || path.length == 0) {
 			this.name = "TAG_ROOT";
 		} else {
@@ -138,16 +132,16 @@ public final class NbtPath {
 				return Collections.singletonList(((List<NbtElement>) ((NbtCompound) tag).get(identifier)).get(idx));
 			};
 		}
-		
+
 		CACHE.put(this.toString(), this);
 	}
 
 	/**
 	 * Checks whether the path exists in the given {@link NbtCompound}
-	 * 
+	 *
 	 * @param root the root {@link NbtCompound} to be checked
 	 * @return <code>true</code> when an element with the current path exists in the
-	 *         {@link NbtCompound} or else <code>false</code>
+	 * {@link NbtCompound} or else <code>false</code>
 	 */
 	public boolean exists(NbtCompound root) {
 		return !unsafeSearch(root).isEmpty();
@@ -155,10 +149,10 @@ public final class NbtPath {
 
 	/**
 	 * Gets all the elements with the current path for a given {@link NbtCompound}
-	 * 
+	 *
 	 * @param root the root {@link NbtCompound} to be checked
 	 * @return a <code>{@link NbtElement}</code> when an element with the current
-	 *         path exists in the {@link NbtCompound} or else <code>null</code>
+	 * path exists in the {@link NbtCompound} or else <code>null</code>
 	 */
 	public List<NbtElement> getAll(NbtCompound root) {
 		return unsafeSearch(root);
@@ -166,7 +160,7 @@ public final class NbtPath {
 
 	/**
 	 * Gets the parent NBTPath of this path
-	 * 
+	 *
 	 * @return The parent of the current path or <code>ROOT</code>
 	 */
 	public NbtPath parent() {
@@ -178,9 +172,9 @@ public final class NbtPath {
 	 * @return The child NBTPath of the current path
 	 */
 	public NbtPath child(String name) {
-		return NbtPath.of(toString() + "." + name);
+		return NbtPath.of(this + "." + name);
 	}
-	
+
 	@Override
 	public String toString() {
 		NbtPath elem = this;
@@ -211,10 +205,10 @@ public final class NbtPath {
 
 	/**
 	 * Gets an element with the current path for a given {@link NbtCompound}
-	 * 
+	 *
 	 * @param root the root {@link NbtCompound} to be checked
 	 * @return a <code>{@link NbtElement}</code> when an element with the current
-	 *         path exists in the {@link NbtCompound} or else <code>null</code>
+	 * path exists in the {@link NbtCompound} or else <code>null</code>
 	 */
 	@Deprecated
 	public NbtElement get(NbtCompound root) {
@@ -223,10 +217,10 @@ public final class NbtPath {
 
 	/**
 	 * Creates an optional for the current path in a given {@link NbtCompound}
-	 * 
+	 *
 	 * @param root the root {@link NbtCompound} to be checked
 	 * @return An {@link Optional} containing the state of this path in the given
-	 *         {@link NbtCompound}
+	 * {@link NbtCompound}
 	 */
 	@Deprecated
 	public Optional<NbtElement> getOptional(NbtCompound root) {
@@ -238,7 +232,7 @@ public final class NbtPath {
 	 * Constructs a new NBTPath using the specified path. Children are separated by
 	 * <code>'.'</code> and list items are indexed using
 	 * <code>'[<i>index</i>]'</code>
-	 * 
+	 *
 	 * @param parent the parent of the path
 	 * @param path   a path separated by <code>'.'</code>
 	 */

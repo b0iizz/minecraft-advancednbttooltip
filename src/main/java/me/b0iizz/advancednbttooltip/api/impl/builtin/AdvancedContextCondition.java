@@ -30,7 +30,7 @@ import net.minecraft.nbt.NbtCompound;
 
 /**
  * A condition which is true when an advanced {@link TooltipContext} is supplied
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("is_advanced_context")

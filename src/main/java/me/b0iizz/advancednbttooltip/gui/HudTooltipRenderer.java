@@ -22,10 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -35,9 +31,13 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * A class for rendering tooltips on the in-game HUD
- * 
+ *
  * @author B0IIZZ
  */
 public class HudTooltipRenderer implements CustomTooltipRenderer {
@@ -51,8 +51,8 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 		});
 	}
 
-	private MinecraftClient client;
-	private HudTooltipPicker picker;
+	private final MinecraftClient client;
+	private final HudTooltipPicker picker;
 
 	/**
 	 * @param client The client this renderer should draw with
@@ -73,7 +73,7 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 
 	@Override
 	public void renderComponents(MatrixStack matrices, ItemStack stack, List<TooltipComponent> components, int x,
-			int y) {
+								 int y) {
 		int componentLimit = ConfigManager.getHudTooltipLineLimt();
 		if (components.size() > componentLimit && componentLimit > 0) {
 			components = components.stream().limit(componentLimit).collect(Collectors.toCollection(ArrayList::new));
@@ -109,7 +109,7 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 		matrices.pop();
 	}
 
-	public static enum HudTooltipContext implements TooltipContext {
+	public enum HudTooltipContext implements TooltipContext {
 		NORMAL, ADVANCED;
 
 		@Override
@@ -125,10 +125,10 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 
 	/**
 	 * An enum representing the position of the HUD tooltip
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
-	public static enum HudTooltipPosition {
+	public enum HudTooltipPosition {
 		TOP_LEFT(Anchor.START, Anchor.START), TOP(Anchor.MIDDLE, Anchor.START), TOP_RIGHT(Anchor.END, Anchor.START),
 		CENTER(Anchor.MIDDLE, Anchor.MIDDLE_START), BOTTOM_LEFT(Anchor.START, Anchor.END),
 		BOTTOM_RIGHT(Anchor.END, Anchor.END);
@@ -136,7 +136,7 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 		private final Anchor x;
 		private final Anchor y;
 
-		private HudTooltipPosition(Anchor x, Anchor y) {
+		HudTooltipPosition(Anchor x, Anchor y) {
 			this.x = x;
 			this.y = y;
 		}
@@ -154,28 +154,28 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 			return name().toLowerCase().replace('_', ' ');
 		}
 
-		public static enum Anchor {
+		public enum Anchor {
 			START, MIDDLE, MIDDLE_START, END;
 
 			public int get(int sizeObj, int maxSize, int offset) {
 				int maxS = maxSize - 2 * offset;
 				int prefX = 0;
 				switch (this) {
-				case START:
-					prefX = 0;
-					break;
-				case MIDDLE:
-					prefX = maxS / 2 - sizeObj / 2;
-					break;
-				case MIDDLE_START:
-					prefX = maxS / 2 + offset;
-					if (prefX + offset + sizeObj > maxSize) {
-						prefX = maxSize - 2 * offset - sizeObj;
-					}
-					break;
-				case END:
-					prefX = maxS - sizeObj;
-					break;
+					case START:
+						prefX = 0;
+						break;
+					case MIDDLE:
+						prefX = maxS / 2 - sizeObj / 2;
+						break;
+					case MIDDLE_START:
+						prefX = maxS / 2 + offset;
+						if (prefX + offset + sizeObj > maxSize) {
+							prefX = maxSize - 2 * offset - sizeObj;
+						}
+						break;
+					case END:
+						prefX = maxS - sizeObj;
+						break;
 				}
 				return prefX + offset;
 			}
@@ -186,15 +186,15 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 
 	/**
 	 * An enum representing the position of custom tooltips in the tooltip list
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
-	public static enum HudTooltipZIndex {
+	public enum HudTooltipZIndex {
 		TOP(400), BOTTOM(-100);
 
 		private final int z;
 
-		private HudTooltipZIndex(int z) {
+		HudTooltipZIndex(int z) {
 			this.z = z;
 		}
 

@@ -22,22 +22,15 @@
 */
 package me.b0iizz.advancednbttooltip.gui;
 
-import java.util.List;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
+
+import java.util.List;
 
 public final class TooltipRenderingUtils {
 
@@ -96,19 +89,19 @@ public final class TooltipRenderingUtils {
 	}
 
 	public static void drawComponents(TextRenderer textRenderer, ItemRenderer itemRenderer, MatrixStack matrices,
-			int startX, int startY, int z, List<TooltipComponent> components) {
+									  int startX, int startY, int z, List<TooltipComponent> components) {
 		matrices.push();
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider
 				.immediate(Tessellator.getInstance().getBuffer());
 		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
-		matrices.translate(0, 0, (double) z);
-		
+		matrices.translate(0, 0, z);
+
 		int lineX = startX;
 		int lineY = startY;
 
 		float prevZ = itemRenderer.zOffset;
 		itemRenderer.zOffset = z;
-		
+
 		for (int s = 0; s < components.size(); ++s) {
 			components.get(s).drawText(textRenderer, lineX, lineY, modelMatrix, immediate);
 			if (s == 0)
@@ -127,7 +120,7 @@ public final class TooltipRenderingUtils {
 				lineY += 2;
 			lineY += components.get(s).getHeight();
 		}
-		
+
 		itemRenderer.zOffset = prevZ;
 	}
 
@@ -159,7 +152,7 @@ public final class TooltipRenderingUtils {
 	}
 
 	private static void fillGradient(Matrix4f matrix, BufferBuilder bufferBuilder, int xStart, int yStart, int xEnd,
-			int yEnd, int z, int colorStart, int colorEnd) {
+									 int yEnd, int z, int colorStart, int colorEnd) {
 		float startA = (float) (colorStart >> 24 & 0xff) / 255.0f;
 		float startR = (float) (colorStart >> 16 & 0xff) / 255.0f;
 		float startG = (float) (colorStart >> 8 & 0xff) / 255.0f;

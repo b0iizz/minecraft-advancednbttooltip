@@ -24,7 +24,6 @@ package me.b0iizz.advancednbttooltip.misc;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 
 /**
@@ -32,9 +31,8 @@ import me.b0iizz.advancednbttooltip.config.ConfigManager;
  * <br>
  * <b>Implements:</b> <br>
  * {@link ModMenuApi}
- * 
- * @author B0IIZZ
  *
+ * @author B0IIZZ
  */
 public class ModMenuEntry implements ModMenuApi {
 

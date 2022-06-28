@@ -22,24 +22,17 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.math.BigDecimal;
-import java.util.Map.Entry;
-
 import com.google.gson.JsonElement;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
-import me.b0iizz.advancednbttooltip.util.NbtPath;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.AbstractNbtList;
-import net.minecraft.nbt.AbstractNbtNumber;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.text.Text;
+import net.minecraft.nbt.*;
+
+import java.math.BigDecimal;
+import java.util.Map.Entry;
 
 /**
  * A condition which is true when the item has the specified {@link NbtElement

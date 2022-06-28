@@ -22,11 +22,7 @@
 */
 package me.b0iizz.advancednbttooltip.gui;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
@@ -44,15 +40,18 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A Screen where all Tooltips are shown and can be toggled
- * 
+ *
  * @author B0IIZZ
  */
 public class TooltipsScreen extends Screen {
 
 	/**
-	 * 
+	 *
 	 */
 	public TooltipsScreen() {
 		super(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".tooltips.title"));
@@ -72,15 +71,15 @@ public class TooltipsScreen extends Screen {
 	public void initWidgets() {
 		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20,
 				new TranslatableText("menu.returnToGame"), widget -> {
-					save();
-					this.client.setScreen(null);
-					this.client.mouse.lockCursor();
-				}));
+			save();
+			this.client.setScreen(null);
+			this.client.mouse.lockCursor();
+		}));
 		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20,
 				new TranslatableText("text.autoconfig.advancednbttooltip.title"), widget -> {
-					save();
-					this.client.setScreen(ConfigManager.getConfigScreen(this).get());
-				}));
+			save();
+			this.client.setScreen(ConfigManager.getConfigScreen(this).get());
+		}));
 		this.tooltipList = this
 				.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
 	}
@@ -90,7 +89,7 @@ public class TooltipsScreen extends Screen {
 		super.close();
 		save();
 	}
-	
+
 
 	private void save() {
 		ConfigManager.writeToggles();
@@ -113,7 +112,7 @@ public class TooltipsScreen extends Screen {
 		final Screen screen;
 
 		public TooltipListWidget(MinecraftClient minecraftClient, Screen screen, int width, int height, int top,
-				int bottom, int itemHeight) {
+								 int bottom, int itemHeight) {
 			super(minecraftClient, width, height, top, bottom, itemHeight);
 			this.screen = screen;
 			AdvancedNBTTooltips.getRegisteredTooltips().stream()
@@ -176,7 +175,7 @@ public class TooltipsScreen extends Screen {
 
 			@Override
 			public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight,
-					int mouseX, int mouseY, boolean hovered, float tickDelta) {
+							   int mouseX, int mouseY, boolean hovered, float tickDelta) {
 
 				widget.client.textRenderer.draw(matrices, displayName, x, y + 5, 0xFFFFFF);
 

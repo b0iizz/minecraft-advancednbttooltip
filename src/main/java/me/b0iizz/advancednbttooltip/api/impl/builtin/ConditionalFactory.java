@@ -22,8 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
@@ -34,10 +32,12 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
 /**
  * A factory which creates two different tooltips depending on a
  * {@link TooltipCondition condition}
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("conditional")
@@ -48,27 +48,27 @@ public class ConditionalFactory implements TooltipFactory {
 	 */
 	@Required
 	public TooltipFactory success;
-	
+
 	/**
 	 * The factory used when the condition is false
 	 */
 	@Required
 	public TooltipFactory fail;
-	
+
 	/**
 	 * The condition
 	 */
 	@Required
 	public TooltipCondition condition;
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return (condition != null && condition.isEnabled(item, tag, context) ? success : fail).getTooltipText(item, tag, context);
 	}
-	
+
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		return (condition != null && condition.isEnabled(item, tag, context) ? success : fail).getTooltip(item, tag, context);
 	}
-	
+
 }

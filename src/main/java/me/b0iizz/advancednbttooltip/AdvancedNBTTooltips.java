@@ -22,40 +22,10 @@
 */
 package me.b0iizz.advancednbttooltip;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
-
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.AdvancedContextCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.AndCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.BuiltInHideflagsFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.ConditionalFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.EffectFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.FormattedFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.HasTagCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.HudContextCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.IsItemCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.ItemRendererFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.LimitLinesFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.LiteralFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.MixFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.MultipleFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtRetargetFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtSizeFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtTextFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NbtValueFactory;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.NotCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.OrCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.SectionVisibleCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.TagMatchesCondition;
-import me.b0iizz.advancednbttooltip.api.impl.builtin.TranslatedFactory;
+import me.b0iizz.advancednbttooltip.api.impl.builtin.*;
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipPicker;
 import me.b0iizz.advancednbttooltip.gui.HudTooltipRenderer;
@@ -73,12 +43,14 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.*;
+
 /**
  * The Fabric Entrypoint of this mod. <br>
  * <br>
  * <b>Implements:</b> <br>
  * {@link ClientModInitializer}
- * 
+ *
  * @author B0IIZZ
  */
 public final class AdvancedNBTTooltips implements ClientModInitializer {
@@ -96,21 +68,21 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	/**
 	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
 	 * given name.
-	 * 
+	 *
 	 * @param name a name
 	 * @return the {@link Identifier} of this mod corresponding to the given name.
 	 */
 	public static Identifier id(String name) {
 		return new Identifier(modid, name);
 	}
-	
+
 	/**
 	 * @return A Set containing all registered Tooltips
 	 */
 	public static Set<Map.Entry<Identifier, CustomTooltip>> getRegisteredTooltips() {
 		return ImmutableSet.copyOf(TOOLTIPS.entrySet());
 	}
-	
+
 	/**
 	 * Called on initialization. Registers and loads this mod's config.
 	 */
@@ -121,7 +93,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
-		
+
 		JsonTooltips.getInstance().registerFactory(LiteralFactory.class);
 		JsonTooltips.getInstance().registerFactory(FormattedFactory.class);
 		JsonTooltips.getInstance().registerFactory(TranslatedFactory.class);
@@ -137,7 +109,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
 		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
 		JsonTooltips.getInstance().registerFactory(ItemRendererFactory.class);
-		
+
 		JsonTooltips.getInstance().registerCondition(AndCondition.class);
 		JsonTooltips.getInstance().registerCondition(OrCondition.class);
 		JsonTooltips.getInstance().registerCondition(NotCondition.class);
@@ -157,7 +129,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 
 	/**
 	 * The tooltip handler for the ItemTooltipCallback
-	 * 
+	 *
 	 * @param stack The item stack
 	 * @param ctx   The context of the tooltip
 	 * @param lines The lines in the tooltip
@@ -180,12 +152,11 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	/**
 	 * Used by the ItemTooltipCallback function to interact with the tooltip
 	 * pipeline.
-	 * 
+	 *
 	 * @param stack   The {@link ItemStack} of which a tooltip should be generated.
 	 * @param tooltip The List of text to add Tooltips to.
 	 * @param context The {@link TooltipContext} where the tooltip is being
 	 *                generated.
-	 *
 	 */
 	protected static void appendCustomTooltip(ItemStack stack, List<TooltipComponent> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
@@ -196,15 +167,15 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 
 	/**
 	 * An enum representing the position of custom tooltips in the tooltip list
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
-	public static enum TooltipPosition {
+	public enum TooltipPosition {
 		TOP(1), BOTTOM(-1);
 
 		private final int offset;
 
-		private TooltipPosition(int offset) {
+		TooltipPosition(int offset) {
 			this.offset = offset;
 		}
 

@@ -22,33 +22,32 @@
 */
 package me.b0iizz.advancednbttooltip.api;
 
+import com.google.gson.Gson;
+import me.b0iizz.advancednbttooltip.api.impl.JsonTooltipsImpl;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.google.gson.Gson;
-
-import me.b0iizz.advancednbttooltip.api.impl.JsonTooltipsImpl;
-
 /**
  * API access point to all things related to .json generated tooltips.
- * 
+ *
  * @author B0IIZZ
  */
 public interface JsonTooltips {
 
 	/**
 	 * Specifies the id of the {@link TooltipCondition} or {@link TooltipFactory}
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public static @interface TooltipCode {
+	@interface TooltipCode {
 		/**
 		 * @return The id of the {@link TooltipCondition} or {@link TooltipFactory} in
-		 *         the .json
+		 * the .json
 		 */
 		String value();
 	}
@@ -56,12 +55,12 @@ public interface JsonTooltips {
 	/**
 	 * Marks a field in a {@link TooltipCondition} or {@link TooltipFactory} as
 	 * required by the object generated.
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public static @interface Required {
+	@interface Required {
 		/**
 		 * @return The name of the field in the .json
 		 */
@@ -71,12 +70,12 @@ public interface JsonTooltips {
 	/**
 	 * Marks a field in a {@link TooltipCondition} or {@link TooltipFactory} as
 	 * optional by the object generated.
-	 * 
+	 *
 	 * @author B0IIZZ
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public static @interface Suggested {
+	@interface Suggested {
 		/**
 		 * @return The name of the field in the .json
 		 */
@@ -87,28 +86,28 @@ public interface JsonTooltips {
 	/**
 	 * @return The GSON Parser to parse tooltips
 	 */
-	public Gson getGson();
-	
+	Gson getGson();
+
 	/**
 	 * Registers a new {@link TooltipFactory}
-	 * 
+	 *
 	 * @param factoryClass the class of the {@link TooltipFactory}
 	 */
-	public void registerFactory(Class<? extends TooltipFactory> factoryClass);
+	void registerFactory(Class<? extends TooltipFactory> factoryClass);
 
 	/**
 	 * Registers a new {@link TooltipCondition}
-	 * 
+	 *
 	 * @param conditionClass the class of the {@link TooltipCondition}
 	 */
-	public void registerCondition(Class<? extends TooltipCondition> conditionClass);
+	void registerCondition(Class<? extends TooltipCondition> conditionClass);
 
 	/**
 	 * @return The instance of the implementation of {@link JsonTooltips}
 	 */
 	@SuppressWarnings("deprecation")
-	public static JsonTooltips getInstance() {
+	static JsonTooltips getInstance() {
 		return JsonTooltipsImpl.INSTANCE;
 	}
-	
+
 }

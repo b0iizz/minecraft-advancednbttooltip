@@ -22,7 +22,17 @@
 */
 package me.b0iizz.advancednbttooltip.misc;
 
-import static me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.id;
+import com.google.gson.JsonParseException;
+import me.b0iizz.advancednbttooltip.api.CustomTooltip;
+import me.b0iizz.advancednbttooltip.api.JsonTooltips;
+import me.b0iizz.advancednbttooltip.api.TooltipCondition;
+import me.b0iizz.advancednbttooltip.config.ConfigManager;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -35,26 +45,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.gson.JsonParseException;
-
-import me.b0iizz.advancednbttooltip.api.CustomTooltip;
-import me.b0iizz.advancednbttooltip.api.JsonTooltips;
-import me.b0iizz.advancednbttooltip.api.TooltipCondition;
-import me.b0iizz.advancednbttooltip.config.ConfigManager;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import static me.b0iizz.advancednbttooltip.AdvancedNBTTooltips.id;
 
 /**
  * A simple class responsible for notifying the mod that the resources are being
  * reloaded, which should reload all tooltips.
- * 
- * @author B0IIZZ
  *
+ * @author B0IIZZ
  */
 public class JsonTooltipResourceManager implements SimpleSynchronousResourceReloadListener {
 
@@ -69,7 +66,6 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 
 	/**
 	 * @param tooltips The map containing all registered Tooltips
-	 * 
 	 */
 	public JsonTooltipResourceManager(Map<Identifier, CustomTooltip> tooltips) {
 		this.tooltips = tooltips;
@@ -125,7 +121,8 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 				builder.toString().lines().map(str -> indent + str + "\n").forEach(message::append);
 			});
 		} else {
-			message.append("- Exception thrown: " + Stream.iterate(error, Throwable::getCause).takeWhile(Objects::nonNull)
+			message.append("- Exception thrown: " + Stream.iterate(error, Throwable::getCause)
+					.takeWhile(Objects::nonNull)
 					.map(t -> t.getClass().getCanonicalName() + " " + t.getMessage())
 					.collect(Collectors.joining(" => ")));
 		}

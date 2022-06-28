@@ -1,7 +1,6 @@
 package me.b0iizz.advancednbttooltip.gui.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -33,7 +32,7 @@ public class ItemTooltipComponent implements TooltipComponent {
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer,
-			int z) {
+						  int z) {
 		MatrixStack itemMatrices = RenderSystem.getModelViewStack();
 		itemMatrices.push();
 		itemMatrices.translate(x + 1, y + 1, 0);

@@ -22,10 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.CustomTooltip;
 import me.b0iizz.advancednbttooltip.api.TooltipCondition;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -35,9 +31,13 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An implementation of {@link CustomTooltip} used in the .json tooltips.
- * 
+ *
  * @author B0IIZZ
  */
 final class CustomTooltipImpl implements CustomTooltip {
@@ -55,7 +55,7 @@ final class CustomTooltipImpl implements CustomTooltip {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		if(!isEnabled(item, tag, context))
+		if (!isEnabled(item, tag, context))
 			return Collections.emptyList();
 		return factories.stream().sequential().flatMap(factory -> factory.getTooltipText(item, tag, context).stream())
 				.toList();
@@ -63,22 +63,22 @@ final class CustomTooltipImpl implements CustomTooltip {
 
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
-		if(!isEnabled(item, tag, context))
+		if (!isEnabled(item, tag, context))
 			return Collections.emptyList();
 		return factories.stream().sequential().flatMap(factory -> factory.getTooltip(item, tag, context).stream())
 				.toList();
 	}
-	
+
 	@Override
 	public CustomTooltip addText(TooltipFactory text) {
-		if(text != null)
+		if (text != null)
 			factories.add(text);
 		return this;
 	}
 
 	@Override
 	public CustomTooltip addCondition(TooltipCondition condition) {
-		if(condition != null)
+		if (condition != null)
 			conditions.add(condition);
 		return this;
 	}

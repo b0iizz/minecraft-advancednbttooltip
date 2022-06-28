@@ -22,8 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -36,10 +34,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 
+import java.util.List;
+
 /**
  * A factory which uses the child factory on every {@link NbtElement} at a
  * {@link NbtPath}
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("nbt_retarget")

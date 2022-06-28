@@ -22,9 +22,6 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import java.util.Arrays;
-import java.util.List;
-
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
@@ -34,37 +31,43 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Combines multiple {@link TooltipFactory TooltipFactories} under each other
  * together.
- * 
+ *
  * @author B0IIZZ
  */
 @TooltipCode("multiple")
 public class MultipleFactory implements TooltipFactory {
-	
+
 	/**
 	 * An array of {@link TooltipFactory TooltipFactories} which
 	 * will be appended under one another.
 	 */
 	@Required
 	public TooltipFactory[] texts;
-	
-	/** Default constructor*/
-	public MultipleFactory() {}
-	
+
+	/**
+	 * Default constructor
+	 */
+	public MultipleFactory() {
+	}
+
 	/**
 	 * @param texts The factories to be appended.
 	 */
 	public MultipleFactory(TooltipFactory[] texts) {
 		this.texts = texts;
 	}
-	
+
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return Arrays.stream(texts).flatMap(text -> text.getTooltipText(item, tag, context).stream()).toList();
 	}
-	
+
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		return Arrays.stream(texts).flatMap(text -> text.getTooltip(item, tag, context).stream()).toList();

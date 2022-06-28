@@ -1,11 +1,5 @@
 package me.b0iizz.advancednbttooltip.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-
 import me.b0iizz.advancednbttooltip.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -21,6 +15,12 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+
 public final class HudTooltipPicker {
 
 	private static final List<Pair<Predicate<Entity>, BiFunction<Entity, Vec3d, ItemStack>>> entityHandlers = new ArrayList<>();
@@ -32,7 +32,7 @@ public final class HudTooltipPicker {
 	 *                      targeted Entity and the hitPosition
 	 */
 	public static <T extends Entity> void registerHandler(Class<T> entityClass,
-			BiFunction<T, Vec3d, ItemStack> stackSupplier) {
+														  BiFunction<T, Vec3d, ItemStack> stackSupplier) {
 		registerHandler(entityClass, e -> true, stackSupplier);
 	}
 
@@ -45,7 +45,7 @@ public final class HudTooltipPicker {
 	 *                      targeted Entity and the hitPosition
 	 */
 	public static <T extends Entity> void registerHandler(Class<T> entityClass, Predicate<Entity> predicate,
-			BiFunction<T, Vec3d, ItemStack> stackSupplier) {
+														  BiFunction<T, Vec3d, ItemStack> stackSupplier) {
 		entityHandlers.add(new Pair<>(predicate.and(e -> entityClass.isAssignableFrom(e.getClass())), (e, hitPos) -> {
 			try {
 				return stackSupplier.apply(entityClass.cast(e), hitPos);
@@ -79,7 +79,7 @@ public final class HudTooltipPicker {
 	private EntityHitResult raycast(float tickDelta) {
 		Entity cameraEntity = this.client.getCameraEntity();
 		Vec3d raycastStart = cameraEntity.getCameraPosVec(tickDelta);
-		double maxReach = (double) this.client.interactionManager.getReachDistance();
+		double maxReach = this.client.interactionManager.getReachDistance();
 		double reach = maxReach;
 		if (this.client.interactionManager.hasExtendedReach()) {
 			maxReach = 6.0D;
