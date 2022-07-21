@@ -34,7 +34,6 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -84,10 +83,10 @@ public class EffectFactory implements TooltipFactory {
 			byte rawId;
 			int duration, strength;
 			try {
-				rawId = new BigDecimal(rawIds.get(i).asString().trim().replaceAll("[A-Za-z]$", "")).byteValue();
-				duration = new BigDecimal(durations.get(i).asString().trim().replaceAll("[A-Za-z]$", ""))
+				rawId = new BigDecimal(rawIds.get(i).getString().trim().replaceAll("[A-Za-z]$", "")).byteValue();
+				duration = new BigDecimal(durations.get(i).getString().trim().replaceAll("[A-Za-z]$", ""))
 						.intValue();
-				strength = new BigDecimal(strengths.get(i).asString().trim().replaceAll("[A-Za-z]$", ""))
+				strength = new BigDecimal(strengths.get(i).getString().trim().replaceAll("[A-Za-z]$", ""))
 						.intValue();
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -97,14 +96,14 @@ public class EffectFactory implements TooltipFactory {
 			StatusEffect eff = StatusEffect.byRawId(rawId);
 			StatusEffectInstance inst = new StatusEffectInstance(eff, duration, strength);
 
-			MutableText line = new TranslatableText(inst.getTranslationKey());
+			MutableText line = Text.translatable(inst.getTranslationKey());
 
 			if (inst.getAmplifier() > 0) {
-				line = new TranslatableText("potion.withAmplifier",
-						line, new TranslatableText("potion.potency." + inst.getAmplifier()));
+				line = Text.translatable("potion.withAmplifier",
+						line, Text.translatable("potion.potency." + inst.getAmplifier()));
 			}
 			if (inst.getDuration() > 20) {
-				line = new TranslatableText("potion.withDuration",
+				line = Text.translatable("potion.withDuration",
 						line, StatusEffectUtil.durationToString(inst, 1));
 			}
 

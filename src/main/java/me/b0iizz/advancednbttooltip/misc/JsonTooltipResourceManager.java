@@ -80,19 +80,17 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 	public void reload(ResourceManager manager) {
 		tooltips.clear();
 
-		manager.findResources("tooltip", path -> path.endsWith(".json")).forEach(id0 -> {
+		manager.findResources("tooltip", path -> path.getPath().endsWith(".json")).forEach((id0, resource) -> {
 			String path = id0.getPath();
 			Identifier id = new Identifier(id0.getNamespace(), path.substring(0, path.length() - FILE_SUFFIX_LENGTH));
 
 			RES_LOGGER.debug("Trying to load Tooltip {} from {} ", id, id0);
 
-			try (Resource resource = manager.getResource(id0)) {
-				try (InputStream is = resource.getInputStream()) {
-					try (Reader reader = new BufferedReader(new InputStreamReader(is))) {
-						CustomTooltip tooltip = JsonTooltips.getInstance().getGson().fromJson(reader,
-								CustomTooltip.class);
-						tooltips.put(id, tooltip);
-					}
+			try (InputStream is = resource.getInputStream()) {
+				try (Reader reader = new BufferedReader(new InputStreamReader(is))) {
+					CustomTooltip tooltip = JsonTooltips.getInstance().getGson()
+							.fromJson(reader, CustomTooltip.class);
+					tooltips.put(id, tooltip);
 				}
 			} catch (Throwable t) {
 				StringBuilder messageBuilder = new StringBuilder();
@@ -110,11 +108,9 @@ public class JsonTooltipResourceManager implements SimpleSynchronousResourceRelo
 		if (error instanceof JsonParseException) {
 			String indent = "   ";
 			message.append(">").append(error.getMessage());
-			List<Throwable> childErrors = Stream
-					.concat(Stream.of(error.getCause()), Arrays.stream(error.getSuppressed())).filter(Objects::nonNull)
-					.toList();
-			if (!childErrors.isEmpty())
-				message.append("\n");
+			List<Throwable> childErrors = Stream.concat(Stream.of(error.getCause()), Arrays.stream(error.getSuppressed()))
+					.filter(Objects::nonNull).toList();
+			if (!childErrors.isEmpty()) message.append("\n");
 			childErrors.forEach(childError -> {
 				StringBuilder builder = new StringBuilder();
 				processTooltipErrorMessageRecursive(builder, childError);

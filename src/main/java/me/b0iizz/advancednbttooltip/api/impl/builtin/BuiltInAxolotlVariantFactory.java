@@ -50,10 +50,10 @@ public class BuiltInAxolotlVariantFactory implements TooltipFactory {
 		int id = tag.getInt(AxolotlEntity.VARIANT_KEY);
 
 		AxolotlEntity.Variant variant = AxolotlEntity.Variant.VARIANTS[id];
-		MutableText text = new TranslatableText("text.advancednbttooltip.tooltip.axolotl").formatted(Formatting.GRAY);
+		MutableText text = Text.translatable("text.advancednbttooltip.tooltip.axolotl").formatted(Formatting.GRAY);
 		// Make sure we don't go out of bounds if mods add more axolotl types.
 		if (id < AXOLOTL_COLORS.length) {
-			text.append(new LiteralText(variant.getName()).setStyle(Style.EMPTY.withColor(AXOLOTL_COLORS[id])));
+			text.append(Text.literal(variant.getName()).setStyle(Style.EMPTY.withColor(AXOLOTL_COLORS[id])));
 		}
 		return List.of(text);
 	}

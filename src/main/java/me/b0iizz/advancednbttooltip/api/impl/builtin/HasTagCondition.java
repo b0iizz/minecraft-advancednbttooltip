@@ -56,7 +56,7 @@ public class HasTagCondition implements TooltipCondition {
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream())
+				.flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream())
 				.anyMatch((t) -> this.type == -1 || t.getType() == this.type);
 	}
 

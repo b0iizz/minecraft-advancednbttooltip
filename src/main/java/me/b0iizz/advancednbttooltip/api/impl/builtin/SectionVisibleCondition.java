@@ -25,7 +25,7 @@ public class SectionVisibleCondition implements TooltipCondition {
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		int flags = tag.getInt("HideFlags")
 				& (enable_overrides.isEnabled(item, tag, context) ? ConfigManager.getHideflagOverrideBitmask() : 0x7f);
-		return sections.getTooltipText(item, tag, context).stream().map(Text::asString).map(String::toUpperCase)
+		return sections.getTooltipText(item, tag, context).stream().map(Text::getString).map(String::toUpperCase)
 				.map(TooltipSection::valueOf).allMatch(section -> (flags & section.getFlag()) != 0);
 	}
 

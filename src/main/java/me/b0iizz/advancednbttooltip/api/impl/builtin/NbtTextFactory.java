@@ -29,8 +29,8 @@ public class NbtTextFactory implements TooltipFactory {
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.<Text>flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream().map(NbtElement::asString)
-						.map(Text.Serializer::fromJson)).toList();
+				.<Text>flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream().map(NbtElement::asString)
+						.map(Text.Serializer::fromLenientJson)).toList();
 	}
 
 }

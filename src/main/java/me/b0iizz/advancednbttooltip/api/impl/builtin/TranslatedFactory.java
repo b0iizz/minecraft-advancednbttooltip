@@ -30,13 +30,12 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * A factory which creates a simple {@link TranslatableText}
+ * A factory which creates a simple {@link Text}
  *
  * @author B0IIZZ
  */
@@ -59,8 +58,8 @@ public class TranslatedFactory implements TooltipFactory {
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return key.getTooltipText(item, tag, context).stream().<Text>flatMap(text -> {
 			if (arguments == null)
-				return Stream.of(new TranslatableText(text.asString()));
-			return Stream.of(new TranslatableText(text.asString(), arguments.getTooltipText(item, tag, context)
+				return Stream.of(Text.translatable(text.getString()));
+			return Stream.of(Text.translatable(text.getString(), arguments.getTooltipText(item, tag, context)
 					.toArray()));
 		}).toList();
 	}

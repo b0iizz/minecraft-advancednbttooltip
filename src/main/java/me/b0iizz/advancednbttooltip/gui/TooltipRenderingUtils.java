@@ -81,8 +81,7 @@ public final class TooltipRenderingUtils {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		bufferBuilder.end();
-		BufferRenderer.draw(bufferBuilder);
+		BufferRenderer.drawWithShader(bufferBuilder.end());
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
 		matrices.pop();

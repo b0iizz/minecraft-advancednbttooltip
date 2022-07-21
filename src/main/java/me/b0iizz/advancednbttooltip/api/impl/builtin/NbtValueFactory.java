@@ -31,7 +31,6 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.AbstractNbtList;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -41,7 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A factory which creates a simple {@link LiteralText} containing the value of
+ * A factory which creates a simple {@link Text} containing the value of
  * a specified {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath}
  *
  * @author B0IIZZ
@@ -73,29 +72,29 @@ public class NbtValueFactory implements TooltipFactory {
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream().map(this::fromTag)
+				.flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream().map(this::fromTag)
 						.flatMap(List::stream)).toList();
 	}
 
 	private List<Text> fromTag(NbtElement tag) {
 		if (tag instanceof NbtCompound) {
 			if (!traverseCompound)
-				return List.of(new LiteralText("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
-			return ((NbtCompound) tag).getKeys().stream().flatMap(key -> Stream.concat(
-					Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
-					fromTag(((NbtCompound) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
+				return List.of(Text.literal("{...}").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+			return ((NbtCompound) tag).getKeys().stream()
+					.flatMap(key -> Stream.concat(Stream.of(Text.literal(key + ": ")
+							.formatted(colored ? Formatting.GRAY : Formatting.RESET)), fromTag(((NbtCompound) tag).get(key)).stream()
+							.map(this::indent))).collect(Collectors.toList());
 		} else if (tag instanceof AbstractNbtList<? extends NbtElement>) {
 			if (!traverseList)
-				return List.of(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+				return List.of(Text.literal("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 			return ((AbstractNbtList<? extends NbtElement>) tag).stream()
-					.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText("")))).map(this::indent)
+					.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(Text.literal("")))).map(this::indent)
 					.collect(Collectors.toList());
-		} else
-			return List.of(new LiteralText(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
+		} else return List.of(Text.literal(tag.asString()).formatted(colored ? Formatting.YELLOW : Formatting.RESET));
 	}
 
 	private MutableText indent(Text text) {
-		return new LiteralText(" ").append(text);
+		return Text.literal(" ").append(text);
 	}
 
 }

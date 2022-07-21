@@ -30,13 +30,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -51,14 +49,14 @@ import java.util.List;
  */
 public class TooltipsScreen extends Screen {
 
+	private TooltipListWidget tooltipList;
+
 	/**
 	 *
 	 */
 	public TooltipsScreen() {
-		super(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".tooltips.title"));
+		super(Text.translatable("text." + AdvancedNBTTooltips.modid + ".tooltips.title"));
 	}
-
-	private TooltipListWidget tooltipList;
 
 	@Override
 	protected void init() {
@@ -70,19 +68,16 @@ public class TooltipsScreen extends Screen {
 	 * Initializes all widgets and buttons
 	 */
 	public void initWidgets() {
-		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20,
-				new TranslatableText("menu.returnToGame"), widget -> {
+		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20, Text.translatable("menu.returnToGame"), widget -> {
 			save();
 			this.client.setScreen(null);
 			this.client.mouse.lockCursor();
 		}));
-		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20,
-				new TranslatableText("text.autoconfig.advancednbttooltip.title"), widget -> {
+		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20, Text.translatable("text.autoconfig.advancednbttooltip.title"), widget -> {
 			save();
 			this.client.setScreen(ConfigManager.getConfigScreen(this).get());
 		}));
-		this.tooltipList = this
-				.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
+		this.tooltipList = this.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
 	}
 
 	@Override
@@ -112,8 +107,7 @@ public class TooltipsScreen extends Screen {
 
 		final Screen screen;
 
-		public TooltipListWidget(MinecraftClient minecraftClient, Screen screen, int width, int height, int top,
-								 int bottom, int itemHeight) {
+		public TooltipListWidget(MinecraftClient minecraftClient, Screen screen, int width, int height, int top, int bottom, int itemHeight) {
 			super(minecraftClient, width, height, top, bottom, itemHeight);
 			this.screen = screen;
 			AdvancedNBTTooltips.getRegisteredTooltips().stream()
@@ -142,16 +136,15 @@ public class TooltipsScreen extends Screen {
 
 			private Text createDisplayName(Identifier id) {
 				if (isOfMod(id))
-					return new TranslatableText("text.advancednbttooltip.toggle." + id.getPath().split("/")[1]);
-				return isNameShortened(id) ? new LiteralText(id.toString().substring(0, MAX_NAME_LENGTH) + "...")
-						: new LiteralText(id.toString());
+					return Text.translatable("text.advancednbttooltip.toggle." + id.getPath().split("/")[1]);
+				return isNameShortened(id) ? Text.literal(id.toString()
+						.substring(0, MAX_NAME_LENGTH) + "...") : Text.literal(id.toString());
 			}
 
 			private Text createTooltip(Identifier id) {
-				if (isOfMod(id))
-					return new TranslatableText(
-							"text.advancednbttooltip.toggle." + id.getPath().split("/")[1] + ".tooltip");
-				return isNameShortened(id) ? new LiteralText(id.toString()) : null;
+				if (isOfMod(id)) return Text.translatable("text.advancednbttooltip.toggle." + id.getPath()
+						.split("/")[1] + ".tooltip");
+				return isNameShortened(id) ? Text.literal(id.toString()) : null;
 			}
 
 			private boolean isOfMod(Identifier id) {
@@ -173,8 +166,7 @@ public class TooltipsScreen extends Screen {
 			}
 
 			@Override
-			public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight,
-							   int mouseX, int mouseY, boolean hovered, float tickDelta) {
+			public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
 
 				widget.client.textRenderer.draw(matrices, displayName, x, y + 5, 0xFFFFFF);
 

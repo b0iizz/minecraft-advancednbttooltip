@@ -107,7 +107,7 @@ public class FormattedFactory implements TooltipFactory {
 
 		final Formatting[] formatting = formattings.toArray(Formatting[]::new);
 		List<Text> result = text.getTooltipText(item, tag, context).stream()
-				.map(line -> line.shallowCopy().formatted(formatting)).collect(Collectors.toList());
+				.map(line -> line.copy().formatted(formatting)).collect(Collectors.toList());
 
 		if (centered) {
 			int width = result.stream().map(MinecraftClient.getInstance().textRenderer::getWidth)
@@ -115,7 +115,7 @@ public class FormattedFactory implements TooltipFactory {
 			result = result.stream().map(line -> {
 				Text centeredLine = line;
 				while (MinecraftClient.getInstance().textRenderer.getWidth(centeredLine) <= width) {
-					centeredLine = Text.of(" ").shallowCopy().append(centeredLine).append(Text.of(" "));
+					centeredLine = Text.of(" ").copy().append(centeredLine).append(Text.of(" "));
 				}
 				return centeredLine;
 			}).toList();

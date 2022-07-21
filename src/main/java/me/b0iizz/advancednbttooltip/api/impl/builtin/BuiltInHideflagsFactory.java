@@ -29,9 +29,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
@@ -49,13 +47,13 @@ public class BuiltInHideflagsFactory implements TooltipFactory {
 
 		int hideFlags = tag.getInt("HideFlags");
 
-		result.add(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".tooltip.hideflag")
+		result.add(Text.translatable("text." + AdvancedNBTTooltips.modid + ".tooltip.hideflag")
 				.formatted(Formatting.GRAY));
 
 		for (int i = 0; i < ItemStack.TooltipSection.values().length; i++) {
 			if (((1 << i) & hideFlags) > 0) {
-				LiteralText line = new LiteralText(" -");
-				line.append(new TranslatableText("text." + AdvancedNBTTooltips.modid + ".hideflag."
+				var line = Text.literal(" -");
+				line.append(Text.translatable("text." + AdvancedNBTTooltips.modid + ".hideflag."
 						+ ItemStack.TooltipSection.values()[i].name().toLowerCase()));
 				result.add(line.formatted(Formatting.GRAY, Formatting.ITALIC));
 			}

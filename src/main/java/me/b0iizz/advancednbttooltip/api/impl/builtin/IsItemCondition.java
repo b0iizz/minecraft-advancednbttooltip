@@ -50,7 +50,7 @@ public class IsItemCondition implements TooltipCondition {
 
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
-		return items.getTooltipText(item, tag, context).stream().map(Text::asString).map(Identifier::new)
+		return items.getTooltipText(item, tag, context).stream().map(Text::getString).map(Identifier::new)
 				.map(Registry.ITEM::get).anyMatch(i -> item == i);
 	}
 

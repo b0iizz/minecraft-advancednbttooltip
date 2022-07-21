@@ -58,7 +58,7 @@ public class NbtRetargetFactory implements TooltipFactory {
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream()
+				.flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream()
 						.filter(t -> t.getType() == NbtType.COMPOUND)
 						.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltipText(item, t, context).stream()))
 				.toList();
@@ -67,7 +67,7 @@ public class NbtRetargetFactory implements TooltipFactory {
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream()
+				.flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream()
 						.filter(t -> t.getType() == NbtType.COMPOUND)
 						.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltip(item, t, context).stream()))
 				.toList();

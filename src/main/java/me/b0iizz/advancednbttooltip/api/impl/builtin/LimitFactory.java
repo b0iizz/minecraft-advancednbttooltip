@@ -28,7 +28,6 @@ import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public class LimitFactory implements TooltipFactory {
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		return text.getTooltipText(item, tag, context).stream()
-				.map(text -> new LiteralText(text.asTruncatedString(length)).setStyle(text.getStyle()))
+				.map(text -> Text.literal(text.asTruncatedString(length)).setStyle(text.getStyle()))
 				.collect(Collectors.toList());
 	}
 

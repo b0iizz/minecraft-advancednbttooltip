@@ -58,15 +58,13 @@ public class TagMatchesCondition implements TooltipCondition {
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream())
+				.flatMap(path -> NbtPathWrapper.getAll(path.getString(), tag).stream())
 				.anyMatch(e -> isEqualTo(e, value));
 	}
 
 	private boolean isEqualTo(NbtElement tag, JsonElement value) {
-		if (tag == null && (value == null || value.isJsonNull()))
-			return true;
-		if (tag == null || (value == null || value.isJsonNull()))
-			return false;
+		if (tag == null && (value == null || value.isJsonNull())) return true;
+		if (tag == null || (value == null || value.isJsonNull())) return false;
 		if (tag instanceof AbstractNbtNumber && value.isJsonPrimitive()) {
 			try {
 				BigDecimal a = new BigDecimal(tag.asString().replaceAll("[A-Za-z]$", ""));
@@ -81,16 +79,13 @@ public class TagMatchesCondition implements TooltipCondition {
 		}
 		if (tag instanceof AbstractNbtList && value.isJsonArray()) {
 			for (JsonElement json : value.getAsJsonArray())
-				if (((AbstractNbtList<?>) tag).stream().noneMatch(nbt -> isEqualTo(nbt, json)))
-					return false;
+				if (((AbstractNbtList<?>) tag).stream().noneMatch(nbt -> isEqualTo(nbt, json))) return false;
 			return true;
 		}
 		if (tag instanceof NbtCompound compound && value.isJsonObject()) {
 			for (Entry<String, JsonElement> json : value.getAsJsonObject().entrySet()) {
-				if (!compound.contains(json.getKey()))
-					return false;
-				if (!isEqualTo(compound.get(json.getKey()), json.getValue()))
-					return false;
+				if (!compound.contains(json.getKey())) return false;
+				if (!isEqualTo(compound.get(json.getKey()), json.getValue())) return false;
 			}
 			return true;
 		}

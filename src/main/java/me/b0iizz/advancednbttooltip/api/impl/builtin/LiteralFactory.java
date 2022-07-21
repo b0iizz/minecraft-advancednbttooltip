@@ -28,14 +28,13 @@ import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * A factory which creates a simple {@link LiteralText}
+ * A factory which creates a simple {@link Text}
  *
  * @author B0IIZZ
  */
@@ -50,7 +49,7 @@ public class LiteralFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return Collections.singletonList(new LiteralText(text));
+		return Collections.singletonList(Text.literal(text));
 	}
 
 }

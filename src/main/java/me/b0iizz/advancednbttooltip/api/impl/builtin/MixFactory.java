@@ -29,7 +29,6 @@ import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -83,12 +82,12 @@ public class MixFactory implements TooltipFactory {
 					if (!list.isEmpty())
 						return Stream.of(list.get(list.size() - 1));
 					return Stream.empty();
-				}).map(Text::shallowCopy).reduce(MutableText::append).orElse(new LiteralText(""));
+				}).map(Text::copy).reduce(MutableText::append).orElse(Text.literal(""));
 			}
 
 			return Arrays.asList(res);
 		} else {
-			return tooltips.stream().flatMap(List::stream).map(Text::shallowCopy).reduce(MutableText::append)
+			return tooltips.stream().flatMap(List::stream).map(Text::copy).reduce(MutableText::append)
 					.map(m -> (Text) m).map(Collections::singletonList).orElseGet(Collections::emptyList);
 		}
 	}

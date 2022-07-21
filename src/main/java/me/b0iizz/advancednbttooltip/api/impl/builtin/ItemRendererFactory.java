@@ -36,7 +36,7 @@ public class ItemRendererFactory implements TooltipFactory {
 
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
-		List<ItemStack> list = items.getTooltipText(item, tag, context).stream().map(Text::asString)
+		List<ItemStack> list = items.getTooltipText(item, tag, context).stream().map(Text::getString)
 				.map(Identifier::new).map(Registry.ITEM::get).distinct().map(ItemStack::new)
 				.toList();
 		return Collections.singletonList(new ItemTooltipComponent(list.toArray(ItemStack[]::new), width, scale));

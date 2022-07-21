@@ -22,21 +22,15 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,10 +42,10 @@ public class BuiltInMusicDiscFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		if(!(item instanceof MusicDiscItem)) return Collections.emptyList();
+		if (!(item instanceof MusicDiscItem)) return Collections.emptyList();
 
 		int luminance = ((MusicDiscItem) item).getComparatorOutput();
-		return List.of(new TranslatableText("text.advancednbttooltip.tooltip.disc", luminance).formatted(Formatting.GRAY));
+		return List.of(Text.translatable("text.advancednbttooltip.tooltip.disc", luminance).formatted(Formatting.GRAY));
 	}
 
 }

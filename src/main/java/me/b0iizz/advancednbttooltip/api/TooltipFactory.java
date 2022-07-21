@@ -26,7 +26,6 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
@@ -92,6 +91,6 @@ public interface TooltipFactory {
 	 * @return a {@link TooltipFactory}
 	 */
 	static TooltipFactory of(String text) {
-		return of(() -> Collections.singletonList(new LiteralText(text)));
+		return of(() -> Collections.singletonList(Text.of(text)));
 	}
 }

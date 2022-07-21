@@ -29,7 +29,6 @@ import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.Collections;
@@ -48,9 +47,9 @@ public class BuiltInFoodStatsFactory implements TooltipFactory {
 		FoodComponent component = item.getFoodComponent();
 		int hunger = component.getHunger();
 		float saturation = 2 * hunger * component.getSaturationModifier();
-		TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.foodstats");
-		TranslatableText labelHunger = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.hunger", "%d".formatted(hunger));
-		TranslatableText labelSaturation = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.saturation", "%.1f".formatted(saturation));
+		var label = Text.translatable("text.advancednbttooltip.tooltip.foodstats");
+		var labelHunger = Text.translatable("text.advancednbttooltip.tooltip.foodstats.hunger", "%d".formatted(hunger));
+		var labelSaturation = Text.translatable("text.advancednbttooltip.tooltip.foodstats.saturation", "%.1f".formatted(saturation));
 
 		return List.of(label.formatted(Formatting.GRAY), labelHunger.formatted(Formatting.DARK_GREEN), labelSaturation.formatted(Formatting.DARK_GREEN));
 	}
