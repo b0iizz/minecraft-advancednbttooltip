@@ -1,0 +1,23 @@
+{
+  "text": {
+    "id": "formatted",
+    "color": "gray",
+    "text": {
+      "id": "translated",
+      "key": "text.advancednbttooltip.tooltip.fuel_time",
+      "arguments": {
+        "id": "formatted",
+        "color": "yellow",
+        "text": {
+          "id": "fuel_time"
+        }
+      }
+    }
+  },
+  "condition": {
+    "id": "has_text",
+    "text": {
+      "id": "fuel_time"
+    }
+  }
+}

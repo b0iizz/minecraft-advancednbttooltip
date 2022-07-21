@@ -1,0 +1,11 @@
+{
+	"text": {
+		"id": "builtin_axolotl_variant"
+	},
+	"condition": {
+		"id": "is_item",
+		"items": [
+			"minecraft:axolotl_bucket"
+		]
+	}
+}

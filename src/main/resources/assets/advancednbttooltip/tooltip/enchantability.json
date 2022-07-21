@@ -1,0 +1,23 @@
+{
+  "text": {
+    "id": "formatted",
+    "color": "gray",
+    "text": {
+      "id": "translated",
+      "key": "text.advancednbttooltip.tooltip.enchantability",
+      "arguments": {
+        "id": "formatted",
+        "color": "yellow",
+        "text": {
+          "id": "enchantability"
+        }
+      }
+    }
+  },
+  "condition": {
+    "id": "has_text",
+    "text": {
+      "id": "enchantability"
+    }
+  }
+}

@@ -28,7 +28,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -50,14 +49,10 @@ public class BuiltInFoodStatsFactory implements TooltipFactory {
 		int hunger = component.getHunger();
 		float saturation = 2 * hunger * component.getSaturationModifier();
 		TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.foodstats");
-		TranslatableText labelHunger = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.hunger");
-		TranslatableText labelSaturation = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.saturation");
-		LiteralText valueHunger = new LiteralText(" " + hunger);
-		LiteralText valueSaturation = new LiteralText(" " + saturation);
+		TranslatableText labelHunger = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.hunger", "%d".formatted(hunger));
+		TranslatableText labelSaturation = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.saturation", "%.1f".formatted(saturation));
 
-		return List.of(label.formatted(Formatting.GRAY), labelHunger.append(valueHunger)
-				.formatted(Formatting.DARK_GREEN), labelSaturation.append(valueSaturation)
-				.formatted(Formatting.DARK_GREEN));
+		return List.of(label.formatted(Formatting.GRAY), labelHunger.formatted(Formatting.DARK_GREEN), labelSaturation.formatted(Formatting.DARK_GREEN));
 	}
 
 }

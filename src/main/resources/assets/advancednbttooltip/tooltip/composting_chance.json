@@ -1,0 +1,23 @@
+{
+  "text": {
+    "id": "formatted",
+    "color": "gray",
+    "text": {
+      "id": "translated",
+      "key": "text.advancednbttooltip.tooltip.composting_chance",
+      "arguments": {
+        "id": "formatted",
+        "color": "yellow",
+        "text": {
+          "id": "composting_chance"
+        }
+      }
+    }
+  },
+  "condition": {
+    "id": "has_text",
+    "text": {
+      "id": "composting_chance"
+    }
+  }
+}

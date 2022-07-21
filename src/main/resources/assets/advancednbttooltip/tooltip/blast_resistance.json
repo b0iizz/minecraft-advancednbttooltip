@@ -1,0 +1,23 @@
+{
+  "text": {
+    "id": "formatted",
+    "color": "gray",
+    "text": {
+      "id": "translated",
+      "key": "text.advancednbttooltip.tooltip.blast_resistance",
+      "arguments": {
+        "id": "formatted",
+        "color": "yellow",
+        "text": {
+          "id": "blast_resistance"
+        }
+      }
+    }
+  },
+  "condition": {
+    "id": "has_text",
+    "text": {
+      "id": "blast_resistance"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "text": {
+    "id": "formatted",
+    "color": "gray",
+    "text": {
+      "id": "translated",
+      "key": "text.advancednbttooltip.tooltip.mining_speed",
+      "arguments": {
+        "id": "formatted",
+        "color": "yellow",
+        "text": {
+          "id": "mining_speed"
+        }
+      }
+    }
+  },
+  "condition": {
+    "id": "has_text",
+    "text": {
+      "id": "mining_speed"
+    }
+  }
+}

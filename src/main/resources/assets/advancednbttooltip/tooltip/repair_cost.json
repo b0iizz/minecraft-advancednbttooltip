@@ -7,7 +7,7 @@
 			"texts": [
 				{
 					"id": "translated",
-					"key": "text.advancednbttooltip.tooltip.repaircost"
+					"key": "text.advancednbttooltip.tooltip.repair_cost"
 				},
 				{
 					"id": "nbt_value",

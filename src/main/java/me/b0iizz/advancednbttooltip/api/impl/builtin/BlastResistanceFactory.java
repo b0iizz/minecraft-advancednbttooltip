@@ -29,7 +29,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Language;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,9 +42,9 @@ public class BlastResistanceFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		if(!(item instanceof BlockItem)) return Collections.emptyList();
+		if (!(item instanceof BlockItem)) return Collections.emptyList();
 
 		float blastResistance = ((BlockItem) item).getBlock().getBlastResistance();
-		return List.of(Text.of(String.valueOf(blastResistance)));
+		return List.of(Text.of("%.1f".formatted(blastResistance)));
 	}
 }

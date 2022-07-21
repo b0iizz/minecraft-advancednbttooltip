@@ -44,6 +44,6 @@ public class BlockHardnessFactory implements TooltipFactory {
 		if(!(item instanceof BlockItem)) return Collections.emptyList();
 
 		float hardness = ((BlockItem) item).getBlock().getHardness();
-		return List.of(Text.of(String.valueOf(hardness)));
+		return List.of(Text.of("%.1f".formatted(hardness)));
 	}
 }

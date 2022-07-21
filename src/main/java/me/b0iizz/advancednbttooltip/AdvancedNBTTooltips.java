@@ -124,6 +124,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		JsonTooltips.getInstance().registerCondition(AdvancedContextCondition.class);
 		JsonTooltips.getInstance().registerCondition(AndCondition.class);
 		JsonTooltips.getInstance().registerCondition(HasTagCondition.class);
+		JsonTooltips.getInstance().registerCondition(HasTextCondition.class);
 		JsonTooltips.getInstance().registerCondition(HudContextCondition.class);
 		JsonTooltips.getInstance().registerCondition(IsItemCondition.class);
 		JsonTooltips.getInstance().registerCondition(NotCondition.class);

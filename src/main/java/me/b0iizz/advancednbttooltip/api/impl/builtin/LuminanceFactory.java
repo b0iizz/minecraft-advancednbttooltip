@@ -44,6 +44,6 @@ public class LuminanceFactory implements TooltipFactory {
 		if(!(item instanceof BlockItem)) return Collections.emptyList();
 
 		int luminance = ((BlockItem) item).getBlock().getDefaultState().getLuminance();
-		return List.of(Text.of(String.valueOf(luminance)));
+		return luminance <= 0 ? Collections.emptyList() : List.of(Text.of(String.valueOf(luminance)));
 	}
 }

@@ -43,6 +43,6 @@ public class CompostingChanceFactory implements TooltipFactory {
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
 		float chance = ComposterBlock.ITEM_TO_LEVEL_INCREASE_CHANCE.getFloat(item);
 
-		return chance <= 0 ? Collections.emptyList() : List.of(Text.of(String.valueOf(chance * 100)));
+		return chance <= 0 ? Collections.emptyList() : List.of(Text.of("%.1f".formatted(chance * 100)));
 	}
 }
