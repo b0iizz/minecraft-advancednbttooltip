@@ -22,55 +22,42 @@
 */
 package me.b0iizz.advancednbttooltip.api.impl.builtin;
 
-import me.b0iizz.advancednbttooltip.api.JsonTooltips.Required;
 import me.b0iizz.advancednbttooltip.api.JsonTooltips.TooltipCode;
 import me.b0iizz.advancednbttooltip.api.TooltipFactory;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * A factory which uses the child factory on every {@link NbtElement} at a nbt path.
- *
  * @author B0IIZZ
  */
-@TooltipCode("nbt_retarget")
-public class NbtRetargetFactory implements TooltipFactory {
-
-	/**
-	 * The nbt path to search
-	 */
-	@Required("tag")
-	public TooltipFactory path;
-
-	/**
-	 * The {@link TooltipFactory} to use
-	 */
-	@Required
-	public TooltipFactory text;
+@TooltipCode("builtin_food_stats")
+public class BuiltInFoodStatsFactory implements TooltipFactory {
 
 	@Override
 	public List<Text> getTooltipText(Item item, NbtCompound tag, TooltipContext context) {
-		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream()
-						.filter(t -> t.getType() == NbtType.COMPOUND)
-						.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltipText(item, t, context).stream()))
-				.toList();
-	}
+		if (!item.isFood()) return Collections.emptyList();
 
-	@Override
-	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
-		return path.getTooltipText(item, tag, context).stream()
-				.flatMap(path -> NbtPathWrapper.getAll(path.asString(), tag).stream()
-						.filter(t -> t.getType() == NbtType.COMPOUND)
-						.map(t -> (NbtCompound) t).flatMap(t -> this.text.getTooltip(item, t, context).stream()))
-				.toList();
+		FoodComponent component = item.getFoodComponent();
+		int hunger = component.getHunger();
+		float saturation = 2 * hunger * component.getSaturationModifier();
+		TranslatableText label = new TranslatableText("text.advancednbttooltip.tooltip.foodstats");
+		TranslatableText labelHunger = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.hunger");
+		TranslatableText labelSaturation = new TranslatableText("text.advancednbttooltip.tooltip.foodstats.saturation");
+		LiteralText valueHunger = new LiteralText(" " + hunger);
+		LiteralText valueSaturation = new LiteralText(" " + saturation);
+
+		return List.of(label.formatted(Formatting.GRAY), labelHunger.append(valueHunger)
+				.formatted(Formatting.DARK_GREEN), labelSaturation.append(valueSaturation)
+				.formatted(Formatting.DARK_GREEN));
 	}
 
 }

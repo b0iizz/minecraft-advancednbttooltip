@@ -217,67 +217,6 @@ public class ModConfig extends PartitioningSerializer.GlobalData {
 		 * See In-game description.
 		 */
 		@ConfigEntry.Gui.Tooltip
-		boolean showMiningSpeed = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
 		boolean showMaxEnchantmentLevel = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showEnchantability = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showAxolotlVariant = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showLightLevel = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showFoodStats = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showFuelTime = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showCompostingChance = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showBlastResistance = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showBlockHardness = true;
-
-		/**
-		 * See In-game description.
-		 */
-		@ConfigEntry.Gui.Tooltip
-		boolean showMusicDisc = true;
-
 	}
 }

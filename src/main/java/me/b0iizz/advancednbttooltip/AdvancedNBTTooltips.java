@@ -63,7 +63,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	/**
 	 * The list of all loaded tooltips
 	 */
-	protected static final Map<Identifier, CustomTooltip> TOOLTIPS = new HashMap<>();
+	private static final Map<Identifier, CustomTooltip> TOOLTIPS = new HashMap<>();
 
 	/**
 	 * Constructs a new {@link Identifier} consisting of this mod's modid and the
@@ -94,31 +94,42 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 		ModKeybinds.initKeyBindings();
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeybinds::updateKeyBindings);
 
-		JsonTooltips.getInstance().registerFactory(LiteralFactory.class);
+		JsonTooltips.getInstance().registerFactory(BlastResistanceFactory.class);
+		JsonTooltips.getInstance().registerFactory(BlockHardnessFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInAxolotlVariantFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInFoodStatsFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
+		JsonTooltips.getInstance().registerFactory(BuiltInMusicDiscFactory.class);
+		JsonTooltips.getInstance().registerFactory(CompostingChanceFactory.class);
+		JsonTooltips.getInstance().registerFactory(ConditionalFactory.class);
+		JsonTooltips.getInstance().registerFactory(EffectFactory.class);
+		JsonTooltips.getInstance().registerFactory(EnchantabilityFactory.class);
 		JsonTooltips.getInstance().registerFactory(FormattedFactory.class);
-		JsonTooltips.getInstance().registerFactory(TranslatedFactory.class);
-		JsonTooltips.getInstance().registerFactory(NbtValueFactory.class);
+		JsonTooltips.getInstance().registerFactory(FuelTimeFactory.class);
+		JsonTooltips.getInstance().registerFactory(ItemRendererFactory.class);
+		JsonTooltips.getInstance().registerFactory(LimitFactory.class);
+		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
+		JsonTooltips.getInstance().registerFactory(LiteralFactory.class);
+		JsonTooltips.getInstance().registerFactory(LuminanceFactory.class);
+		JsonTooltips.getInstance().registerFactory(MiningSpeedFactory.class);
+		JsonTooltips.getInstance().registerFactory(MixFactory.class);
+		JsonTooltips.getInstance().registerFactory(MultipleFactory.class);
 		JsonTooltips.getInstance().registerFactory(NbtRetargetFactory.class);
 		JsonTooltips.getInstance().registerFactory(NbtSizeFactory.class);
 		JsonTooltips.getInstance().registerFactory(NbtTextFactory.class);
-		JsonTooltips.getInstance().registerFactory(ConditionalFactory.class);
-		JsonTooltips.getInstance().registerFactory(MultipleFactory.class);
-		JsonTooltips.getInstance().registerFactory(MixFactory.class);
-		JsonTooltips.getInstance().registerFactory(EffectFactory.class);
-		JsonTooltips.getInstance().registerFactory(LimitFactory.class);
-		JsonTooltips.getInstance().registerFactory(LimitLinesFactory.class);
-		JsonTooltips.getInstance().registerFactory(BuiltInHideflagsFactory.class);
-		JsonTooltips.getInstance().registerFactory(ItemRendererFactory.class);
+		JsonTooltips.getInstance().registerFactory(NbtValueFactory.class);
+		JsonTooltips.getInstance().registerFactory(TranslatedFactory.class);
 
-		JsonTooltips.getInstance().registerCondition(AndCondition.class);
-		JsonTooltips.getInstance().registerCondition(OrCondition.class);
-		JsonTooltips.getInstance().registerCondition(NotCondition.class);
-		JsonTooltips.getInstance().registerCondition(IsItemCondition.class);
-		JsonTooltips.getInstance().registerCondition(HasTagCondition.class);
-		JsonTooltips.getInstance().registerCondition(TagMatchesCondition.class);
+
 		JsonTooltips.getInstance().registerCondition(AdvancedContextCondition.class);
+		JsonTooltips.getInstance().registerCondition(AndCondition.class);
+		JsonTooltips.getInstance().registerCondition(HasTagCondition.class);
 		JsonTooltips.getInstance().registerCondition(HudContextCondition.class);
+		JsonTooltips.getInstance().registerCondition(IsItemCondition.class);
+		JsonTooltips.getInstance().registerCondition(NotCondition.class);
+		JsonTooltips.getInstance().registerCondition(OrCondition.class);
 		JsonTooltips.getInstance().registerCondition(SectionVisibleCondition.class);
+		JsonTooltips.getInstance().registerCondition(TagMatchesCondition.class);
 
 		HudTooltipRenderer.setup();
 		HudTooltipPicker.setup();
@@ -158,7 +169,7 @@ public final class AdvancedNBTTooltips implements ClientModInitializer {
 	 * @param context The {@link TooltipContext} where the tooltip is being
 	 *                generated.
 	 */
-	protected static void appendCustomTooltip(ItemStack stack, List<TooltipComponent> tooltip, TooltipContext context) {
+	private static void appendCustomTooltip(ItemStack stack, List<TooltipComponent> tooltip, TooltipContext context) {
 		Item item = stack.getItem();
 		NbtCompound tag = stack.hasNbt() ? stack.getNbt() : new NbtCompound();
 		TOOLTIPS.entrySet().stream().sorted(Comparator.comparing(a -> a.getKey().toString()))

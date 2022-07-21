@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 public class NbtValueFactory implements TooltipFactory {
 
 	/**
-	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath} to search
+	 * The {@link net.minecraft.command.argument.NbtPathArgumentType.NbtPath NbtPath} to search
 	 */
 	@Required("tag")
 	public TooltipFactory path;
@@ -84,11 +84,10 @@ public class NbtValueFactory implements TooltipFactory {
 			return ((NbtCompound) tag).getKeys().stream().flatMap(key -> Stream.concat(
 					Stream.of(new LiteralText(key + ": ").formatted(colored ? Formatting.GRAY : Formatting.RESET)),
 					fromTag(((NbtCompound) tag).get(key)).stream().map(this::indent))).collect(Collectors.toList());
-		} else if (tag instanceof AbstractNbtList) {
+		} else if (tag instanceof AbstractNbtList<? extends NbtElement>) {
 			if (!traverseList)
 				return List.of(new LiteralText("[...]").formatted(colored ? Formatting.YELLOW : Formatting.RESET));
-			//noinspection unchecked
-			return ((AbstractNbtList<NbtElement>) tag).stream()
+			return ((AbstractNbtList<? extends NbtElement>) tag).stream()
 					.flatMap(e -> Stream.concat(fromTag(e).stream(), Stream.of(new LiteralText("")))).map(this::indent)
 					.collect(Collectors.toList());
 		} else
