@@ -42,30 +42,25 @@ public interface CustomTooltipRenderer {
 
 	void renderComponents(MatrixStack matrices, @Nullable ItemStack stack, List<TooltipComponent> components, int x, int y);
 
-	default void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y, boolean advanced,
-							   @Nullable List<Text> vanilla_lines, @Nullable PlayerEntity player) {
+	default void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y, boolean advanced, @Nullable List<Text> vanilla_lines, @Nullable PlayerEntity player) {
 		TooltipContext ctx = advanced ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL;
 		this.renderTooltip(matrices, stack, x, y, ctx, vanilla_lines, player);
 	}
 
-	default void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y, TooltipContext ctx,
-							   @Nullable List<Text> vanilla_lines, @Nullable PlayerEntity player) {
+	default void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y, TooltipContext ctx, @Nullable List<Text> vanilla_lines, @Nullable PlayerEntity player) {
 		List<TooltipComponent> tooltip = Optional.ofNullable(vanilla_lines).orElse(stack.getTooltip(player, ctx))
-				.stream()
-				.sequential().map(Text::asOrderedText).map(TooltipComponent::of)
+				.stream().sequential().map(Text::asOrderedText).map(TooltipComponent::of)
 				.collect(Collectors.toCollection(ArrayList::new));
 
-		stack.getTooltipData().flatMap(CustomTooltipRenderer::fromTooltipData).ifPresent(tooltip::add);
+		stack.getTooltipData().map(CustomTooltipRenderer::fromTooltipData).ifPresent(tooltip::add);
 
 		AdvancedNBTTooltips.getTooltip(stack, ctx, tooltip);
 		this.renderComponents(matrices, stack, tooltip, x, y);
 	}
 
-	private static Optional<TooltipComponent> fromTooltipData(TooltipData data0) {
-		return Optional.ofNullable(data0).map(data -> {
-			TooltipComponent result = TooltipComponentCallback.EVENT.invoker().getComponent(data);
-			return result != null ? result : TooltipComponent.of(data);
-		});
+	private static TooltipComponent fromTooltipData(TooltipData data) {
+		TooltipComponent result = TooltipComponentCallback.EVENT.invoker().getComponent(data);
+		return result != null ? result : TooltipComponent.of(data);
 	}
 
 }
