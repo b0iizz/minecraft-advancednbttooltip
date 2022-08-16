@@ -23,8 +23,10 @@
 package me.b0iizz.advancednbttooltip.gui;
 
 import me.b0iizz.advancednbttooltip.AdvancedNBTTooltips;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -53,10 +55,17 @@ public interface CustomTooltipRenderer {
 				.sequential().map(Text::asOrderedText).map(TooltipComponent::of)
 				.collect(Collectors.toCollection(ArrayList::new));
 
-		stack.getTooltipData().map(TooltipComponent::of).ifPresent(tooltip::add);
+		stack.getTooltipData().flatMap(CustomTooltipRenderer::fromTooltipData).ifPresent(tooltip::add);
 
 		AdvancedNBTTooltips.getTooltip(stack, ctx, tooltip);
 		this.renderComponents(matrices, stack, tooltip, x, y);
+	}
+
+	private static Optional<TooltipComponent> fromTooltipData(TooltipData data0) {
+		return Optional.ofNullable(data0).map(data -> {
+			TooltipComponent result = TooltipComponentCallback.EVENT.invoker().getComponent(data);
+			return result != null ? result : TooltipComponent.of(data);
+		});
 	}
 
 }
