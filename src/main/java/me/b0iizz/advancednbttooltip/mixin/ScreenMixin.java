@@ -47,8 +47,9 @@ public abstract class ScreenMixin implements CustomTooltipRenderer {
 	 */
 	@Inject(at = @At("HEAD"), method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V", cancellable = true)
 	public void renderTooltipHook(MatrixStack matrices, ItemStack stack, int x, int y, CallbackInfo ci) {
+		/* fix: Unknown TooltipComment Crash*/
 		this.renderTooltip(matrices, stack, x, y, this.client.options.advancedItemTooltips, null, this.client.player);
-		ci.cancel();
+		//ci.cancel();
 	}
 
 	@Override
