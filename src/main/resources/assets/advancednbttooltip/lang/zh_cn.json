@@ -8,7 +8,7 @@
 	"text.advancednbttooltip.hideflag.enchantments": "附魔信息",
 	"text.advancednbttooltip.hideflag.modifiers": "属性修饰符",
 	"text.advancednbttooltip.hideflag.unbreakable": "无法破坏",
-	"text.advancednbttooltip.toggle.axolotl": "显示Axolotl变量",
+	"text.advancednbttooltip.toggle.axolotl": "显示 Axolotl 变量",
 	"text.advancednbttooltip.toggle.axolotl.tooltip": "将指定变量的行添加到 Axolotl 工具提示的桶中。",
 	"text.advancednbttooltip.toggle.bee_nest": "显示'蜂巢'信息",
 	"text.advancednbttooltip.toggle.bee_nest.tooltip": "显示'蜂巢'内有多少蜜蜂",
