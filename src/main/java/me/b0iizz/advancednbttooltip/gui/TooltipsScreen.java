@@ -68,15 +68,23 @@ public class TooltipsScreen extends Screen {
 	 * Initializes all widgets and buttons
 	 */
 	public void initWidgets() {
-		this.addDrawableChild(new ButtonWidget(width / 3, this.height - 27, this.width / 3, 20, Text.translatable("menu.returnToGame"), widget -> {
-			save();
-			this.client.setScreen(null);
-			this.client.mouse.lockCursor();
-		}));
-		this.addDrawableChild(new ButtonWidget(width * 9 / 12, this.height - 27, this.width / 6, 20, Text.translatable("text.autoconfig.advancednbttooltip.title"), widget -> {
-			save();
-			this.client.setScreen(ConfigManager.getConfigScreen(this).get());
-		}));
+		this.addDrawableChild(
+			new ButtonWidget.Builder(Text.translatable("menu.returnToGame"), widget -> {
+				save();
+				this.client.setScreen(null);
+				this.client.mouse.lockCursor();
+			})
+					.dimensions(width / 3, this.height - 27, this.width / 3, 20)
+					.build());
+
+		this.addDrawableChild(
+			new ButtonWidget.Builder(Text.translatable("text.autoconfig.advancednbttooltip.title"), widget -> {
+				save();
+				this.client.setScreen(ConfigManager.getConfigScreen(this).get());
+			})
+					.dimensions(width * 9 / 12, this.height - 27, this.width / 6, 20)
+					.build());
+
 		this.tooltipList = this.addDrawableChild(new TooltipListWidget(this.client, this, this.width, this.height, 40, this.height - 48, 20));
 	}
 
@@ -131,7 +139,11 @@ public class TooltipsScreen extends Screen {
 				this.widget = parent;
 				this.displayName = createDisplayName(id);
 				this.tooltip = createTooltip(id);
-				this.toggleButton = new ButtonWidget(0, 0, 35, 20, getText(ConfigManager.isEnabled(id)), button -> button.setMessage(getText(ConfigManager.toggle(id))));
+				this.toggleButton = new ButtonWidget.Builder(getText(ConfigManager.isEnabled(id)), button -> {
+					button.setMessage(getText(ConfigManager.toggle(id)));
+				})
+						.dimensions(0, 0, 35, 20)
+						.build();
 			}
 
 			private Text createDisplayName(Identifier id) {
@@ -170,8 +182,8 @@ public class TooltipsScreen extends Screen {
 
 				widget.client.textRenderer.draw(matrices, displayName, x, y + 5, 0xFFFFFF);
 
-				this.toggleButton.x = x + 190;
-				this.toggleButton.y = y;
+				this.toggleButton.setX(x + 190);
+				this.toggleButton.setY(y);
 
 				this.toggleButton.render(matrices, mouseX, mouseY, tickDelta);
 

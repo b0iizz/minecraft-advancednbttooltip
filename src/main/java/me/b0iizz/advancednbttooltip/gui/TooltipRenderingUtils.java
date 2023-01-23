@@ -28,7 +28,7 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public final class TooltipRenderingUtils {
 		matrices.push();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		Matrix4f modelMatrix = matrices.peek().getPositionMatrix();
 
@@ -81,7 +81,7 @@ public final class TooltipRenderingUtils {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		BufferRenderer.drawWithShader(bufferBuilder.end());
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
 		matrices.pop();

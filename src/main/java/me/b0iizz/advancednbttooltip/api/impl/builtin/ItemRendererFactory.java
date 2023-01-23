@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +37,7 @@ public class ItemRendererFactory implements TooltipFactory {
 	@Override
 	public List<TooltipComponent> getTooltip(Item item, NbtCompound tag, TooltipContext context) {
 		List<ItemStack> list = items.getTooltipText(item, tag, context).stream().map(Text::getString)
-				.map(Identifier::new).map(Registry.ITEM::get).distinct().map(ItemStack::new)
+				.map(Identifier::new).map(Registries.ITEM::get).distinct().map(ItemStack::new)
 				.toList();
 		return Collections.singletonList(new ItemTooltipComponent(list.toArray(ItemStack[]::new), width, scale));
 	}
