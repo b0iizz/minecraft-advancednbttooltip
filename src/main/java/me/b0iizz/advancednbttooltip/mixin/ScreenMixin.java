@@ -26,6 +26,8 @@ import me.b0iizz.advancednbttooltip.gui.CustomTooltipRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.gui.tooltip.TooltipPositioner;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,11 +55,11 @@ public abstract class ScreenMixin implements CustomTooltipRenderer {
 
 	@Override
 	public void renderComponents(MatrixStack matrices, ItemStack stack, List<TooltipComponent> components, int x, int y) {
-		this.renderTooltipFromComponents(matrices, components, x, y);
+		this.renderTooltipFromComponents(matrices, components, x, y, HoveredTooltipPositioner.INSTANCE);
 	}
 
 	@Shadow
 	protected abstract void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, int x,
-														int y);
+														int y, TooltipPositioner positioner);
 
 }

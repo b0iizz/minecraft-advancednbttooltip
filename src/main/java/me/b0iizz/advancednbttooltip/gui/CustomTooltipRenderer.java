@@ -43,7 +43,7 @@ public interface CustomTooltipRenderer {
 	void renderComponents(MatrixStack matrices, @Nullable ItemStack stack, List<TooltipComponent> components, int x, int y);
 
 	default void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y, boolean advanced, @Nullable List<Text> vanilla_lines, @Nullable PlayerEntity player) {
-		TooltipContext ctx = advanced ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL;
+		TooltipContext ctx = advanced ? TooltipContext.ADVANCED : TooltipContext.BASIC;
 		this.renderTooltip(matrices, stack, x, y, ctx, vanilla_lines, player);
 	}
 

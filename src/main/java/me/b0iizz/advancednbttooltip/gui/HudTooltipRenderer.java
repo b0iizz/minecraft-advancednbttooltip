@@ -121,6 +121,10 @@ public class HudTooltipRenderer implements CustomTooltipRenderer {
 			return isAdvanced ? ADVANCED : NORMAL;
 		}
 
+		@Override
+		public boolean isCreative() {
+			return false;
+		}
 	}
 
 	/**

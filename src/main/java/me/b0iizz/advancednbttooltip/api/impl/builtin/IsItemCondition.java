@@ -31,7 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 /**
  * A condition which is fulfilled when the item is contained in the specified
@@ -51,7 +51,7 @@ public class IsItemCondition implements TooltipCondition {
 	@Override
 	public boolean isEnabled(Item item, NbtCompound tag, TooltipContext context) {
 		return items.getTooltipText(item, tag, context).stream().map(Text::getString).map(Identifier::new)
-				.map(Registry.ITEM::get).anyMatch(i -> item == i);
+				.map(Registries.ITEM::get).anyMatch(i -> item == i);
 	}
 
 }
