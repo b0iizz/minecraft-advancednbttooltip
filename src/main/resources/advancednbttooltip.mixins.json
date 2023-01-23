@@ -7,8 +7,9 @@
   ],
   "client": [
   	"EnchantmentMixin",
-    "ItemStackMixin",
-    "ScreenMixin"
+	"ItemStackMixin",
+	"ScreenMixin",
+	"CreativeInventoryScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
