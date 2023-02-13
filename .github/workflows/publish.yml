@@ -1,0 +1,39 @@
+name: release-mod
+
+on: 
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 17
+      - name: Build with Gradle
+        id: build,
+        run: chmod +x gradlew && ./gradlew build
+      - name: Publish
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: 5gKJeRsh
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          
+          curseforge-id: 393788
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          
+          github-token: ${{ secrets.GHUB_TOKEN }}
+          github-files-primary: build/libs/*-@(dev|sources|javadoc).jar
+          github-files-secondary: build/libs/!(*-@(dev|sources|javadoc)).jar
+          
+          name: ""
+          dependencies: |
+            fabric-api | depends | *
+            modmenu | suggests | *
+          version-resolver: latest
+        
