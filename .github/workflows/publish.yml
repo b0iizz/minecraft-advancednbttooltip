@@ -16,7 +16,6 @@ jobs:
           distribution: 'adopt'
           java-version: 17
       - name: Build with Gradle
-        id: build,
         run: chmod +x gradlew && ./gradlew build
       - name: Publish
         uses: Kir-Antipov/mc-publish@v3.2
@@ -27,7 +26,7 @@ jobs:
           curseforge-id: 393788
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           
-          github-token: ${{ secrets.GHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           github-files-primary: build/libs/*-@(dev|sources|javadoc).jar
           github-files-secondary: build/libs/!(*-@(dev|sources|javadoc)).jar
           
