@@ -1,4 +1,5 @@
-﻿# minecraft-advancednbttooltip
+# I have stopped developing this mod. Feel free to fork if you want to continue development!
+# minecraft-advancednbttooltip
 
 Minecraft Mod (Fabric Modloader) for 1.16.1 and above.
 
